@@ -12,5 +12,8 @@ int main()
     engine->setTimeManager(move(clock));
     engine->startGame();
 
-    while (true) {};
+    std::cout << "Press ENTER to stop...\n";
+    std::cin.get();
+
+    engine->stopGame();
 }

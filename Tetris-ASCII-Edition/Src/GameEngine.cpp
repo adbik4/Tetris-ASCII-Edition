@@ -2,8 +2,12 @@
 
 #include "TimeManager.h"
 
-void GameEngine::startGame() {;
+void GameEngine::startGame() {
 	clock->startClock();
+}
+
+void GameEngine::stopGame() {
+	clock->stopClock();
 }
 
 // This function conducts the main mediation logic

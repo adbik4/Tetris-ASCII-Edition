@@ -19,6 +19,10 @@ private:
 	unique_ptr<TimeManager> clock;
 
 public:
+	~GameEngine() override {
+		stopGame();
+	}
+
 	void setTimeManager(unique_ptr<TimeManager> ptr) { clock = move(ptr); };
 	void notify(const Event& event) override;
 

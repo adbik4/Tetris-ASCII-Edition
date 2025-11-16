@@ -1,19 +1,11 @@
-#include "ProjectHeaders.h"
-#include "GameEngine.h"
-#include "TimeManager.h"
+#include "Settings.h"
+#include "App.h"
 
 int main()
 {
-    unique_ptr<GameEngine> engine = make_unique<GameEngine>();
-    unique_ptr<TimeManager> clock = make_unique<TimeManager>(engine.get());
+	struct GameSettings settings;
+	settings.start_level = 0;
 
-    std::cout << "MAIN MENU\n";
-
-    engine->setTimeManager(move(clock));
-    engine->startGame();
-
-    std::cout << "Press ENTER to stop...\n";
-    std::cin.get();
-
-    engine->stopGame();
+	Application app(settings);
+	app.run();
 }

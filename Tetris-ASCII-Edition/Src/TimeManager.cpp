@@ -1,12 +1,13 @@
 #include "TimeManager.h"
-
 #include "GameEngine.h"
 
 void clockTask(std::stop_token stopToken, GameEngine* engine) {
 	Event tick(CLK); // Event object to use for notification
 
+	int sleep_duration{ 0 };
 	while (!stopToken.stop_requested()) {
-		this_thread::sleep_for(chrono::milliseconds(1000));
+		sleep_duration = static_cast<int>( 1000.0 / pow(2, engine->getLevel()) );
+		this_thread::sleep_for(chrono::milliseconds(sleep_duration));
 		engine->notify(tick);
 	}
 }

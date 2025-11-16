@@ -1,5 +1,5 @@
 #pragma once
-#include "ProjectHeaders.h"
+#include <cstdint>
 
 #define CLK 0
 

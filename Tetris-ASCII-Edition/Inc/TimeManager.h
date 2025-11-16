@@ -1,20 +1,19 @@
 #pragma once
-#include "ProjectHeaders.h"
 #include <thread>
 #include <chrono>
+
 using namespace std;
 
 class GameEngine;
 
+// The TimeManager launches and keeps track of threads that keep track of time.
+// The threads will generate notifications that trigger certain actions in the GameEngine
 class TimeManager {
 	GameEngine* engine;
-	uint8_t level;
-
-	// threads
 	std::jthread BaseClock;
 
 public:
-	TimeManager(GameEngine* ptr, const uint8_t start_level = 0) : engine(ptr), level(start_level) {}
+	TimeManager(GameEngine* ptr) : engine(ptr) {}
 	void startClock();
 	void stopClock();
 };

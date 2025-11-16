@@ -24,6 +24,9 @@
     <ClCompile Include="Src\TimeManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\GameEngine.h">
@@ -35,7 +38,10 @@
     <ClInclude Include="Inc\TimeManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Inc\ProjectHeaders.h">
+    <ClInclude Include="Inc\Settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -131,14 +131,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\App.cpp" />
     <ClCompile Include="Src\GameEngine.cpp" />
     <ClCompile Include="Src\Main.cpp" />
     <ClCompile Include="Src\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Inc\App.h" />
     <ClInclude Include="Inc\Events.h" />
     <ClInclude Include="Inc\GameEngine.h" />
-    <ClInclude Include="Inc\ProjectHeaders.h" />
+    <ClInclude Include="Inc\Settings.h" />
     <ClInclude Include="Inc\TimeManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

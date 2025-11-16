@@ -16,10 +16,10 @@ class Mediator {
 
 class GameEngine : public Mediator {
 private:
-	shared_ptr<TimeManager> clock;
+	unique_ptr<TimeManager> clock;
 
 public:
-	void setTimeManager(const shared_ptr<TimeManager>& ptr) { clock = ptr; };
+	void setTimeManager(unique_ptr<TimeManager> ptr) { clock = move(ptr); };
 	void notify(const Event& event) override;
 
 	void startGame();

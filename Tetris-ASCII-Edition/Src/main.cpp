@@ -4,12 +4,12 @@
 
 int main()
 {
-    shared_ptr<GameEngine> engine = make_shared<GameEngine>();
-    shared_ptr<TimeManager> clock = make_shared<TimeManager>(engine);
+    unique_ptr<GameEngine> engine = make_unique<GameEngine>();
+    unique_ptr<TimeManager> clock = make_unique<TimeManager>(engine.get());
 
     std::cout << "MAIN MENU\n";
 
-    engine->setTimeManager(clock);
+    engine->setTimeManager(move(clock));
     engine->startGame();
 
     while (true) {};

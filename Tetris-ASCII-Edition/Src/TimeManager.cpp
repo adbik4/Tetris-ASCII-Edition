@@ -1,9 +1,9 @@
 #include "TimeManager.h"
 
 #include <thread>
-#include <GameEngine.h>
+#include "GameEngine.h"
 
-void clockTask(const shared_ptr<GameEngine>& engine) {
+void clockTask(GameEngine* engine) {
 	Event tick(CLK); // Event object to use for notification
 
 	while (true) {

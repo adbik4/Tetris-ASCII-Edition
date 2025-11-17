@@ -2,18 +2,19 @@
 
 #include <memory>
 #include "GameEngine.h"
+#include "GameRenderer.h"
 #include "TimeManager.h"
 #include "Settings.h"
 
 class Application {
     unique_ptr<GameEngine> engine;
-    bool running = false;
+    bool app_running_ = false;  // used to check if the app is running
 
     public:
         Application(const struct GameSettings& settings) { create(settings); }
-        ~Application() { stop(); }
+        ~Application() { shutdown(); }
 
         void create(const struct GameSettings& settings);
         void run();
-        void stop();
+        void shutdown();
 };

@@ -131,15 +131,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\GameRenderer.cpp" />
     <ClCompile Include="Src\App.cpp" />
     <ClCompile Include="Src\GameEngine.cpp" />
+    <ClCompile Include="Src\InputManager.cpp" />
     <ClCompile Include="Src\Main.cpp" />
     <ClCompile Include="Src\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Inc\GameRenderer.h" />
     <ClInclude Include="Inc\App.h" />
     <ClInclude Include="Inc\Events.h" />
     <ClInclude Include="Inc\GameEngine.h" />
+    <ClInclude Include="Inc\InputManager.h" />
     <ClInclude Include="Inc\Settings.h" />
     <ClInclude Include="Inc\TimeManager.h" />
   </ItemGroup>

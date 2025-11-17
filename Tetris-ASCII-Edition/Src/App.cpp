@@ -5,23 +5,24 @@
 void Application::create(const struct GameSettings& cfg) {
     engine = make_unique<GameEngine>(cfg);
     auto tm = make_unique<TimeManager>(engine.get());
+    auto gr = make_unique<GameRenderer>();
+    auto im = make_unique<InputManager>();
 
+    engine->setGameRenderer(move(gr));
     engine->setTimeManager(move(tm));
+    engine->setInputManager(move(im));
 }
 
 void Application::run() {
+    app_running_ = true;
     engine->startGame();
-    running = true;
-    cout << "MAIN MENU\n";
-    cout << "Press ENTER to quit...\n";
-    cin.get();
 
-    stop();
+    while (!engine->getStatus()) {}; // wait for stop flag
 }
 
-void Application::stop() {
-    if (!running)
+void Application::shutdown() {
+    if (!app_running_)
         return;
-    running = false;
+    app_running_ = false;
     engine->stopGame();
 }

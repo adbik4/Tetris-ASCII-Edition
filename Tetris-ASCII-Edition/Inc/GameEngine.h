@@ -1,15 +1,11 @@
 #pragma once
 
 #include <memory>
-#include <iostream>
 #include "Events.h"
 #include "Settings.h"
-#include "GameEngine.h"
 #include "GameRenderer.h"
 #include "TimeManager.h"
 #include "InputManager.h"
-
-using namespace std;
 
 class TimeManager;
 

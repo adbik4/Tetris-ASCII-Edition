@@ -1,5 +1,10 @@
 #include "App.h"
 
+#include <memory>
+#include "GameRenderer.h"
+#include "TimeManager.h"
+#include "Settings.h"
+
 // Inititialises everything safely and in the right order
 // the App holds a pointer to the GameEngine which owns the TimeManager
 void Application::create(const struct GameSettings& cfg) {
@@ -17,7 +22,8 @@ void Application::run() {
     app_running_ = true;
     engine->startGame();
 
-    while (!engine->getStatus()) {}; // wait for stop flag
+    // wait for stop flag
+    while (!engine->getStatus()) {}
 }
 
 void Application::shutdown() {

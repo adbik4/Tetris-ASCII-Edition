@@ -1,15 +1,17 @@
 #pragma once
-
-#include <iostream>
-
-using namespace std;
+#include <string>
 
 class GameRenderer
 {
-public:
-	GameRenderer() = default;
-	~GameRenderer() = default;
+private:
+	void initTerm();
+	void deinitTerm();
 
+public:
+	GameRenderer() { initTerm(); }
+	~GameRenderer() { deinitTerm(); }
+
+	void print(const string& str);
 	void showMenu();
 	void showEndScreen();
 };

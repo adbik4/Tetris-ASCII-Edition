@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\WindowManager.cpp" />
     <ClCompile Include="Src\GameRenderer.cpp" />
     <ClCompile Include="Src\App.cpp" />
     <ClCompile Include="Src\GameEngine.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="Src\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Inc\WindowManager.h" />
     <ClInclude Include="Inc\GameRenderer.h" />
     <ClInclude Include="Inc\App.h" />
     <ClInclude Include="Inc\Events.h" />

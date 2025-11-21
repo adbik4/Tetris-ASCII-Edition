@@ -1,9 +1,12 @@
 #pragma once
 
 #include "GameEngine.h"
+#include "WindowManager.h"
 
 class Application {
-    unique_ptr<GameEngine> engine;
+    shared_ptr<GameEngine> engine;
+    shared_ptr<WindowManager> win_mgr;
+
     bool app_running_ = false;  // used to check if the app is running
 
     void create(const struct GameSettings& settings);

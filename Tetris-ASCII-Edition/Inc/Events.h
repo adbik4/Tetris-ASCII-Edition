@@ -5,11 +5,27 @@
 
 using namespace std;
 
+#define INPUT_ERR	-2
+#define CRIT_ERR	-1
 #define CLK			0
-#define INPUT_ERR	1
-#define INT_INPUT	2
+#define INT_INPUT	1
+
 
 typedef struct {
-	uint8_t id;
+	int8_t id;
 	tuple<int, int> args;
 } Event;
+
+/*
+class Event {
+public:
+	int id;
+	int getId() { return id; }
+};
+
+class TickEvent : public Event {};
+
+class InputEvent : public Event {
+	tuple<int, int> args;
+};
+*/

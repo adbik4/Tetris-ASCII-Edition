@@ -44,11 +44,16 @@ void GameEngine::notify (const Event& event) {
 		update();
 		break;
 	case INPUT_ERR:
-		renderer->windowPrint(MAIN_MENU, "Invalid input - try again...\n");
+		renderer->windowPrint(INPUT_WIN, "Invalid input - try again...\n");
 		break;
 	case INT_INPUT:
-		int_input = input_mgr->getIntInput(MAIN_MENU, event.args);
-		renderer->clearWindow(MAIN_MENU);
+		int_input = input_mgr->getIntInput(event.args);
+		break;
+	case CRIT_ERR:
+		renderer->errPrint("placeholder");
+		break;
+	default:
+		renderer->errPrint("[DEBUG] GameEngine has recieved an undefined event\n");
 		break;
 	}
 }

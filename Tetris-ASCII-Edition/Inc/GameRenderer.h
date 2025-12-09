@@ -16,7 +16,7 @@ public:
 	~GameRenderer() {}
 
 	void windowPrint(const int& win_id, const string& str);
+	void errPrint(const string& str);
 	void showMenu();
 	void showEndScreen();
-	void clearWindow(const int& win_id);
 };

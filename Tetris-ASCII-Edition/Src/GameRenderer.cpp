@@ -9,15 +9,22 @@ void GameRenderer::windowPrint(const int& win_id, const string& str) {
 	wrefresh(local_win);
 }
 
+void GameRenderer::errPrint(const string& str) {
+	WINDOW* err_win = win_mgr->getWindow(ERR_WIN);
+	win_mgr->showBorder(ERR_WIN);
+
+	mvwprintw(err_win, 1, 1, str.c_str());
+	wrefresh(err_win);
+}
+
 void GameRenderer::showMenu() {
 	WINDOW* menu_win = win_mgr->getWindow(MAIN_MENU);
 
 	mvwprintw(menu_win, 1, 2, "1) Start Game\n");
 	mvwprintw(menu_win, 2, 2, "2) Settings\n");
 	mvwprintw(menu_win, 3, 2, "3) Exit\n");
-	mvwprintw(menu_win, 4, 2, "input: \n");
 
-	box(menu_win, 0, 0);
+	win_mgr->showBorder(MAIN_MENU);
 	mvwprintw(menu_win, 0, 1, "MAIN MENU");
 	wrefresh(menu_win);
 
@@ -26,10 +33,4 @@ void GameRenderer::showMenu() {
 
 void GameRenderer::showEndScreen() {
 	windowPrint(MAIN_MENU, "Exiting the game...\n");;
-}
-
-void GameRenderer::clearWindow(const int& win_id) {
-	WINDOW* local_win =win_mgr-> getWindow(win_id);
-	wclear(local_win);
-	box(local_win, 0, 0);
 }

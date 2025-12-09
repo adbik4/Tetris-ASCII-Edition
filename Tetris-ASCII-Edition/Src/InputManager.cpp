@@ -2,28 +2,26 @@
 
 #include <curses.h>
 #include <iostream>
+#include "Events.h"
 
 using namespace std;
 
 // Returns user input between valid bounds from a to b
-int InputManager::getIntInput(const int& min_val = INT_MIN, const int& max_val = INT_MAX) {
-	int input{ 0 };
-	echo();					// input echoing
-	nodelay(stdscr, FALSE);	// blocking input
+int InputManager::getIntInput(WINDOW* local_win, const tuple<int, int>& bounds = {INT_MIN, INT_MAX}) {
+    char buf[16];
+    echo();
+    nodelay(local_win, FALSE);
 
-	while (true) {
-		printw("input: ");
-		refresh();
+    while (true) {
+        wgetstr(local_win, buf);
+        int value = atoi(buf);
 
-		int result = scanw("%d", &input);
+        if (value >= get<0>(bounds) && value <= get<1>(bounds)) {
+            noecho();
+            nodelay(local_win, TRUE);
+            return value;
+        }
 
-		if (result == 1 && input >= min_val && input <= max_val)
-			return input;
-
-		printw("Wrong input, try again.\n");
+        engine->notify(Event(INPUT_ERR, {0, 0}));
 	}
-
-	noecho();				// redisable input echoing
-	nodelay(stdscr, TRUE);	// reenable blocking input
-	return input;
 }

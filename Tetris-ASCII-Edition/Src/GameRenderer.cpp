@@ -1,37 +1,35 @@
 #include "GameRenderer.h"
 
-#include <curses.h>
-#include <thread>
-#include <chrono>
-
 using namespace std;
 
-void GameRenderer::initTerm() {
-	initscr();            // Start curses mode
-	noecho();             // Don’t echo pressed keys
-	cbreak();             // Disable line buffering
-	keypad(stdscr, TRUE); // Enable arrow keys
-	nodelay(stdscr, TRUE);// Non-blocking input
-}
+void GameRenderer::windowPrint(const int& win_id, const string& str) {
+	WINDOW* local_win = win_mgr->getWindow(win_id);
 
-void GameRenderer::deinitTerm() {
-	this_thread::sleep_for(chrono::seconds(1));
-	endwin();
-}
-
-void GameRenderer::print(const string& str) {
-	printw(str.c_str());
-	refresh();
+	wprintw(local_win, str.c_str());
+	wrefresh(local_win);
 }
 
 void GameRenderer::showMenu() {
-	printw("MAIN MENU:\n");
-	printw("1) Start Game\n");
-	printw("2) Settings\n");
-	printw("3) Exit\n");
-	refresh();
+	WINDOW* menu_win = win_mgr->getWindow(MAIN_MENU);
+
+	mvwprintw(menu_win, 1, 2, "1) Start Game\n");
+	mvwprintw(menu_win, 2, 2, "2) Settings\n");
+	mvwprintw(menu_win, 3, 2, "3) Exit\n");
+	mvwprintw(menu_win, 4, 2, "input: \n");
+
+	box(menu_win, 0, 0);
+	mvwprintw(menu_win, 0, 1, "MAIN MENU");
+	wrefresh(menu_win);
+
+	engine->notify(Event(INT_INPUT, { 1, 3 }));
 }
 
 void GameRenderer::showEndScreen() {
-	print("Exiting the game...\n");
+	windowPrint(MAIN_MENU, "Exiting the game...\n");;
+}
+
+void GameRenderer::clearWindow(const int& win_id) {
+	WINDOW* local_win = win_mgr->getWindow(win_id);
+	wclear(local_win);
+	box(local_win, 0, 0);
 }

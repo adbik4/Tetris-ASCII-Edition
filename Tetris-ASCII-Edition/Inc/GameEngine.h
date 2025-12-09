@@ -7,7 +7,14 @@
 #include "TimeManager.h"
 #include "InputManager.h"
 
+// TODO: create a parent class for ncurses io classes
+// contains pointers to each window and getters
+
+using namespace std;
+
 class TimeManager;
+class InputManager;
+class GameRenderer;
 
 class Mediator {
 	public:
@@ -33,9 +40,9 @@ public:
 	void setInputManager(unique_ptr<InputManager> ptr) { input_mgr = move(ptr); }
 	void notify(const Event& event) override;
 
-	void startGame();
+	void startEngine();
 	void update();
-	void stopGame();
+	void stopEngine();
 
 	void nextLevel();
 

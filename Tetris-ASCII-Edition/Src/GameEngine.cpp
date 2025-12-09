@@ -2,18 +2,19 @@
 
 using namespace std;
 
-void GameEngine::startGame() {
+int int_input;
+
+void GameEngine::startEngine() {
 	state.running = true;
 
 	renderer->showMenu();
-	int option = input_mgr->getIntInput(1, 3);
-	switch (option) {
+	switch (int_input) {
 	case 1:
-		renderer->print("GAMEPLAY\n");
+		renderer->windowPrint(MAIN_MENU, "GAMEPLAY\n");
 		time_mgr->startClock();
 		break;
 	case 2:
-		renderer->print("SETTINGS\n");
+		renderer->windowPrint(MAIN_MENU, "SETTINGS\n");
 		break;
 	case 3:
 		state.stop_flag = true;
@@ -26,13 +27,13 @@ void GameEngine::update() {
 	// char k_input = input_mgr->getKeyboardInput();
 
 	// GAME LOGIC
-	renderer->print("tetris");
+	//renderer->windowPrint(MAIN_MENU, "tetris");
 
 	// RENDER OUTPUT
 	//renderer->updateScreen();
 }
 
-void GameEngine::stopGame() {
+void GameEngine::stopEngine() {
 	if (!state.running) return;
 	state.running = false;
 	renderer->showEndScreen();
@@ -45,8 +46,17 @@ void GameEngine::nextLevel() {
 
 // This function conducts the main mediation logic
 void GameEngine::notify (const Event& event) {
-	if (event.id == CLK) {
+	switch (event.id) {
+	case CLK:
 		update();
 		state.frame++;
+		break;
+	case INPUT_ERR:
+		renderer->windowPrint(MAIN_MENU, "Invalid input - try again...\n");
+		break;
+	case INT_INPUT:
+		int_input = input_mgr->getIntInput(MAIN_MENU, event.args);
+		renderer->clearWindow(MAIN_MENU);
+		break;
 	}
 }

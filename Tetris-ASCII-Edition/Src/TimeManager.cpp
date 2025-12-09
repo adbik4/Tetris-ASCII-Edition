@@ -6,9 +6,9 @@ void clockTask(std::stop_token stopToken, GameEngine* engine) {
 
 	int sleep_duration{ 0 };
 	while (!stopToken.stop_requested()) {
-		sleep_duration = static_cast<int>( 1000.0 / pow(2, engine->getLevel()) );
-		this_thread::sleep_for(chrono::milliseconds(sleep_duration));
+		this_thread::sleep_for(chrono::milliseconds(10));
 		engine->notify(tick);
+		engine->getState().frame;
 	}
 }
 

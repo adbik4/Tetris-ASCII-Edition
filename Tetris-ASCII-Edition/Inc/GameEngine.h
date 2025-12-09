@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "Events.h"
-#include "Settings.h"
+#include "GameState.h"
 #include "GameRenderer.h"
 #include "TimeManager.h"
 #include "InputManager.h"
@@ -23,12 +23,10 @@ private:
 	unique_ptr<TimeManager> time_mgr;
 	unique_ptr<InputManager> input_mgr;
 
-	bool running_ = false;	// used to check if the engine systems are running
-	bool stop_flag = false; // triggers the app shutdown
-	uint8_t level_;
+	GameState state;
 
 public:
-	GameEngine(const GameSettings& cfg) : level_(cfg.start_level) {};
+	GameEngine(const GameSettings& cfg) : state(cfg) {};
 
 	void setTimeManager(unique_ptr<TimeManager> ptr) { time_mgr = move(ptr); }
 	void setGameRenderer(unique_ptr<GameRenderer> ptr) { renderer = move(ptr); }
@@ -41,6 +39,5 @@ public:
 
 	void nextLevel();
 
-	uint8_t getLevel() const { return level_; }
-	bool getStatus() const { return stop_flag; }
+	GameState getState() const { return state; }
 };

@@ -3,7 +3,7 @@
 #include <memory>
 #include "GameRenderer.h"
 #include "TimeManager.h"
-#include "Settings.h"
+#include "GameState.h"
 
 // Inititialises everything safely and in the right order
 // the App holds a pointer to the GameEngine which owns the TimeManager
@@ -23,7 +23,9 @@ void Application::run() {
     engine->startGame();
 
     // wait for stop flag
-    while (!engine->getStatus()) {}
+    while (!engine->getState().stop_flag) {
+        this_thread::sleep_for(chrono::milliseconds(500));
+    }
 }
 
 void Application::shutdown() {

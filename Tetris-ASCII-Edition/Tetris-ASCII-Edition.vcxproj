@@ -144,7 +144,7 @@
     <ClInclude Include="Inc\Events.h" />
     <ClInclude Include="Inc\GameEngine.h" />
     <ClInclude Include="Inc\InputManager.h" />
-    <ClInclude Include="Inc\Settings.h" />
+    <ClInclude Include="Inc\GameState.h" />
     <ClInclude Include="Inc\TimeManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

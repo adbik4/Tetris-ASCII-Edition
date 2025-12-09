@@ -6,8 +6,6 @@ void WindowManager::initTerm() {
 	initscr();            // Start curses mode
 	noecho();             // Don’t echo pressed keys
 	cbreak();             // Disable line buffering
-	keypad(stdscr, TRUE); // Enable arrow keys
-	nodelay(stdscr, TRUE);// Non-blocking input
 }
 
 void WindowManager::deinitTerm() {
@@ -20,13 +18,75 @@ WINDOW* WindowManager::makeMenuWindow() {
 	getmaxyx(stdscr, lines, cols);
 
 	width = 20;
-	height = 10;
+	height = 6;
 	starty = (lines - height) / 2;	/* Calculating for a center placement */
 	startx = (cols - width) / 2;	/* of the window		*/
 
-	WINDOW* window = newwin(width, height, starty, startx);
+	WINDOW* window = createNewWindow(height, width, starty, startx);
 	keypad(window, TRUE); // Enable arrow keys
 	nodelay(window, TRUE);// Non-blocking input
+	return window;
+}
+
+WINDOW* WindowManager::makeErrorWindow() {
+	int width, height, starty, startx, lines, cols;
+	getmaxyx(stdscr, lines, cols);
+
+	width = 40;
+	height = 7;
+	starty = 0;
+	startx = 0;
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+	return window;
+}
+
+WINDOW* WindowManager::makeInputWindow() {
+	int width, height, starty, startx, lines, cols, voffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = 20;
+	height = 4;
+	voffset = 4;
+	starty = voffset + (lines - height) / 2;
+	startx = (cols - width) / 2;
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+
+	keypad(window, TRUE); // Enable arrow keys
+	nodelay(window, TRUE);// Non-blocking input
+	return window;
+}
+
+void WindowManager::showBorder(const int& win_id) {
+	WINDOW* local_win = getWindow(win_id);
+	box(local_win, 0, 0);
+	wrefresh(local_win);
+}
+
+void WindowManager::clearBorder(const int& win_id) {
+	WINDOW* local_win = getWindow(win_id);
+	wborder(local_win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+	wrefresh(local_win);
+}
+
+void WindowManager::clearContents(const int& win_id) {
+	WINDOW* local_win = getWindow(win_id);
+	wclear(local_win);
+	box(local_win, 0, 0);
+	wrefresh(local_win);
+}
+
+void WindowManager::clearWindow(const int& win_id) {
+	clearContents(win_id);
+	showBorder(win_id);
+}
+
+WINDOW* WindowManager::createNewWindow(const int& height, const int& width, const int& starty, const int& startx) {
+	WINDOW* window;
+	if ((window = newwin(height, width, starty, startx)) == nullptr) {
+		exit(-3); // window couldn't be created
+	}
 	return window;
 }
 
@@ -35,8 +95,17 @@ WINDOW* WindowManager::getWindow(const int& win_id) {
 	case MAIN_MENU:
 		return menu_win;
 		break;
+	case INPUT_WIN:
+		return input_win;
+		break;
+	case ERR_WIN:
+		return err_win;
+		break;
 	default:
 		return nullptr;
+		showBorder(ERR_WIN);
+		wprintw(err_win, "[DEBUG] undefined window ID");
+		wrefresh(err_win);
 		break;
 	}
 }

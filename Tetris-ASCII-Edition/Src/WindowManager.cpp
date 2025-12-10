@@ -3,9 +3,23 @@
 #include <chrono>
 
 void WindowManager::initTerm() {
+	setlocale(LC_ALL, "");
+
 	initscr();            // Start curses mode
 	noecho();             // Don’t echo pressed keys
 	cbreak();             // Disable line buffering
+
+	start_color();
+	use_default_colors(); // enable color usage
+
+	// Define color pairs
+	init_pair(1, COLOR_BLACK, COLOR_MAGENTA);
+	init_pair(2, COLOR_BLACK, COLOR_CYAN);
+	
+	// example
+	// attron(COLOR_PAIR(0));
+	// mvaddstr(y, x * 2, "  ");  // two spaces = one "pixel"
+	// attroff(COLOR_PAIR(0));
 }
 
 void WindowManager::deinitTerm() {

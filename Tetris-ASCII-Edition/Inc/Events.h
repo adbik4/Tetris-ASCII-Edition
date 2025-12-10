@@ -6,7 +6,7 @@
 using namespace std;
 
 #define INPUT_ERR	-2
-#define CRIT_ERR	-1
+#define GENERAL_ERR	-1
 #define CLK			0
 #define INT_INPUT	1
 

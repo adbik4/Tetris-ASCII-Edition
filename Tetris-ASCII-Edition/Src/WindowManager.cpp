@@ -17,7 +17,7 @@ WINDOW* WindowManager::makeMenuWindow() {
 	int width, height, starty, startx, lines, cols;
 	getmaxyx(stdscr, lines, cols);
 
-	width = 20;
+	width = 22;
 	height = 5;
 	starty = (lines - height) / 2;	/* Calculating for a center placement */
 	startx = (cols - width) / 2;	/* of the window		*/
@@ -77,21 +77,24 @@ WINDOW* WindowManager::makeInputWindow() {
 
 void WindowManager::showBorder(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
-	WINDOW* tmp = createNewWindow(local_win->_maxy+2, local_win->_maxx+2, local_win->_begy-1, local_win->_begx-1);
+	WINDOW* tmp = createNewWindow(local_win->_maxy + 2, local_win->_maxx + 2, local_win->_begy - 1, local_win->_begx - 1);
 	box(tmp, 0, 0);
 	wrefresh(tmp);
+	delwin(tmp);
 }
 
 void WindowManager::clearBorder(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
-	wborder(local_win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-	wrefresh(local_win);
+	WINDOW* tmp = createNewWindow(local_win->_maxy + 2, local_win->_maxx + 2, local_win->_begy - 1, local_win->_begx - 1);
+	wborder(tmp, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+	wrefresh(tmp);
+	delwin(tmp);
 }
 
 void WindowManager::clearContents(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
 	wclear(local_win);
-	box(local_win, 0, 0);
+	showBorder(win_id);
 	wrefresh(local_win);
 }
 
@@ -101,9 +104,23 @@ void WindowManager::clearWindow(const int& win_id) {
 }
 
 WINDOW* WindowManager::createNewWindow(const int& height, const int& width, const int& starty, const int& startx) {
+	int max_y, max_x;
+	getmaxyx(stdscr, max_y, max_x);
+
+	// Validate coordinates and size
+	if (height <= 0 || width <= 0) {
+		throw std::invalid_argument("Window height and width must be positive");
+	}
+	if (starty < 0 || startx < 0) {
+		throw std::invalid_argument("Window coordinates must be non-negative");
+	}
+	if (starty + height > max_y || startx + width > max_x) {
+		throw std::out_of_range("Window does not fit within the terminal");
+	}
+
 	WINDOW* window;
 	if ((window = newwin(height, width, starty, startx)) == nullptr) {
-		exit(-3); // window couldn't be created
+		throw std::runtime_error("Failed to create a window");
 	}
 	return window;
 }

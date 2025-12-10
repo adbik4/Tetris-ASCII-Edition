@@ -1,4 +1,7 @@
 #include <memory>
+#include <iostream>
+#include <stdexcept>
+
 #include "GameState.h"
 #include "GameEngine.h"
 #include "InputManager.h"
@@ -12,12 +15,20 @@ using namespace std;
 
 int main()
 {
-	struct GameSettings cfg;
+    shared_ptr<WindowManager> win_mgr;
+
+    struct GameSettings cfg;
 	cfg.start_level = 0;
 
     // Inititialises everything safely and in the right order
     shared_ptr<GameEngine> engine = make_shared<GameEngine>(cfg);
-    shared_ptr<WindowManager> win_mgr = make_shared<WindowManager>();
+    
+    try {
+        win_mgr = make_shared<WindowManager>();
+    }
+    catch (const std::exception& err) {
+        cout << "[DEBUG]: " << err.what() << '\n';
+    }
 
     auto gr = make_unique<GameRenderer>(engine, win_mgr);
     auto im = make_unique<InputManager>(engine, win_mgr);

@@ -1,4 +1,5 @@
 #include "GameRenderer.h"
+#include <stdexcept>
 
 using namespace std;
 
@@ -32,8 +33,10 @@ void GameRenderer::showMenu() {
 }
 
 void GameRenderer::initGameUI() {
-	win_mgr->clearWindow(GLOBAL);
+	win_mgr->clearWindow(MAIN_MENU);
+	win_mgr->clearWindow(INPUT_WIN);
 	win_mgr->showBorder(GAME_WIN);
+	windowPrint(GAME_WIN, "########################################################################################################################################################################################################");
 }
 
 void GameRenderer::showEndScreen() {

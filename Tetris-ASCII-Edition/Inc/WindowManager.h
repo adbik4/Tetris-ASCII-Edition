@@ -1,5 +1,5 @@
 #pragma once
-
+#include <stdexcept>
 #include <curses.h>
 
 using namespace std;
@@ -32,6 +32,10 @@ public:
 		game_win = makeGameWindow();
 		input_win = makeInputWindow();
 		err_win = makeErrorWindow();
+
+		if (!menu_win || !game_win || !input_win || !err_win) {
+			throw std::runtime_error("Failed to initialise windows");
+		}
 	}
 	~WindowManager() { deinitTerm(); }
 

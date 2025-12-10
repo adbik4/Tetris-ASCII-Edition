@@ -26,8 +26,7 @@ int InputManager::getIntInput(const tuple<int, int>& bounds = {INT_MIN, INT_MAX}
         if (value >= get<0>(bounds) && value <= get<1>(bounds)) {
             noecho();
             nodelay(input_win, TRUE);
-            win_mgr->clearContents(INPUT_WIN);
-            win_mgr->clearBorder(INPUT_WIN);
+            win_mgr->clearWindow(INPUT_WIN);
             return value;
         }
 

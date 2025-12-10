@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include <exception>
 
 using namespace std;
 
@@ -7,29 +8,44 @@ int int_input;
 void GameEngine::startEngine() {
 	state.running = true;
 
-	renderer->showMenu();
-	switch (int_input) {
-	case 1:
-		renderer->initGameUI();
-		time_mgr->startClock();
-		break;
-	case 2:
-		renderer->windowPrint(MAIN_MENU, "SETTINGS\n");
-		break;
-	case 3:
-		state.stop_flag = true;
-		break;
+	try {
+		renderer->showMenu();
+		switch (int_input) {
+		case 1:
+			renderer->initGameUI();
+			time_mgr->startClock();
+			break;
+		case 2:
+			renderer->windowPrint(MAIN_MENU, "SETTINGS\n");
+			break;
+		case 3:
+			state.stop_flag = true;
+			break;
+		}
+	}
+	catch (const std::exception& err) {
+		string message = string("[DEBUG]: ") + err.what() + "\n";
+		renderer->errPrint(message);
+	}
+	catch (...) {
+      renderer->errPrint("[DEBUG]: Unknown exception\n");
 	}
 }
 
 void GameEngine::update() {
-	// INPUT
-	// char k_input = input_mgr->getKeyboardInput();
+	try {
+		// INPUT
+		// char k_input = input_mgr->getKeyboardInput();
 
-	// GAME LOGIC
+		// GAME LOGIC
 
-	// RENDER OUTPUT
-	//renderer->renderFrame();
+		// RENDER OUTPUT
+		//renderer->renderFrame();
+	}
+	catch (const std::exception& err) {
+		string message = string("[DEBUG]: ") + err.what() + "\n";
+		renderer->errPrint(message);
+	}
 }
 
 void GameEngine::stopEngine() {
@@ -56,8 +72,8 @@ void GameEngine::notify (const Event& event) {
 	case INT_INPUT:
 		int_input = input_mgr->getIntInput(event.args);
 		break;
-	case CRIT_ERR:
-		renderer->errPrint("placeholder");
+	case GENERAL_ERR:
+		renderer->errPrint("[DEBUG] an error has occured\n");
 		break;
 	default:
 		renderer->errPrint("[DEBUG] GameEngine has recieved an undefined event\n");

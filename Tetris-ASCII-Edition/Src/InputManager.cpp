@@ -19,7 +19,7 @@ int InputManager::getIntInput(const tuple<int, int>& bounds = {INT_MIN, INT_MAX}
     nodelay(input_win, FALSE);
 
     while (true) {
-        mvwprintw(input_win, 1, 1, "input: ");
+        mvwprintw(input_win, 0, 0, "input: ");
         wgetstr(input_win, buf);
         int value = atoi(buf);
 

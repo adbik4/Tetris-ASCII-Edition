@@ -4,9 +4,11 @@
 
 using namespace std;
 
-#define MAIN_MENU	0
-#define INPUT_WIN	2
-#define ERR_WIN		1
+#define GLOBAL		0
+#define MAIN_MENU	1
+#define GAME_WIN	2
+#define INPUT_WIN	3
+#define ERR_WIN		4
 
 class WindowManager {
 private:
@@ -21,11 +23,13 @@ private:
 	WINDOW* makeMenuWindow();
 	WINDOW* makeInputWindow();
 	WINDOW* makeErrorWindow();
+	WINDOW* makeGameWindow();
 
 public:
 	WindowManager() {
 		initTerm();
 		menu_win = makeMenuWindow();
+		game_win = makeGameWindow();
 		input_win = makeInputWindow();
 		err_win = makeErrorWindow();
 	}

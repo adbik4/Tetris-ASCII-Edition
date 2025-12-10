@@ -13,22 +13,27 @@ void GameRenderer::errPrint(const string& str) {
 	WINDOW* err_win = win_mgr->getWindow(ERR_WIN);
 	win_mgr->showBorder(ERR_WIN);
 
-	mvwprintw(err_win, 1, 1, str.c_str());
+	mvwprintw(err_win, 0, 0, str.c_str());
 	wrefresh(err_win);
 }
 
 void GameRenderer::showMenu() {
 	WINDOW* menu_win = win_mgr->getWindow(MAIN_MENU);
 
-	mvwprintw(menu_win, 1, 2, "1) Start Game\n");
-	mvwprintw(menu_win, 2, 2, "2) Settings\n");
-	mvwprintw(menu_win, 3, 2, "3) Exit\n");
+	mvwprintw(menu_win, 1, 0, "1) Start Game\n");
+	mvwprintw(menu_win, 2, 0, "2) Settings\n");
+	mvwprintw(menu_win, 3, 0, "3) Exit\n");
 
 	win_mgr->showBorder(MAIN_MENU);
-	mvwprintw(menu_win, 0, 1, "MAIN MENU");
+	mvwprintw(menu_win, 0, 6, "MAIN MENU");
 	wrefresh(menu_win);
 
 	engine->notify(Event(INT_INPUT, { 1, 3 }));
+}
+
+void GameRenderer::initGameUI() {
+	win_mgr->clearWindow(GLOBAL);
+	win_mgr->showBorder(GAME_WIN);
 }
 
 void GameRenderer::showEndScreen() {

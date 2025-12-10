@@ -19,5 +19,6 @@ public:
 	void windowPrint(const int& win_id, const string& str);
 	void errPrint(const string& str);
 	void showMenu();
+	void initGameUI();
 	void showEndScreen();
 };

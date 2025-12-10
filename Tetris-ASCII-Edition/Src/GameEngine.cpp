@@ -10,7 +10,7 @@ void GameEngine::startEngine() {
 	renderer->showMenu();
 	switch (int_input) {
 	case 1:
-		renderer->windowPrint(MAIN_MENU, "GAMEPLAY\n");
+		renderer->initGameUI();
 		time_mgr->startClock();
 		break;
 	case 2:
@@ -27,10 +27,9 @@ void GameEngine::update() {
 	// char k_input = input_mgr->getKeyboardInput();
 
 	// GAME LOGIC
-	//renderer->windowPrint(MAIN_MENU, "tetris");
 
 	// RENDER OUTPUT
-	//renderer->updateScreen();
+	//renderer->renderFrame();
 }
 
 void GameEngine::stopEngine() {
@@ -52,7 +51,7 @@ void GameEngine::notify (const Event& event) {
 		state.frame++;
 		break;
 	case INPUT_ERR:
-		renderer->windowPrint(INPUT_WIN, "Invalid input - try again...\n");
+		renderer->windowPrint(INPUT_WIN, "Invalid input\n");
 		break;
 	case INT_INPUT:
 		int_input = input_mgr->getIntInput(event.args);

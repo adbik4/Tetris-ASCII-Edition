@@ -28,12 +28,14 @@ const char tetrominoLUT[81] = {
 		"...."
 };
 
-void Tetromino::next_piece() {
-	uint8_t random_id = 5;
-	uint8_t random_rotation = 0;
+void Tetromino::next_piece(std::mt19937& rng) {
+	std::uniform_int_distribution<uint16_t> piece_distr(1, 5);
+	curr_piece = static_cast<uint8_t>(piece_distr(rng));
 
-	curr_piece = random_id;
-	curr_rotation = random_rotation;
+	//std::uniform_int_distribution<uint16_t> rot_distr(0, 4);
+	//curr_rotation = static_cast<uint8_t>(rot_distr(rng));
+	curr_rotation = 0;
+
 	x_pos = (uint8_t)BOARD_W / 2 - 2; // center
 	y_pos = 0;
 }

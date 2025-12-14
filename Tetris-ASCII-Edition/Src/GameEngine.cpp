@@ -1,10 +1,12 @@
 #include "GameEngine.h"
 #include <exception>
+#include <random>
 #include "Tetromino.h"
 
 using namespace std;
 
 int int_input;
+mt19937 rng(chrono::system_clock::now().time_since_epoch().count());
 
 void GameEngine::startEngine() {
 	state->running = true;
@@ -40,7 +42,7 @@ void GameEngine::update() {
 
 		// GAME LOGIC
 		if (state->active_piece.get_piece_id() == 0) {
-			state->active_piece.next_piece();
+			state->active_piece.next_piece(rng);
 		}
 
 		// RENDER OUTPUT

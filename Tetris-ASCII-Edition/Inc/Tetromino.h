@@ -1,5 +1,6 @@
 #pragma once
 #include <stdexcept>
+#include <random>
 #include "Constants.h"
 
 class Tetromino {
@@ -13,7 +14,7 @@ public:
 
 	Tetromino() : curr_piece(0), curr_rotation(0), x_pos((uint8_t)BOARD_W/2 - 2), y_pos(0) {};
 
-	void next_piece();
+	void next_piece(std::mt19937& rng);
 	void rotateR();
 	void rotateL();
  

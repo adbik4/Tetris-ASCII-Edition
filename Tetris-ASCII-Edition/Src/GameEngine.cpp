@@ -1,12 +1,15 @@
 #include "GameEngine.h"
 #include <exception>
+#include <random>
+#include "Tetromino.h"
 
 using namespace std;
 
 int int_input;
+mt19937 rng(chrono::system_clock::now().time_since_epoch().count());
 
 void GameEngine::startEngine() {
-	state.running = true;
+	state->running = true;
 
 	try {
 		renderer->showMenu();
@@ -19,7 +22,7 @@ void GameEngine::startEngine() {
 			renderer->windowPrint(MAIN_MENU, "SETTINGS\n");
 			break;
 		case 3:
-			state.stop_flag = true;
+			state->stop_flag = true;
 			break;
 		}
 	}
@@ -38,25 +41,29 @@ void GameEngine::update() {
 		// char k_input = input_mgr->getKeyboardInput();
 
 		// GAME LOGIC
+		if (state->active_piece.get_piece_id() == 0) {
+			state->active_piece.next_piece(rng);
+		}
 
 		// RENDER OUTPUT
-		//renderer->renderFrame();
+		renderer->renderFrame();
 	}
 	catch (const std::exception& err) {
 		string message = string("[DEBUG]: ") + err.what() + "\n";
 		renderer->errPrint(message);
+		while (true) {};
 	}
 }
 
 void GameEngine::stopEngine() {
-	if (!state.running) return;
-	state.running = false;
+	if (!state->running) return;
+	state->running = false;
 	renderer->showEndScreen();
 	time_mgr->stopClock();
 }
 
 void GameEngine::nextLevel() {
-	state.level++;
+	state->level++;
 }
 
 // This function conducts the main mediation logic
@@ -64,7 +71,7 @@ void GameEngine::notify (const Event& event) {
 	switch (event.id) {
 	case CLK:
 		update();
-		state.frame++;
+		state->frame++;
 		break;
 	case INPUT_ERR:
 		renderer->windowPrint(INPUT_WIN, "Invalid input\n");

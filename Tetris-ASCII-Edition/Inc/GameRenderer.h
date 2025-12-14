@@ -16,6 +16,8 @@ public:
 	GameRenderer(const shared_ptr<GameEngine>& engine_ptr, const shared_ptr< WindowManager>& win_ptr) : engine(engine_ptr), win_mgr(win_ptr) {}
 	~GameRenderer() {}
 
+	void renderFrame();
+
 	void windowPrint(const int& win_id, const string& str);
 	void errPrint(const string& str);
 	void showMenu();

@@ -1,6 +1,7 @@
 #include "WindowManager.h"
 #include <thread>
 #include <chrono>
+#include "GameState.h"
 
 void WindowManager::initTerm() {
 	setlocale(LC_ALL, "");
@@ -31,7 +32,7 @@ WINDOW* WindowManager::makeMenuWindow() {
 	int width, height, starty, startx, lines, cols;
 	getmaxyx(stdscr, lines, cols);
 
-	width = 22;
+	width = BOARD_W * 2;
 	height = 5;
 	starty = (lines - height) / 2;	/* Calculating for a center placement */
 	startx = (cols - width) / 2;	/* of the window		*/
@@ -46,8 +47,8 @@ WINDOW* WindowManager::makeGameWindow() {
 	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
 
-	width = 10;
-	height = 20;
+	width = BOARD_W * 2;	// scale according to block size
+	height = BOARD_H;
 	voffset = 0;
 	starty = voffset + (lines - height) / 2;
 	startx = (cols - width) / 2;
@@ -63,10 +64,10 @@ WINDOW* WindowManager::makeErrorWindow() {
 	int width, height, starty, startx, lines, cols;
 	getmaxyx(stdscr, lines, cols);
 
-	width = 40;
-	height = 5;
-	starty = 0;
-	startx = 0;
+	width = cols-2;
+	height = 1;
+	starty = 1;
+	startx = 1;
 
 	WINDOW* window = createNewWindow(height, width, starty, startx);
 	return window;
@@ -76,7 +77,7 @@ WINDOW* WindowManager::makeInputWindow() {
 	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
 
-	width = 20;
+	width = BOARD_W * 2;
 	height = 2;
 	voffset = 4;
 	starty = voffset + (lines - height) / 2;
@@ -119,22 +120,23 @@ void WindowManager::clearWindow(const int& win_id) {
 
 WINDOW* WindowManager::createNewWindow(const int& height, const int& width, const int& starty, const int& startx) {
 	int max_y, max_x;
+
 	getmaxyx(stdscr, max_y, max_x);
 
 	// Validate coordinates and size
 	if (height <= 0 || width <= 0) {
-		throw std::invalid_argument("Window height and width must be positive");
+		exit(-1);
 	}
 	if (starty < 0 || startx < 0) {
-		throw std::invalid_argument("Window coordinates must be non-negative");
+		exit(-2);
 	}
-	if (starty + height > max_y || startx + width > max_x) {
-		throw std::out_of_range("Window does not fit within the terminal");
+	if (max_x <= startx || max_y <= starty) {
+		exit(-3);
 	}
 
 	WINDOW* window;
 	if ((window = newwin(height, width, starty, startx)) == nullptr) {
-		throw std::runtime_error("Failed to create a window");
+		exit(-4);
 	}
 	return window;
 }
@@ -157,10 +159,7 @@ WINDOW* WindowManager::getWindow(const int& win_id) {
 		return stdscr;
 		break;
 	default:
-		return nullptr;
-		showBorder(ERR_WIN);
-		wprintw(err_win, "[DEBUG] undefined window ID");
-		wrefresh(err_win);
+		exit(-5); // undefined window id 
 		break;
 	}
 }

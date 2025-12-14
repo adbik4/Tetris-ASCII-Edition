@@ -42,7 +42,7 @@ void GameRenderer::windowPrint(const int& win_id, const string& str) {
 
 void GameRenderer::errPrint(const string& str) {
 	WINDOW* err_win = win_mgr->getWindow(ERR_WIN);
-	win_mgr->showBorder(ERR_WIN);
+	win_mgr->clearContents(ERR_WIN);
 
 	wprintw(err_win, str.c_str());
 	wrefresh(err_win);

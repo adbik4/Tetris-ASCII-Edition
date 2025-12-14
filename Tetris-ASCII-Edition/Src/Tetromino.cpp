@@ -1,6 +1,7 @@
 #include "Tetromino.h"
+#include "Constants.h"
 
-const char tetrominoLUT[81] = {
+const char tetrominoLUT[TETROMINO_SIZE*TETROMINO_COUNT + 1] = {
 	// id: 1
 		"..@."
 		"..@."
@@ -23,18 +24,19 @@ const char tetrominoLUT[81] = {
 		"...."
 	// id: 5
 		"...."
+		"%%.."
+		".%%."
+		"...."
+	// id: 6
+		"...."
 		".&&."
 		".&&."
 		"...."
 };
 
 void Tetromino::next_piece(std::mt19937& rng) {
-	std::uniform_int_distribution<uint16_t> piece_distr(1, 5);
+	std::uniform_int_distribution<uint16_t> piece_distr(1, TETROMINO_COUNT);
 	curr_piece = static_cast<uint8_t>(piece_distr(rng));
-
-	//std::uniform_int_distribution<uint16_t> rot_distr(0, 4);
-	//curr_rotation = static_cast<uint8_t>(rot_distr(rng));
-	curr_rotation = 0;
 
 	x_pos = (uint8_t)BOARD_W / 2 - 2; // center
 	y_pos = 0;
@@ -51,16 +53,19 @@ void Tetromino::rotateR() {
 const char Tetromino::lookup_piece(const uint8_t& x, const uint8_t& y) {
 	uint8_t idx;
 	switch (curr_rotation) {
-	case 0:
-		idx = (curr_piece - 1) * 16 + x + y * 4;
+	case 0: // 0deg
+		idx = TETROMINO_SIZE * (curr_piece - 1) + x + TETROMINO_W * y;
 		return tetrominoLUT[idx];
-	case 1:
-		break;
-	case 2:
-		break;
-	case 3:
-		break;
-	case 42:
+	case 1: // 90deg
+		idx = TETROMINO_SIZE * (curr_piece - 1) - TETROMINO_W * x + y + 12;
+		return tetrominoLUT[idx];
+	case 2: // 180deg
+		idx = TETROMINO_SIZE * (curr_piece - 1) - x - TETROMINO_W * y + 15;
+		return tetrominoLUT[idx];
+	case 3: // 270deg
+		idx = TETROMINO_SIZE * (curr_piece - 1) + TETROMINO_W * x - y + 3;
+		return tetrominoLUT[idx];
+	default:
 		return 'E';	// for debug purposes
 	}
 }

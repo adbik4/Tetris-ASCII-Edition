@@ -55,8 +55,9 @@ WINDOW* WindowManager::makeGameWindow() {
 
 	WINDOW* window = createNewWindow(height, width, starty, startx);
 
-	keypad(window, TRUE); // Enable arrow keys
-	nodelay(window, TRUE);// Non-blocking input
+	keypad(window, TRUE);	// Enable arrow keys
+	nodelay(window, TRUE);	// Non-blocking input
+	curs_set(0);			// invisible cursor
 	return window;
 }
 

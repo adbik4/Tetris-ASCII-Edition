@@ -6,6 +6,11 @@
 
 using namespace std;
 
+int InputManager::getKeyboardInput(const uint8_t& win_id) {
+    WINDOW* local_win = win_mgr->getWindow(win_id);
+    return wgetch(local_win);
+}
+
 // Returns user input between valid bounds from a to b
 int InputManager::getIntInput(const tuple<int, int>& bounds = {INT_MIN, INT_MAX}) {
     char buf[16];

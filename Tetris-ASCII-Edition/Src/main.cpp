@@ -18,7 +18,7 @@ int main()
     shared_ptr<WindowManager> win_mgr;
 
     struct GameSettings cfg;
-	cfg.start_level = 0;
+	//cfg.ascii_mode = true;
 
     // Inititialises everything safely and in the right order
     shared_ptr<GameEngine> engine = make_shared<GameEngine>(cfg);

@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Tetromino.cpp" />
     <ClCompile Include="Src\WindowManager.cpp" />
     <ClCompile Include="Src\GameRenderer.cpp" />
     <ClCompile Include="Src\GameEngine.cpp" />
@@ -139,6 +140,8 @@
     <ClCompile Include="Src\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Inc\Constants.h" />
+    <ClInclude Include="Inc\Tetromino.h" />
     <ClInclude Include="Inc\WindowManager.h" />
     <ClInclude Include="Inc\GameRenderer.h" />
     <ClInclude Include="Inc\Events.h" />

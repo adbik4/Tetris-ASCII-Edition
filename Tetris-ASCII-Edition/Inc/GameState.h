@@ -1,9 +1,9 @@
 #pragma once
 #include <cstdint>
-
-struct GameSettings {
-	uint8_t start_level = 0;
-};
+#include <string>
+#include <memory>
+#include "Tetromino.h"
+#include "Constants.h"
 
 class GameState {
 public:
@@ -15,7 +15,9 @@ public:
 	// game variables
 	uint8_t level;
 	uint64_t score;
-	uint8_t curr_piece;
+
+	std::string board;
+	Tetromino active_piece;
 
 	// initial conditions
 	GameState(const GameSettings& cfg) {
@@ -23,7 +25,7 @@ public:
 		stop_flag = false;
 		level = cfg.start_level;
 		score = 0;
-		curr_piece = 0;
 		frame = 0;
+		board = std::string(BOARD_W * BOARD_H, '.');
 	}
 };

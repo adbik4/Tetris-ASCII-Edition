@@ -6,6 +6,7 @@
 #include "GameRenderer.h"
 #include "TimeManager.h"
 #include "InputManager.h"
+#include "Constants.h"
 
 // TODO: create a parent class for ncurses io classes
 // contains pointers to each window and getters
@@ -30,10 +31,10 @@ private:
 	unique_ptr<TimeManager> time_mgr;
 	unique_ptr<InputManager> input_mgr;
 
-	GameState state;
+	unique_ptr<GameState> state;
 
 public:
-	GameEngine(const GameSettings& cfg) : state(cfg) {};
+	GameEngine(const GameSettings& cfg) { state = make_unique<GameState>(cfg); };
 
 	void setTimeManager(unique_ptr<TimeManager> ptr) { time_mgr = move(ptr); }
 	void setGameRenderer(unique_ptr<GameRenderer> ptr) { renderer = move(ptr); }
@@ -46,5 +47,5 @@ public:
 
 	void nextLevel();
 
-	GameState getState() const { return state; }
+	GameState getState() const { return *(state.get()); }
 };

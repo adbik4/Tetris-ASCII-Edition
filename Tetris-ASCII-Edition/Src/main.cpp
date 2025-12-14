@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "GameState.h"
+#include "Constants.h"
 #include "GameEngine.h"
 #include "InputManager.h"
 #include "TimeManager.h"

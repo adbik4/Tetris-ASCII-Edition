@@ -5,31 +5,120 @@
 
 using namespace std;
 
+
 void GameRenderer::renderFrame() {
-	WINDOW* game_win = win_mgr->getWindow(GAME_WIN);
+	wclear(game_win_); // reset the screen
+
 	string board = engine->getState().board;
-	char block[3];
 
 	// 1st pass - board
 	for (char tile : board) {
-		if (true || tile != '.') {
-			memset(block, tile, 2);
-			block[2] = '\0';
-			windowPrint(GAME_WIN, block);
-		}
+		render_tile(tile);
 	}
 
 	// 2nd pass - active tetromino
-	Tetromino piece = engine->getState().active_piece;
-	uint8_t x, y;
-	char tile;
-	for (y = 0; y < 4; y++) {
-		for (x = 0; x < 4; x++) {
-			tile = piece.lookup_piece(x, y);
-			memset(block, tile, 2);
-			block[2] = '\0';
-			mvwprintw(game_win, piece.y_pos+y, 2*(piece.x_pos+x), block);
+	for (uint8_t y = 0; y < 4; y++) {
+		for (uint8_t x = 0; x < 4; x++) {
+			render_piece(x, y);
 		}
+	}
+
+	wrefresh(game_win_);
+}
+
+void GameRenderer::render_tile(const char& tile) {
+	if (tile == '.') {
+		return;
+	}
+
+	if (engine->getState().ascii_mode) {
+		memset(block_buf_, tile, 2);
+		block_buf_[2] = '\0';
+		windowPrint(GAME_WIN, block_buf_);
+	}
+	else {
+		chtype color = 6;
+		switch (tile) {
+		case '@':
+			color = COLOR_PAIR(1);
+			break;
+		case '#':
+			color = COLOR_PAIR(2);
+			break;
+		case 'o':
+			color = COLOR_PAIR(3);
+			break;
+		case '$':
+			color = COLOR_PAIR(4);
+			break;
+		case '*':
+			color = COLOR_PAIR(5);
+			break;
+		case '%':
+			color = COLOR_PAIR(6);
+			break;
+		case '&':
+			color = COLOR_PAIR(7);
+			break;
+		}
+
+		wattron(game_win_, color);
+		windowPrint(GAME_WIN, "  ");
+		wattroff(game_win_, color);
+	}
+}
+
+void GameRenderer::render_piece(const uint8_t& x, const uint8_t& y) {
+	char tile = engine->getState().active_piece.lookup_piece(x, y);
+	if (tile == '.') {
+		return;
+	}
+
+	if (engine->getState().ascii_mode) {
+		memset(block_buf_, tile, 2);
+		block_buf_[2] = '\0';
+
+		mvwprintw(
+			game_win_,
+			engine->getState().active_piece.y_pos + y,
+			(engine->getState().active_piece.x_pos + x) * 2,
+			block_buf_
+		);
+	}
+	else {
+		chtype color = 6;
+		switch (tile) {
+		case '@':
+			color = COLOR_PAIR(1);
+			break;
+		case '#':
+			color = COLOR_PAIR(2);
+			break;
+		case 'o':
+			color = COLOR_PAIR(3);
+			break;
+		case '$':
+			color = COLOR_PAIR(4);
+			break;
+		case '*':
+			color = COLOR_PAIR(5);
+			break;
+		case '%':
+			color = COLOR_PAIR(6);
+			break;
+		case '&':
+			color = COLOR_PAIR(7);
+			break;
+		}
+
+		wattron(game_win_, color);
+		mvwprintw(
+			game_win_,
+			engine->getState().active_piece.y_pos + y,
+			(engine->getState().active_piece.x_pos + x) * 2,
+			"  "	// two spaces = one block
+		);
+		wattroff(game_win_, color);
 	}
 }
 
@@ -39,6 +128,12 @@ void GameRenderer::windowPrint(const int& win_id, const string& str) {
 	wprintw(local_win, str.c_str());
 	wrefresh(local_win);
 }
+
+void GameRenderer::blink() {
+	flash();
+}
+
+// UTILITY ----
 
 void GameRenderer::errPrint(const string& str) {
 	WINDOW* err_win = win_mgr->getWindow(ERR_WIN);

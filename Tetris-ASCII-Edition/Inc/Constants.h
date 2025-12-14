@@ -5,7 +5,7 @@
 #define BOARD_W 10
 #define BOARD_H 20
 
-#define TETROMINO_COUNT 6
+#define TETROMINO_COUNT 7
 #define TETROMINO_SIZE 16
 #define TETROMINO_W 4
 

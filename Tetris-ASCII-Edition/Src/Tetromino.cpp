@@ -14,25 +14,31 @@ const char tetrominoLUT[TETROMINO_SIZE*TETROMINO_COUNT + 1] = {
 		"...."
 	// id: 3
 		"...."
+		"o..."
+		"ooo."
+		"...."
+	// id: 4
+		"...."
 		"..$."
 		".$$$"
 		"...."
-	// id: 4
+	// id: 5
 		"...."
 		"..**"
 		".**."
 		"...."
-	// id: 5
+	// id: 6
 		"...."
 		"%%.."
 		".%%."
 		"...."
-	// id: 6
+	// id: 7
 		"...."
 		".&&."
 		".&&."
 		"...."
 };
+
 
 void Tetromino::next_piece(std::mt19937& rng) {
 	std::uniform_int_distribution<uint16_t> piece_distr(1, TETROMINO_COUNT);
@@ -43,7 +49,12 @@ void Tetromino::next_piece(std::mt19937& rng) {
 }
 
 void Tetromino::rotateL() {
-	curr_rotation = (curr_rotation - 1) % 4;
+	if (curr_rotation == 0) {
+		curr_rotation = 3;
+	}
+	else {
+		curr_rotation = (curr_rotation - 1) % 4;
+	}
 }
 
 void Tetromino::rotateR() {

@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <curses.h>
 #include <tuple>
 
 using namespace std;

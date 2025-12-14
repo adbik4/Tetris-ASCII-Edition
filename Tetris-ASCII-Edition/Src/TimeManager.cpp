@@ -9,7 +9,7 @@ void clockTask(std::stop_token stopToken, GameEngine* engine) {
 	while (!stopToken.stop_requested()) {
 		this_thread::sleep_for(chrono::milliseconds(GAME_TICK));
 		engine->notify(tick);
-		engine->getState().frame;
+		engine->getState().tick;
 	}
 }
 

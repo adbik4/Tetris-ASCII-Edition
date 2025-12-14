@@ -1,6 +1,6 @@
-#include "GameEngine.h"
 #include <exception>
 #include <random>
+#include "GameEngine.h"
 #include "Tetromino.h"
 
 using namespace std;
@@ -79,7 +79,7 @@ void GameEngine::notify (const Event& event) {
 	switch (event.id) {
 	case CLK:
 		update();
-		state->frame++;
+		state->tick++;
 		break;
 	case INPUT_ERR:
 		renderer->windowPrint(INPUT_WIN, "Invalid input\n");

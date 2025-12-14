@@ -31,5 +31,6 @@ public:
 	void errPrint(const string& str);
 	void showMenu();
 	void initGameUI();
+	void initSettingsUI();
 	void showEndScreen();
 };

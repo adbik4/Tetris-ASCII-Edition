@@ -5,6 +5,24 @@
 
 using namespace std;
 
+string title_art =
+"oooooooooooooooooo ooooooooooooooooo oooooooooooooooooo ooooooooooooooo     oooooooo    oooooooooooooo\n"
+"oooooooooooooooooo ooooooooooooooooo oooooooooooooooooo ooooooooooooooooo   oooooooo  ooooooooooooooo\n"
+"oooooooooooooooooo ooooooooooooooooo oooooooooooooooooo oooooooooooooooooo  oooooooo ooooooooooooooo\n"
+"oooooooooooooooooo ooooooooooooooooo oooooooooooooooooo oooooooooooooooooo  ooooooo ooooooooooooooo\n"
+"     oooooooo      ooooooo                oooooooo      ooooooo  ooooooooo  oooooooo ooooooooo\n"
+"     oooooooo      ooooooooooooooo        oooooooo      ooooooooooooooooo   oooooooo oooooooooo\n"
+"     oooooooo      ooooooooooooooo        oooooooo      oooooooooooooooo    oooooooo   ooooooooo\n"
+"     oooooooo      oooooooooooooo         oooooooo      oooooooooooooooo    oooooooo    oooooooooo\n"
+"     oooooooo      ooooooooooooo          oooooooo      ooooooo ooooooooo   oooooooo     oooooooooo\n"
+"     oooooooo      oooooooo               oooooooo      ooooooo  ooooooooo  oooooooo       ooooooooo\n"
+"     oooooooo      oooooooo               oooooooo      oooooooo   oooooooo oooooooo        oooooooooo\n"
+"     oooooooo      oooooooooooooooooo     oooooooo      oooooooo    ooooooo oooooooo ooooooooooooooooo\n"
+"     oooooooo      oooooooooooooooooooo   oooooooo      oooooooo     oooooo oooooooo ooooooooooooooooo\n"
+"     oooooooo      ooooooooooooooooooooo  oooooooo      oooooooo      ooooo oooooooo ooooooooooooooooo\n"
+"     oooooooo        oooooooooooooooooooo oooooooo      oooooooo       oooo oooooooo ooooooooooooooo";
+
+
 
 void GameRenderer::renderFrame() {
 	wclear(game_win_); // reset the screen
@@ -122,18 +140,17 @@ void GameRenderer::render_piece(const uint8_t& x, const uint8_t& y) {
 	}
 }
 
+void GameRenderer::blink() {
+	flash();
+}
+
+// UTILITY ----
 void GameRenderer::windowPrint(const int& win_id, const string& str) {
 	WINDOW* local_win = win_mgr->getWindow(win_id);
 
 	wprintw(local_win, str.c_str());
 	wrefresh(local_win);
 }
-
-void GameRenderer::blink() {
-	flash();
-}
-
-// UTILITY ----
 
 void GameRenderer::errPrint(const string& str) {
 	WINDOW* err_win = win_mgr->getWindow(ERR_WIN);
@@ -144,6 +161,10 @@ void GameRenderer::errPrint(const string& str) {
 }
 
 void GameRenderer::showMenu() {
+	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
+	waddnstr(title_win, title_art.c_str(), -1);
+	wrefresh(title_win);
+
 	WINDOW* menu_win = win_mgr->getWindow(MAIN_MENU);
 
 	mvwprintw(menu_win, 1, 0, "1) Start Game\n");
@@ -160,8 +181,13 @@ void GameRenderer::showMenu() {
 void GameRenderer::initGameUI() {
 	win_mgr->clearWindow(MAIN_MENU);
 	win_mgr->clearWindow(INPUT_WIN);
+	win_mgr->clearWindow(TITLE_WIN);
 	win_mgr->showBorder(GAME_WIN);
-	//windowPrint(GAME_WIN, string(BOARD_W * BOARD_H * 2, '.'));
+}
+
+void GameRenderer::initSettingsUI() {
+	win_mgr->clearContents(MAIN_MENU);
+	win_mgr->clearContents(INPUT_WIN);
 }
 
 void GameRenderer::showEndScreen() {

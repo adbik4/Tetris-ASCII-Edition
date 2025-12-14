@@ -9,6 +9,7 @@ using namespace std;
 #define GAME_WIN	2
 #define INPUT_WIN	3
 #define ERR_WIN		4
+#define TITLE_WIN	5
 
 class WindowManager {
 private:
@@ -16,14 +17,18 @@ private:
 	WINDOW* input_win;
 	WINDOW* err_win;
 	WINDOW* game_win;
+	WINDOW* title_win;
 
 	void initTerm();
 	void deinitTerm();
-	WINDOW* createNewWindow(const int& height, const int& width, const int& starty, const int& startx);
+
 	WINDOW* makeMenuWindow();
 	WINDOW* makeInputWindow();
 	WINDOW* makeErrorWindow();
 	WINDOW* makeGameWindow();
+	WINDOW* makeTitleWindow();
+
+	WINDOW* createNewWindow(const int& height, const int& width, const int& starty, const int& startx);
 
 public:
 	WindowManager() {
@@ -32,8 +37,9 @@ public:
 		game_win = makeGameWindow();
 		input_win = makeInputWindow();
 		err_win = makeErrorWindow();
+		title_win = makeTitleWindow();
 
-		if (!menu_win || !game_win || !input_win || !err_win) {
+		if (!menu_win || !game_win || !input_win || !err_win || !title_win) {
 			throw std::runtime_error("Failed to initialise windows");
 		}
 	}

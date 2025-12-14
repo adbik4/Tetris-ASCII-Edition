@@ -13,12 +13,14 @@ void GameEngine::startEngine() {
 
 	try {
 		renderer->showMenu();
+
 		switch (int_input) {
 		case 1:
 			renderer->initGameUI();
 			time_mgr->startClock();
 			break;
 		case 2:
+			renderer->initSettingsUI();
 			renderer->windowPrint(MAIN_MENU, "SETTINGS\n");
 			break;
 		case 3:

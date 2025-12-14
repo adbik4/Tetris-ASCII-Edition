@@ -28,16 +28,53 @@ void WindowManager::deinitTerm() {
 	endwin();
 }
 
+WINDOW* WindowManager::makeTitleWindow() {
+	int width, height, starty, startx, lines, cols, voffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = 105; //105;
+	height = 15;
+	voffset = -5;
+
+	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
+	startx = (cols - width) / 2;	/* of the window		*/
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+	keypad(window, TRUE); // Enable arrow keys
+	nodelay(window, TRUE);// Non-blocking input
+	return window;
+}
+
 WINDOW* WindowManager::makeMenuWindow() {
-	int width, height, starty, startx, lines, cols;
+	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
 
 	width = BOARD_W * 2;
 	height = 5;
-	starty = (lines - height) / 2;	/* Calculating for a center placement */
+	voffset = 7;
+
+	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
 	startx = (cols - width) / 2;	/* of the window		*/
 
 	WINDOW* window = createNewWindow(height, width, starty, startx);
+	keypad(window, TRUE); // Enable arrow keys
+	nodelay(window, TRUE);// Non-blocking input
+	return window;
+}
+
+WINDOW* WindowManager::makeInputWindow() {
+	int width, height, starty, startx, lines, cols, voffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = BOARD_W * 2;
+	height = 2;
+	voffset = 11;
+
+	starty = voffset + (lines - height) / 2;
+	startx = (cols - width) / 2;
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+
 	keypad(window, TRUE); // Enable arrow keys
 	nodelay(window, TRUE);// Non-blocking input
 	return window;
@@ -50,6 +87,7 @@ WINDOW* WindowManager::makeGameWindow() {
 	width = BOARD_W * 2;	// scale according to block size
 	height = BOARD_H;
 	voffset = 0;
+
 	starty = voffset + (lines - height) / 2;
 	startx = (cols - width) / 2;
 
@@ -72,23 +110,6 @@ WINDOW* WindowManager::makeErrorWindow() {
 	startx = 1;
 
 	WINDOW* window = createNewWindow(height, width, starty, startx);
-	return window;
-}
-
-WINDOW* WindowManager::makeInputWindow() {
-	int width, height, starty, startx, lines, cols, voffset;
-	getmaxyx(stdscr, lines, cols);
-
-	width = BOARD_W * 2;
-	height = 2;
-	voffset = 4;
-	starty = voffset + (lines - height) / 2;
-	startx = (cols - width) / 2;
-
-	WINDOW* window = createNewWindow(height, width, starty, startx);
-
-	keypad(window, TRUE); // Enable arrow keys
-	nodelay(window, TRUE);// Non-blocking input
 	return window;
 }
 
@@ -156,6 +177,9 @@ WINDOW* WindowManager::getWindow(const int& win_id) {
 		break;
 	case ERR_WIN:
 		return err_win;
+		break;
+	case TITLE_WIN:
+		return title_win;
 		break;
 	case GLOBAL:
 		return stdscr;

@@ -5,20 +5,27 @@
 
 class Tetromino {
 private:
-	uint8_t curr_piece;
-	uint8_t curr_rotation;
+	int8_t curr_piece;
+	int8_t curr_rotation;
+
+	bool isInvalidPosition(const std::string& board);
+	void merge_piece();
 
 public: 
-	uint8_t x_pos;
-	uint8_t y_pos;
+	int8_t x_pos;
+	int8_t y_pos;
 
-	Tetromino() : curr_piece(NULL), curr_rotation(NULL), x_pos((uint8_t)BOARD_W/2 - 2), y_pos(0) {};
+	Tetromino() : curr_piece(NULL), curr_rotation(NULL), x_pos((int8_t)BOARD_W/2 - 2), y_pos(0) {};
 
 	void next_piece(std::mt19937& rng);
-	void rotateR();
-	void rotateL();
+	void rotateR(const std::string& board);
+	void rotateL(const std::string& board);
+	void moveR(const std::string& board);
+	void moveL(const std::string& board);
+	void soft_drop(const std::string& board);
+	void hard_drop(const std::string& board);
  
 	const uint8_t get_piece_id() const { return curr_piece; }
 	const uint8_t get_rotation() const { return curr_rotation; }
-	const char lookup_piece(const uint8_t& x, const uint8_t& y);
+	const char transform_piece(const int8_t& x, const int8_t& y);
 };

@@ -42,15 +42,51 @@ void GameEngine::update() {
 		// INPUT
 		int k_input = input_mgr->getKeyboardInput(GAME_WIN);
 		switch (k_input) {
-		case KEY_LEFT:
-			state->active_piece.rotateL();
-			break;
-		case KEY_RIGHT:
-			state->active_piece.rotateR();
-			break;
+			case (int)'q':
+			case (int)'j':
+				state->active_piece.rotateL(state->board);
+				break;
+
+			case (int)'e':
+			case (int)'k':
+				state->active_piece.rotateR(state->board);
+				break;
+
+			case (int)'w':
+			case KEY_UP:
+				//state->active_piece.hard_drop(state->board);
+				break;
+
+			case (int)'a':
+			case KEY_LEFT:
+				state->active_piece.moveL(state->board);
+				break;
+
+			case (int)'s':
+			case KEY_DOWN:
+				state->active_piece.soft_drop(state->board);
+				break;
+
+			case (int)'d':
+			case KEY_RIGHT:
+				state->active_piece.moveR(state->board);
+				break;
+
+			case (int)'x':
+				stopEngine();
 		}
 
 		// GAME LOGIC
+		// gravity
+		uint16_t drop_interval = BASE_SPEED - ((state->level - 1) * LEVEL_DECR);
+		if (!drop_interval) {
+			throw std::invalid_argument("Level got too high");
+		}
+		if (state->tick % drop_interval == 0) {
+			state->active_piece.soft_drop(state->board);
+		}
+
+		// pieces get refreshed if needed
 		if (state->active_piece.get_piece_id() == NULL) {
 			state->active_piece.next_piece(rng);
 		}
@@ -66,7 +102,14 @@ void GameEngine::update() {
 }
 
 void GameEngine::stopEngine() {
-	if (!state->running) return;
+	if (!state->stop_flag) {
+		state->stop_flag = true;
+		return;
+	}
+	else if (!state->running) {
+		return;
+	}
+
 	state->running = false;
 	renderer->showEndScreen();
 	time_mgr->stopClock();

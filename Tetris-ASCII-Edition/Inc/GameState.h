@@ -25,7 +25,7 @@ public:
 		running = false;
 		stop_flag = false;
 		score = 0;
-		tick = 0;
+		tick = 1;
 		board = std::string(BOARD_W * BOARD_H, '.');
 
 		level = cfg.start_level;

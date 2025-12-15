@@ -55,7 +55,7 @@ void GameRenderer::render_tile(const char& tile) {
 		windowPrint(GAME_WIN, block_buf_);
 	}
 	else {
-		chtype color = 6;
+		chtype color = 1;
 		switch (tile) {
 		case '@':
 			color = COLOR_PAIR(1);
@@ -78,6 +78,10 @@ void GameRenderer::render_tile(const char& tile) {
 		case '&':
 			color = COLOR_PAIR(7);
 			break;
+		case 'E':
+			// error
+			color = COLOR_PAIR(4);
+			break;
 		}
 
 		wattron(game_win_, color);
@@ -87,7 +91,7 @@ void GameRenderer::render_tile(const char& tile) {
 }
 
 void GameRenderer::render_piece(const uint8_t& x, const uint8_t& y) {
-	char tile = engine->getState().active_piece.lookup_piece(x, y);
+	char tile = engine->getState().active_piece.transform_piece(x, y);
 	if (tile == '.') {
 		return;
 	}
@@ -104,7 +108,7 @@ void GameRenderer::render_piece(const uint8_t& x, const uint8_t& y) {
 		);
 	}
 	else {
-		chtype color = 6;
+		chtype color = 1;
 		switch (tile) {
 		case '@':
 			color = COLOR_PAIR(1);
@@ -126,6 +130,10 @@ void GameRenderer::render_piece(const uint8_t& x, const uint8_t& y) {
 			break;
 		case '&':
 			color = COLOR_PAIR(7);
+			break;
+		case 'E':
+			// error
+			color = COLOR_PAIR(4);
 			break;
 		}
 
@@ -181,7 +189,11 @@ void GameRenderer::showMenu() {
 void GameRenderer::initGameUI() {
 	win_mgr->clearWindow(MAIN_MENU);
 	win_mgr->clearWindow(INPUT_WIN);
-	win_mgr->clearWindow(TITLE_WIN);
+
+	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
+	wclear(title_win);
+	wrefresh(title_win);
+
 	win_mgr->showBorder(GAME_WIN);
 }
 

@@ -13,10 +13,12 @@ private:
 	void merge_piece(std::span<char> board);
 
 public: 
+	bool is_falling;	// keeps track of the falling animation
+
 	int8_t x_pos;
 	int8_t y_pos;
 
-	Tetromino() : curr_piece(NULL), curr_rotation(NULL), x_pos((int8_t)BOARD_W/2 - 2), y_pos(0) {};
+	Tetromino() : is_falling(false), curr_piece(NULL), curr_rotation(NULL), x_pos((int8_t)BOARD_W/2 - 2), y_pos(0) {};
 
 	void next_piece(std::mt19937& rng);
 	void rotateR(std::span<const char> board);

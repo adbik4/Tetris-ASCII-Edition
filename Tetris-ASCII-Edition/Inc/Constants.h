@@ -6,10 +6,9 @@
 // constants
 #define MAX_LEVEL 10
 
-#define GAME_TICK 10		//ms
+#define GAME_TICK 5			//ms
 #define BASE_SPEED 100		// ticks
 #define LEVEL_DECR 10		// ticks
-
 
 #define BOARD_W 10
 #define BOARD_H 20

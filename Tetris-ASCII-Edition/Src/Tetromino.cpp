@@ -45,6 +45,7 @@ const char tetrominoLUT[TETROMINO_SIZE*TETROMINO_COUNT + 1] = {
 void Tetromino::next_piece(mt19937& rng) {
 	uniform_int_distribution<int16_t> piece_distr(1, TETROMINO_COUNT);
 	curr_piece = static_cast<int8_t>(piece_distr(rng));
+	is_falling = false;
 
 	x_pos = (int8_t)BOARD_W / 2 - 2; // center
 	y_pos = 0;
@@ -92,9 +93,8 @@ void Tetromino::soft_drop(span<char> board) {
 }
 
 void Tetromino::hard_drop(span<char> board) {
-	while (!isInvalidPosition(board)) {
-		soft_drop(board);
-	}
+	is_falling = true;
+	soft_drop(board);
 }
 
 // merges the tetromino with the board
@@ -112,6 +112,7 @@ void Tetromino::merge_piece(span<char> board) {
 		}
 	}
 
+	is_falling = false;
 	curr_piece = NULL;
 }
 
@@ -120,13 +121,15 @@ bool Tetromino::isInvalidPosition(span<const char> board) {
 
 	for (int8_t y = 0; y < TETROMINO_W; y++) {
 		for (int8_t x = 0; x < TETROMINO_W; x++) {
+
 			tile = realize_piece(x, y);
+
 			if (tile != '.') {
-				if ((x_pos + x) < 0 || (x_pos + x) > (BOARD_W - 1)) {
+				if ((x_pos + x) < 0 || (x_pos + x) >= BOARD_W) {
 					// horizontal out of bounds
 					return true;
 				}
-				else if ((y_pos + y) < 0 || (y_pos + y) > (BOARD_H - 1)) {
+				else if ((y_pos + y) < 0 || (y_pos + y) >= BOARD_H) {
 					// vertical out of bounds
 					return true;
 				}

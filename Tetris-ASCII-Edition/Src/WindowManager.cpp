@@ -14,6 +14,7 @@ void WindowManager::initTerm() {
 	use_default_colors(); // enable color usage
 
 	// Define color pairs (the indexes correspond to tetromino id's)
+	init_pair(0, COLOR_BLACK, COLOR_BLACK);
 	init_pair(1, COLOR_BLACK, COLOR_CYAN);
 	init_pair(2, COLOR_BLACK, COLOR_WHITE);
 	init_pair(3, COLOR_BLACK, COLOR_BLUE);

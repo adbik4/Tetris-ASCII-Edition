@@ -3,8 +3,6 @@
 
 using namespace std;
 
-#define SAMPLE2D(array, x, y) ((array)[(x) + (BOARD_W) * (y)])
-
 const char tetrominoLUT[TETROMINO_SIZE*TETROMINO_COUNT + 1] = {
 	// id: 1
 		"..@."
@@ -52,7 +50,7 @@ void Tetromino::next_piece(mt19937& rng) {
 	y_pos = 0;
 }
 
-void Tetromino::rotateL(const string& board) {
+void Tetromino::rotateL(span<const char> board) {
 	int8_t prev_rotation = curr_rotation;
 
 	curr_rotation = curr_rotation == 0 ? 3 : (--curr_rotation % 4);
@@ -62,7 +60,7 @@ void Tetromino::rotateL(const string& board) {
 	}
 }
 
-void Tetromino::rotateR(const string& board) {
+void Tetromino::rotateR(span<const char> board) {
 	int8_t prev_rotation = curr_rotation;
 
 	curr_rotation = ++curr_rotation % 4;
@@ -71,34 +69,58 @@ void Tetromino::rotateR(const string& board) {
 	}
 }
 
-void Tetromino::moveR(const string& board) {
+void Tetromino::moveR(span<const char> board) {
 	x_pos++;
 	if (isInvalidPosition(board)) {
 		x_pos--;
 	}
 }
 
-void Tetromino::moveL(const string& board) {
+void Tetromino::moveL(span<const char> board) {
 	x_pos--;
 	if (isInvalidPosition(board)) {
 		x_pos++;
 	}
 }
 
-void Tetromino::soft_drop(const string& board) {
+void Tetromino::soft_drop(span<char> board) {
 	y_pos++;
 	if (isInvalidPosition(board)) {
 		y_pos--;
-		merge_piece();
+		merge_piece(board);
 	}
 }
 
-bool Tetromino::isInvalidPosition(const string& board) {
+void Tetromino::hard_drop(span<char> board) {
+	while (!isInvalidPosition(board)) {
+		soft_drop(board);
+	}
+}
+
+// merges the tetromino with the board
+void Tetromino::merge_piece(span<char> board) {
+	if (isInvalidPosition(board)) {
+		return;
+	}
+
+	for (int8_t y = 0; y < TETROMINO_W; y++) {
+		for (int8_t x = 0; x < TETROMINO_W; x++) {
+			char tile = realize_piece(x, y);
+			if (tile != '.') {
+				SAMPLE_BOARD(board, x_pos + x, y_pos + y) = tile;
+			}
+		}
+	}
+
+	curr_piece = NULL;
+}
+
+bool Tetromino::isInvalidPosition(span<const char> board) {
 	char tile;
 
 	for (int8_t y = 0; y < TETROMINO_W; y++) {
 		for (int8_t x = 0; x < TETROMINO_W; x++) {
-			tile = transform_piece(x, y);
+			tile = realize_piece(x, y);
 			if (tile != '.') {
 				if ((x_pos + x) < 0 || (x_pos + x) > (BOARD_W - 1)) {
 					// horizontal out of bounds
@@ -108,7 +130,7 @@ bool Tetromino::isInvalidPosition(const string& board) {
 					// vertical out of bounds
 					return true;
 				}
-				else if (SAMPLE2D(board, x_pos + x, y_pos + y) != '.') {
+				else if (SAMPLE_BOARD(board, x_pos + x, y_pos + y) != '.') {
 					// there's piece overlap
 					return true;
 				}
@@ -119,7 +141,7 @@ bool Tetromino::isInvalidPosition(const string& board) {
 	return false;
 }
 
-const char Tetromino::transform_piece(const int8_t& x, const int8_t& y) {
+const char Tetromino::realize_piece(const int8_t x, const int8_t y) {
 	uint8_t idx;
 	switch (curr_rotation) {
 	case 0: // 0deg
@@ -138,5 +160,3 @@ const char Tetromino::transform_piece(const int8_t& x, const int8_t& y) {
 		return 'E';	// for debug purposes
 	}
 }
-
-void Tetromino::merge_piece() {};

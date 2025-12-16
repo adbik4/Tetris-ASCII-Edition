@@ -3,6 +3,7 @@
 #include <curses.h>
 #include "GameEngine.h"
 #include "WindowManager.h"
+#include <array>
 
 using namespace std;
 class GameEngine;
@@ -12,14 +13,20 @@ private:
 	shared_ptr<GameEngine> engine;
 	shared_ptr<WindowManager> win_mgr;
 
-	WINDOW* game_win_ = win_mgr->getWindow(GAME_WIN);	// a reference to the game window
-	char block_buf_[3]{ 0 };							// a buffer for tile rendering
+	WINDOW* game_win = win_mgr->getWindow(GAME_WIN);		// a reference to the game window
+	std::array<char, 3> block_buff;							// a buffer for a single ascii tile
 
-	void render_tile(const char& tile);
-	void render_piece(const uint8_t& x, const uint8_t& y);
+
+	void render_tile(const char tile);
+	void render_piece(const uint8_t x, const uint8_t y);
 
 public:
-	GameRenderer(const shared_ptr<GameEngine>& engine_ptr, const shared_ptr< WindowManager>& win_ptr) : engine(engine_ptr), win_mgr(win_ptr) {}
+	GameRenderer(const shared_ptr<GameEngine>& engine_ptr, const shared_ptr< WindowManager>& win_ptr) :
+		engine(engine_ptr),
+		win_mgr(win_ptr),
+		block_buff({ '.', '.', '\0' })
+	{}
+
 	~GameRenderer() {}
 
 	// graphics

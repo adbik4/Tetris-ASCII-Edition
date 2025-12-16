@@ -37,6 +37,8 @@ void GameEngine::startEngine() {
 	}
 }
 
+uint8_t target_x = 255, target_y = 0;
+
 void GameEngine::update() {
 	try {
 		// INPUT
@@ -54,7 +56,7 @@ void GameEngine::update() {
 
 			case (int)'w':
 			case KEY_UP:
-				//state->active_piece.hard_drop(state->board);
+				state->active_piece.hard_drop(state->board);
 				break;
 
 			case (int)'a':

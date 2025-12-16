@@ -2,6 +2,7 @@
 #include "Tetromino.h"
 #include <stdexcept>
 #include <string>
+#include "Constants.h"
 
 using namespace std;
 
@@ -25,13 +26,13 @@ string title_art =
 
 
 void GameRenderer::renderFrame() {
-	wclear(game_win_); // reset the screen
-
-	string board = engine->getState().board;
+	wclear(game_win); // clear the screen
 
 	// 1st pass - board
-	for (char tile : board) {
-		render_tile(tile);
+	for (uint8_t y = 0; y < BOARD_H; y++) {
+		for (uint8_t x = 0; x < BOARD_W; x++) {
+			render_tile(SAMPLE_BOARD(engine->getState().board, x, y));
+		}
 	}
 
 	// 2nd pass - active tetromino
@@ -41,22 +42,21 @@ void GameRenderer::renderFrame() {
 		}
 	}
 
-	wrefresh(game_win_);
+	wrefresh(game_win);
 }
 
-void GameRenderer::render_tile(const char& tile) {
-	if (tile == '.') {
-		return;
-	}
-
+void GameRenderer::render_tile(const char tile) {
 	if (engine->getState().ascii_mode) {
-		memset(block_buf_, tile, 2);
-		block_buf_[2] = '\0';
-		windowPrint(GAME_WIN, block_buf_);
+		block_buff[0] = tile;
+		block_buff[1] = tile;
+		wprintw(game_win, block_buff.data());
 	}
 	else {
 		chtype color = 1;
 		switch (tile) {
+		case '.':
+			color = COLOR_PAIR(0);
+			break;
 		case '@':
 			color = COLOR_PAIR(1);
 			break;
@@ -84,27 +84,27 @@ void GameRenderer::render_tile(const char& tile) {
 			break;
 		}
 
-		wattron(game_win_, color);
-		windowPrint(GAME_WIN, "  ");
-		wattroff(game_win_, color);
+		wattron(game_win, color);
+		wprintw(game_win, "  ");
+		wattroff(game_win, color);
 	}
 }
 
-void GameRenderer::render_piece(const uint8_t& x, const uint8_t& y) {
-	char tile = engine->getState().active_piece.transform_piece(x, y);
+void GameRenderer::render_piece(const uint8_t x, const uint8_t y) {
+	char tile = engine->getState().active_piece.realize_piece(x, y);
 	if (tile == '.') {
 		return;
 	}
 
 	if (engine->getState().ascii_mode) {
-		memset(block_buf_, tile, 2);
-		block_buf_[2] = '\0';
+		block_buff[0] = tile;
+		block_buff[1] = tile;
 
 		mvwprintw(
-			game_win_,
+			game_win,
 			engine->getState().active_piece.y_pos + y,
 			(engine->getState().active_piece.x_pos + x) * 2,
-			block_buf_
+			block_buff.data()
 		);
 	}
 	else {
@@ -137,14 +137,14 @@ void GameRenderer::render_piece(const uint8_t& x, const uint8_t& y) {
 			break;
 		}
 
-		wattron(game_win_, color);
+		wattron(game_win, color);
 		mvwprintw(
-			game_win_,
+			game_win,
 			engine->getState().active_piece.y_pos + y,
 			(engine->getState().active_piece.x_pos + x) * 2,
 			"  "	// two spaces = one block
 		);
-		wattroff(game_win_, color);
+		wattroff(game_win, color);
 	}
 }
 

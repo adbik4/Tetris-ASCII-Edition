@@ -1,5 +1,9 @@
 #pragma once
 
+// macros
+#define SAMPLE_BOARD(array, x, y) ((array)[(x) + (BOARD_W) * (y)])
+
+// constants
 #define MAX_LEVEL 10
 
 #define GAME_TICK 10		//ms
@@ -14,7 +18,8 @@
 #define TETROMINO_SIZE 16
 #define TETROMINO_W 4
 
-struct GameSettings {		// default settings
+// default settings
+struct GameSettings {
 	uint8_t start_level = 1;
 	bool ascii_mode = false;
 };

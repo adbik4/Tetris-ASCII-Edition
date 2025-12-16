@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include <string>
+#include <array>
 #include <memory>
 #include "Tetromino.h"
 #include "Constants.h"
@@ -17,7 +17,7 @@ public:
 	uint8_t level;
 	uint64_t score;
 
-	std::string board;
+	std::array<char, BOARD_W * BOARD_H> board;
 	Tetromino active_piece;
 
 	// initial conditions
@@ -26,7 +26,7 @@ public:
 		stop_flag = false;
 		score = 0;
 		tick = 1;
-		board = std::string(BOARD_W * BOARD_H, '.');
+		board.fill('.');
 
 		level = cfg.start_level;
 		ascii_mode = cfg.ascii_mode;

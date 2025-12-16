@@ -18,7 +18,7 @@ int main()
     shared_ptr<WindowManager> win_mgr;
 
     struct GameSettings cfg;
-    cfg.start_level = 11;
+    cfg.start_level = 1;
     cfg.ascii_mode = false;
 
     // Inititialises everything safely and in the right order

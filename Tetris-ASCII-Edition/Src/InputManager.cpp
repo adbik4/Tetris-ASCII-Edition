@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int InputManager::getKeyboardInput(const uint8_t& win_id) {
+int InputManager::getKeyboardInput(const uint8_t win_id) {
     WINDOW* local_win = win_mgr->getWindow(win_id);
     return wgetch(local_win);
 }

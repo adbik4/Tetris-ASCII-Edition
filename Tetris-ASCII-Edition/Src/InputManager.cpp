@@ -14,7 +14,7 @@ int InputManager::getKeyboardInput(const uint8_t win_id) {
 // Returns user input between valid bounds from a to b
 int InputManager::getIntInput(const tuple<int, int>& bounds = {INT_MIN, INT_MAX}) {
     char buf[16];
-    Event err(INPUT_ERR, { 0, 0 });
+    Event err(EventId::INPUT_ERR, { 0, 0 });
 
     win_mgr->clearContents(INPUT_WIN);
     win_mgr->showBorder(INPUT_WIN);

@@ -87,7 +87,7 @@ void GameEngine::update() {
 			// gravity
 			uint16_t drop_interval = BASE_SPEED - ((state->level - 1) * LEVEL_DECR);
 			if (!drop_interval) {
-				throw std::invalid_argument("Level got too high");
+				throw std::invalid_argument("<engine::update> Level got too high");
 			}
 			if (state->tick % drop_interval == 0) {
 				state->active_piece.soft_drop(state->board);
@@ -130,17 +130,17 @@ void GameEngine::nextLevel() {
 // This function conducts the main mediation logic
 void GameEngine::notify (const Event& event) {
 	switch (event.id) {
-	case CLK:
+	case EventId::CLK:
 		update();
 		state->tick++;
 		break;
-	case INPUT_ERR:
+	case EventId::INPUT_ERR:
 		renderer->windowPrint(INPUT_WIN, "Invalid input\n");
 		break;
-	case INT_INPUT:
-		int_input = input_mgr->getIntInput(event.args);
+	case EventId::INT_INPUT:
+		 int_input = input_mgr->getIntInput(event.args);
 		break;
-	case GENERAL_ERR:
+	case EventId::GENERAL_ERR:
 		renderer->errPrint("[DEBUG] an error has occured\n");
 		break;
 	default:

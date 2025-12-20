@@ -6,25 +6,6 @@
 
 using namespace std;
 
-string title_art =
-"oooooooooooooooooo ooooooooooooooooo oooooooooooooooooo ooooooooooooooo     oooooooo    oooooooooooooo\n"
-"oooooooooooooooooo ooooooooooooooooo oooooooooooooooooo ooooooooooooooooo   oooooooo  ooooooooooooooo\n"
-"oooooooooooooooooo ooooooooooooooooo oooooooooooooooooo oooooooooooooooooo  oooooooo ooooooooooooooo\n"
-"oooooooooooooooooo ooooooooooooooooo oooooooooooooooooo oooooooooooooooooo  ooooooo ooooooooooooooo\n"
-"     oooooooo      ooooooo                oooooooo      ooooooo  ooooooooo  oooooooo ooooooooo\n"
-"     oooooooo      ooooooooooooooo        oooooooo      ooooooooooooooooo   oooooooo oooooooooo\n"
-"     oooooooo      ooooooooooooooo        oooooooo      oooooooooooooooo    oooooooo   ooooooooo\n"
-"     oooooooo      oooooooooooooo         oooooooo      oooooooooooooooo    oooooooo    oooooooooo\n"
-"     oooooooo      ooooooooooooo          oooooooo      ooooooo ooooooooo   oooooooo     oooooooooo\n"
-"     oooooooo      oooooooo               oooooooo      ooooooo  ooooooooo  oooooooo       ooooooooo\n"
-"     oooooooo      oooooooo               oooooooo      oooooooo   oooooooo oooooooo        oooooooooo\n"
-"     oooooooo      oooooooooooooooooo     oooooooo      oooooooo    ooooooo oooooooo ooooooooooooooooo\n"
-"     oooooooo      oooooooooooooooooooo   oooooooo      oooooooo     oooooo oooooooo ooooooooooooooooo\n"
-"     oooooooo      ooooooooooooooooooooo  oooooooo      oooooooo      ooooo oooooooo ooooooooooooooooo\n"
-"     oooooooo        oooooooooooooooooooo oooooooo      oooooooo       oooo oooooooo ooooooooooooooo";
-
-
-
 void GameRenderer::renderFrame() {
 	wclear(game_win); // clear the screen
 
@@ -35,10 +16,27 @@ void GameRenderer::renderFrame() {
 		}
 	}
 
-	// 2nd pass - active tetromino
-	for (uint8_t y = 0; y < 4; y++) {
-		for (uint8_t x = 0; x < 4; x++) {
-			render_piece(x, y);
+	if (engine->getState().active_piece.get_piece_id() != NULL) {
+
+		// 2nd pass - ghost piece
+		int8_t og_x_pos = engine->getState().active_piece.x_pos;
+		int8_t og_y_pos = engine->getState().active_piece.y_pos;
+
+		engine->getState().active_piece.ghost_drop(engine->getState().board);
+
+		for (uint8_t y = 0; y < 4; y++) {
+			for (uint8_t x = 0; x < 4; x++) {
+				render_piece(x, y);
+			}
+		}
+		engine->getState().active_piece.set_xpos(og_x_pos);
+		engine->getState().active_piece.set_ypos(og_y_pos);
+
+		// 3rd pass - active tetromino
+		for (uint8_t y = 0; y < 4; y++) {
+			for (uint8_t x = 0; x < 4; x++) {
+				render_piece(x, y);
+			}
 		}
 	}
 
@@ -54,8 +52,11 @@ void GameRenderer::render_tile(const char tile) {
 	else {
 		chtype color = 1;
 		switch (tile) {
-		case '.':
+		case '.':	// empty space
 			color = COLOR_PAIR(0);
+			break;
+		case '/': // ghost piece
+			color = COLOR_PAIR(2);
 			break;
 		case '@':
 			color = COLOR_PAIR(1);
@@ -78,8 +79,7 @@ void GameRenderer::render_tile(const char tile) {
 		case '&':
 			color = COLOR_PAIR(7);
 			break;
-		case 'E':
-			// error
+		case 'E':	// error
 			color = COLOR_PAIR(4);
 			break;
 		}
@@ -170,7 +170,7 @@ void GameRenderer::errPrint(const string& str) {
 
 void GameRenderer::showMenu() {
 	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
-	waddnstr(title_win, title_art.c_str(), -1);
+	waddnstr(title_win, title_art.data(), -1);
 	wrefresh(title_win);
 
 	WINDOW* menu_win = win_mgr->getWindow(MAIN_MENU);
@@ -183,7 +183,7 @@ void GameRenderer::showMenu() {
 	mvwprintw(menu_win, 0, 6, "MAIN MENU");
 	wrefresh(menu_win);
 
-	engine->notify(Event(INT_INPUT, { 1, 3 }));
+	engine->notify(Event(EventId::INT_INPUT, { 1, 3 }));
 }
 
 void GameRenderer::initGameUI() {

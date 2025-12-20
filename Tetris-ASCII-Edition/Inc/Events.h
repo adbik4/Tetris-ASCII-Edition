@@ -4,14 +4,15 @@
 
 using namespace std;
 
-#define INPUT_ERR	-2
-#define GENERAL_ERR	-1
-#define CLK			0
-#define INT_INPUT	1
-
+enum class EventId : int8_t {
+	INPUT_ERR = -2,
+	GENERAL_ERR = -1,
+	CLK = 0,
+	INT_INPUT = 1
+};
 
 typedef struct {
-	int8_t id;
+	EventId id;
 	tuple<int, int> args;
 } Event;
 

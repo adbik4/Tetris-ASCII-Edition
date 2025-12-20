@@ -40,7 +40,7 @@ public:
 		title_win = makeTitleWindow();
 
 		if (!menu_win || !game_win || !input_win || !err_win || !title_win) {
-			throw std::runtime_error("Failed to initialise windows");
+			throw std::runtime_error("<WindowManager> Failed to initialise windows");
 		}
 	}
 	~WindowManager() { deinitTerm(); }

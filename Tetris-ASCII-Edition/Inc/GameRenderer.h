@@ -14,17 +14,15 @@ private:
 	shared_ptr<WindowManager> win_mgr;
 
 	WINDOW* game_win = win_mgr->getWindow(GAME_WIN);		// a reference to the game window
-	std::array<char, 3> block_buff;							// a buffer for a single ascii tile
 
 
 	void render_tile(const char tile);
-	void render_piece(const uint8_t x, const uint8_t y);
+	void render_piece(const uint8_t x, const uint8_t y, const char force_tile = NULL);
 
 public:
 	GameRenderer(const shared_ptr<GameEngine>& engine_ptr, const shared_ptr< WindowManager>& win_ptr) :
 		engine(engine_ptr),
-		win_mgr(win_ptr),
-		block_buff({ '.', '.', '\0' })
+		win_mgr(win_ptr)
 	{}
 
 	~GameRenderer() {}

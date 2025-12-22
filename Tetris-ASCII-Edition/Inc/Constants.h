@@ -17,6 +17,8 @@
 #define TETROMINO_SIZE 16
 #define TETROMINO_W 4
 
+#define GHOST_SYM '.'		// used for displaying the ghost piece
+
 // default settings
 struct GameSettings {
 	uint8_t start_level = 1;

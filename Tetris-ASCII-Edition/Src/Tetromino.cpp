@@ -5,7 +5,7 @@ using namespace std;
 
 void Tetromino::next_piece(mt19937& rng) {
 	uniform_int_distribution<int16_t> piece_distr(1, TETROMINO_COUNT);
-	curr_piece = static_cast<int8_t>(piece_distr(rng));
+	piece_id = static_cast<int8_t>(piece_distr(rng));
 	is_falling = false;
 
 	x_pos = (int8_t)BOARD_W / 2 - 2; // center
@@ -13,6 +13,10 @@ void Tetromino::next_piece(mt19937& rng) {
 }
 
 void Tetromino::rotateL(span<const char> board) {
+	if (piece_id == NULL) {
+		return;
+	}
+
 	int8_t prev_rotation = curr_rotation;
 
 	curr_rotation = curr_rotation == 0 ? 3 : (--curr_rotation % 4);
@@ -23,6 +27,10 @@ void Tetromino::rotateL(span<const char> board) {
 }
 
 void Tetromino::rotateR(span<const char> board) {
+	if (piece_id == NULL) {
+		return;
+	}
+
 	int8_t prev_rotation = curr_rotation;
 
 	curr_rotation = ++curr_rotation % 4;
@@ -32,6 +40,10 @@ void Tetromino::rotateR(span<const char> board) {
 }
 
 void Tetromino::moveR(span<const char> board) {
+	if (piece_id == NULL) {
+		return;
+	}
+
 	x_pos++;
 	if (isInvalidPosition(board)) {
 		x_pos--;
@@ -39,13 +51,32 @@ void Tetromino::moveR(span<const char> board) {
 }
 
 void Tetromino::moveL(span<const char> board) {
+	if (piece_id == NULL) {
+		return;
+	}
+
 	x_pos--;
 	if (isInvalidPosition(board)) {
 		x_pos++;
 	}
 }
 
+void Tetromino::ghost_drop(span<const char> board) {
+	if (piece_id == NULL) {
+		return;
+	}
+
+	while (!isInvalidPosition(board)) {
+		y_pos++;
+	}
+	y_pos--;
+}
+
 void Tetromino::soft_drop(span<char> board) {
+	if (piece_id == NULL) {
+		return;
+	}
+
 	y_pos++;
 	if (isInvalidPosition(board)) {
 		y_pos--;
@@ -54,6 +85,10 @@ void Tetromino::soft_drop(span<char> board) {
 }
 
 void Tetromino::hard_drop(span<char> board) {
+	if (piece_id == NULL) {
+		return;
+	}
+
 	is_falling = true;
 }
 
@@ -73,7 +108,7 @@ void Tetromino::merge_piece(span<char> board) {
 	}
 
 	is_falling = false;
-	curr_piece = NULL;
+	piece_id = NULL;
 }
 
 bool Tetromino::isInvalidPosition(span<const char> board) {
@@ -108,32 +143,25 @@ const char Tetromino::realize_piece(const int8_t x, const int8_t y) {
 	if (x < 0 || y < 0 || x >= TETROMINO_W || y >= TETROMINO_W) {
 		throw std::out_of_range("<realize_piece> Tetromino tile index out of range");
 	}
-	if (curr_piece == NULL) {
+	if (piece_id == NULL) {
 		throw std::runtime_error("<realize_piece> No tetromino is active");
 	}
 
 	uint8_t idx;
 	switch (curr_rotation) {
 	case 0: // 0deg
-		idx = TETROMINO_SIZE * (curr_piece - 1) + x + TETROMINO_W * y;
+		idx = TETROMINO_SIZE * (piece_id - 1) + x + TETROMINO_W * y;
 		return tetrominoLUT[idx];
 	case 1: // 90deg
-		idx = TETROMINO_SIZE * (curr_piece - 1) - TETROMINO_W * x + y + 12;
+		idx = TETROMINO_SIZE * (piece_id - 1) - TETROMINO_W * x + y + 12;
 		return tetrominoLUT[idx];
 	case 2: // 180deg
-		idx = TETROMINO_SIZE * (curr_piece - 1) - x - TETROMINO_W * y + 15;
+		idx = TETROMINO_SIZE * (piece_id - 1) - x - TETROMINO_W * y + 15;
 		return tetrominoLUT[idx];
 	case 3: // 270deg
-		idx = TETROMINO_SIZE * (curr_piece - 1) + TETROMINO_W * x - y + 3;
+		idx = TETROMINO_SIZE * (piece_id - 1) + TETROMINO_W * x - y + 3;
 		return tetrominoLUT[idx];
 	default:
 		return 'E';	// for debug purposes
 	}
-}
-
-void Tetromino::ghost_drop(span<const char> board) {
-	while (!isInvalidPosition(board)) {
-		y_pos++;
-	}
-	y_pos--;
 }

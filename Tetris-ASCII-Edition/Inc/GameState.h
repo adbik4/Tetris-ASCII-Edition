@@ -19,6 +19,7 @@ public:
 
 	std::array<char, BOARD_W * BOARD_H> board;
 	Tetromino active_piece;
+	Tetromino ghost_piece;
 
 	// initial conditions
 	GameState(const GameSettings& cfg) {

@@ -17,20 +17,12 @@ void GameRenderer::renderFrame() {
 	}
 
 	if (engine->getState().active_piece.get_piece_id() != NULL) {
-
 		// 2nd pass - ghost piece
-		int8_t og_x_pos = engine->getState().active_piece.x_pos;
-		int8_t og_y_pos = engine->getState().active_piece.y_pos;
-
-		engine->getState().active_piece.ghost_drop(engine->getState().board);
-
-		for (uint8_t y = 0; y < 4; y++) {
-			for (uint8_t x = 0; x < 4; x++) {
-				render_piece(x, y);
+		for (uint8_t j = 0; j < 4; j++) {
+			for (uint8_t i = 0; i < 4; i++) {
+				render_piece(i, j, '/');
 			}
 		}
-		engine->getState().active_piece.set_xpos(og_x_pos);
-		engine->getState().active_piece.set_ypos(og_y_pos);
 
 		// 3rd pass - active tetromino
 		for (uint8_t y = 0; y < 4; y++) {
@@ -44,19 +36,24 @@ void GameRenderer::renderFrame() {
 }
 
 void GameRenderer::render_tile(const char tile) {
+	char block[3] = { ' ', ' ', '\0' };
+
 	if (engine->getState().ascii_mode) {
-		block_buff[0] = tile;
-		block_buff[1] = tile;
-		wprintw(game_win, block_buff.data());
+		if (tile == '.') {
+			block[0] = ' ';
+			block[1] = ' ';
+		}
+		else {
+			block[0] = tile;
+			block[1] = tile;
+		}
+		waddstr(game_win, block);
 	}
 	else {
 		chtype color = 1;
 		switch (tile) {
 		case '.':	// empty space
 			color = COLOR_PAIR(0);
-			break;
-		case '/': // ghost piece
-			color = COLOR_PAIR(2);
 			break;
 		case '@':
 			color = COLOR_PAIR(1);
@@ -85,31 +82,45 @@ void GameRenderer::render_tile(const char tile) {
 		}
 
 		wattron(game_win, color);
-		wprintw(game_win, "  ");
+		waddstr(game_win, "  ");
 		wattroff(game_win, color);
 	}
 }
 
-void GameRenderer::render_piece(const uint8_t x, const uint8_t y) {
+void GameRenderer::render_piece(const uint8_t x, const uint8_t y, const char force_tile) {
 	char tile = engine->getState().active_piece.realize_piece(x, y);
+	int8_t x_pos, y_pos;
+	char block[3] = {' ', ' ', '\0'};
+
 	if (tile == '.') {
 		return;
 	}
+	else if (force_tile) {
+		tile = force_tile;
+	}
 
 	if (engine->getState().ascii_mode) {
-		block_buff[0] = tile;
-		block_buff[1] = tile;
+		if (tile == '/') {
+			x_pos = engine->getState().ghost_piece.x_pos;
+			y_pos = engine->getState().ghost_piece.y_pos;
+			block[0] = '.';
+			block[1] = '.';
+		}
+		else {
+			x_pos = engine->getState().active_piece.x_pos;
+			y_pos = engine->getState().active_piece.y_pos;
+			block[0] = tile;
+			block[1] = tile;
+		}
 
-		mvwprintw(
-			game_win,
-			engine->getState().active_piece.y_pos + y,
-			(engine->getState().active_piece.x_pos + x) * 2,
-			block_buff.data()
-		);
+		mvwprintw(game_win, y_pos + y, (x_pos + x) * 2, block);
 	}
 	else {
 		chtype color = 1;
 		switch (tile) {
+		case '/': // ghost piece
+			color = COLOR_PAIR(2);
+			break;
 		case '@':
 			color = COLOR_PAIR(1);
 			break;
@@ -137,14 +148,24 @@ void GameRenderer::render_piece(const uint8_t x, const uint8_t y) {
 			break;
 		}
 
-		wattron(game_win, color);
-		mvwprintw(
-			game_win,
-			engine->getState().active_piece.y_pos + y,
-			(engine->getState().active_piece.x_pos + x) * 2,
-			"  "	// two spaces = one block
-		);
-		wattroff(game_win, color);
+		if (tile == '/') {
+			x_pos = engine->getState().ghost_piece.x_pos;
+			y_pos = engine->getState().ghost_piece.y_pos;
+			block[0] = GHOST_SYM;
+			block[1] = GHOST_SYM;
+
+			mvwprintw(game_win, y_pos + y, (x_pos + x) * 2, block);
+		}
+		else {
+			x_pos = engine->getState().active_piece.x_pos;
+			y_pos = engine->getState().active_piece.y_pos;
+
+			wattron(game_win, color);
+			mvwprintw(game_win, y_pos + y, (x_pos + x) * 2, "  ");
+			wattroff(game_win, color);
+		}
+
+
 	}
 }
 
@@ -156,7 +177,7 @@ void GameRenderer::blink() {
 void GameRenderer::windowPrint(const int& win_id, const string& str) {
 	WINDOW* local_win = win_mgr->getWindow(win_id);
 
-	wprintw(local_win, str.c_str());
+	waddstr(local_win, str.c_str());
 	wrefresh(local_win);
 }
 
@@ -164,7 +185,7 @@ void GameRenderer::errPrint(const string& str) {
 	WINDOW* err_win = win_mgr->getWindow(ERR_WIN);
 	win_mgr->clearContents(ERR_WIN);
 
-	wprintw(err_win, str.c_str());
+	waddstr(err_win, str.c_str());
 	wrefresh(err_win);
 }
 
@@ -203,5 +224,5 @@ void GameRenderer::initSettingsUI() {
 }
 
 void GameRenderer::showEndScreen() {
-	windowPrint(MAIN_MENU, "Exiting the game...\n");;
+	windowPrint(MAIN_MENU, "Exiting the game...\n");
 }

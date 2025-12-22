@@ -8,10 +8,11 @@
 class GameState {
 public:
 	// engine state
-	bool running;		// used to check if the engine systems are running
-	bool stop_flag;		// triggers the app shutdown
-	bool ascii_mode;	// controls the rendering mode
-	uint64_t tick;		// stores the current tick no
+	bool running;			// used to check if the engine systems are running
+	bool stop_flag;			// triggers the app shutdown
+	bool ascii_mode;		// controls the rendering mode
+	uint64_t tick;			// stores the current tick no
+	uint64_t wait_until;		// used for in-game delays
 
 	// game variables
 	uint8_t level;
@@ -31,6 +32,7 @@ public:
 		board.fill('.');
 		tick = 1;
 		running = false;
+		wait_until = 0;
 		stop_flag = false;
 
 		top_score = 694202137;

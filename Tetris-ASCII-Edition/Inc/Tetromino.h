@@ -17,11 +17,13 @@ private:
 
 public: 
 	bool is_falling;	// keeps track of the falling animation
+	uint8_t fall_dist;
+
 
 	int8_t x_pos;
 	int8_t y_pos;
 
-	Tetromino() : is_falling(false), piece_id(NULL), curr_rotation(NULL), x_pos((int8_t)BOARD_W/2 - 2), y_pos(0) {};
+	Tetromino() : is_falling(false), fall_dist(0), piece_id(NULL), curr_rotation(NULL), x_pos((int8_t)BOARD_W / 2 - 2), y_pos(0) {};
 
 	void next_piece(mt19937& rng);
 	void rotateR(span<const char> board);

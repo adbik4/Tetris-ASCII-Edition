@@ -2,6 +2,7 @@
 
 // macros
 #define SAMPLE_BOARD(array, x, y) ((array)[(x) + (BOARD_W) * (y)])
+#define MS_TO_TICKS(duration) (static_cast<uint16_t>(floor((duration) / (GAME_TICK)) / 3.0))
 
 // constants
 #define MAX_LEVEL 10

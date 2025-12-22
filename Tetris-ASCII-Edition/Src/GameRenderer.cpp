@@ -18,15 +18,15 @@ void GameRenderer::renderFrame() {
 
 	if (engine->getState().active_piece.get_piece_id() != NULL) {
 		// 2nd pass - ghost piece
-		for (uint8_t j = 0; j < 4; j++) {
-			for (uint8_t i = 0; i < 4; i++) {
+		for (uint8_t j = 0; j < TETROMINO_W; j++) {
+			for (uint8_t i = 0; i < TETROMINO_W; i++) {
 				render_piece(i, j, '/');
 			}
 		}
 
 		// 3rd pass - active tetromino
-		for (uint8_t y = 0; y < 4; y++) {
-			for (uint8_t x = 0; x < 4; x++) {
+		for (uint8_t y = 0; y < TETROMINO_W; y++) {
+			for (uint8_t x = 0; x < TETROMINO_W; x++) {
 				render_piece(x, y);
 			}
 		}

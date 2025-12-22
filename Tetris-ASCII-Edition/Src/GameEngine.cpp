@@ -1,12 +1,10 @@
 #include <exception>
-#include <random>
 #include "GameEngine.h"
 #include "Tetromino.h"
 
 using namespace std;
 
 int int_input;
-mt19937 rng((uint8_t) chrono::system_clock::now().time_since_epoch().count());
 
 void GameEngine::startEngine() {
 	state->running = true;
@@ -99,23 +97,22 @@ void GameEngine::update() {
 			}
 
 			if (active_piece.get_piece_id() == NULL) {
+				// assign points for hard-dropping
+				uint8_t score_mult = static_cast<uint8_t>((floor(state->level / 2.0))) + 1;
+				state->score += active_piece.fall_dist * SCORE_DEF[0] * score_mult;
+
 				// generate a new piece if needed
 				active_piece.next_piece(rng);
-				ghost_piece.set_piece_id( active_piece.get_piece_id() );
+				ghost_piece.set_piece_id(active_piece.get_piece_id());
 
-				// also, since the last piece has just been merged, check for filled lines
-				// for line in board
-				// if it's full: 
-				// clear line
-				// give points
-				// flash screen
-				// wait for 1s
-				// fill in the blanks
-	
+				// also, since the last piece has just been merged...
+
 				bool is_full;
-				uint8_t fill_count{ 0 };
+				vector<uint8_t> cleared;
 
-				for (uint8_t row = 0; row < BOARD_H; row++) {
+				// for each line in the board
+				// in reverse order so elements in the cleared vector are in the right order
+				for (int8_t row = BOARD_H - 1; row >= 0; row--) {
 					is_full = true;
 
 					// check line
@@ -127,17 +124,34 @@ void GameEngine::update() {
 
 					//clear line
 					if (is_full) {
-						fill_count++;
+						cleared.push_back(row);
 						for (uint8_t i = 0; i < BOARD_W; i++) {
 							SAMPLE_BOARD(board, i, row) = '.';
 						}
 					}
 				}
 
-				if (fill_count) {
-					//increment points
-					state->score += SCORE_DEF[fill_count] * (static_cast<uint64_t>((floor(state->level / 2.0))) + 1);
+				if (cleared.size() != 0) {
+					// assign points for clearing
+					state->score += SCORE_DEF[cleared.size()] * score_mult;
+					state->lines += (uint16_t)cleared.size();
+
 					renderer->blink();
+					
+					renderer->renderFrame();
+					this_thread::sleep_for(chrono::milliseconds(500));
+
+					// fill in the blanks by shifting down the upper portion of the board
+					// starting from the cleared line
+					int8_t move_count{ 0 };
+					for (auto start_idx : cleared) {
+						for (int8_t row = start_idx + move_count; row > 0; row--) {
+							for (uint8_t col = 0; col < BOARD_W; col++) {
+								SAMPLE_BOARD(board, col, row) = SAMPLE_BOARD(board, col, row - 1); // move down
+							}
+						}
+						move_count++;
+					}
 				}
 			}
 
@@ -146,6 +160,14 @@ void GameEngine::update() {
 			ghost_piece.set_xpos(active_piece.x_pos);
 			ghost_piece.set_rotation(active_piece.get_rotation());
 			ghost_piece.ghost_drop(board);
+
+			// check for game over
+			// last row has something in it
+			for (uint8_t col = 0; col < BOARD_W; col++) {
+				if (SAMPLE_BOARD(board, col, 0) != '.') {
+					// game over
+				}
+			}
 		}
 
 		// ==== RENDER OUTPUT ====

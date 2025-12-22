@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <random>
 #include "Events.h"
 #include "GameState.h"
 #include "GameRenderer.h"
@@ -32,9 +33,13 @@ private:
 	unique_ptr<InputManager> input_mgr;
 
 	unique_ptr<GameState> state;
+	mt19937 rng;
 
 public:
-	GameEngine(const GameSettings& cfg) { state = make_unique<GameState>(cfg); };
+	GameEngine(const GameSettings& cfg) { 
+		state = make_unique<GameState>(cfg);
+		rng = mt19937((uint8_t)chrono::system_clock::now().time_since_epoch().count());
+	};
 
 	void setTimeManager(unique_ptr<TimeManager> ptr) { time_mgr = move(ptr); }
 	void setGameRenderer(unique_ptr<GameRenderer> ptr) { renderer = move(ptr); }

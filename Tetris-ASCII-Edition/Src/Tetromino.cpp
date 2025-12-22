@@ -7,6 +7,7 @@ void Tetromino::next_piece(mt19937& rng) {
 	uniform_int_distribution<int16_t> piece_distr(1, TETROMINO_COUNT);
 	piece_id = static_cast<int8_t>(piece_distr(rng));
 	is_falling = false;
+	fall_dist = 0;
 
 	x_pos = (int8_t)BOARD_W / 2 - 2; // center
 	y_pos = 0;
@@ -76,10 +77,14 @@ void Tetromino::soft_drop(span<char> board) {
 	if (piece_id == NULL) {
 		return;
 	}
+	else if (is_falling) {
+		fall_dist++;
+	}
 
 	y_pos++;
 	if (isInvalidPosition(board)) {
 		y_pos--;
+		fall_dist -= (fall_dist > 0) ? 1 : 0;
 		merge_piece(board);
 	}
 }

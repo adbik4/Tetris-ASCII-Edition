@@ -162,10 +162,31 @@ void GameEngine::update() {
 			ghost_piece.ghost_drop(board);
 
 			// check for game over
-			// last row has something in it
+
+			// the ghost piece is overlapping with the start position
+			if (ghost_piece.y_pos < TETROMINO_W) {
+				char active_tile;
+				char ghost_tile;
+
+				// for each overlapping tile pair
+				for (int8_t y = 0; y < TETROMINO_W - ghost_piece.y_pos; y++) {
+					for (uint8_t x = 0; x < 4; x++) {
+						ghost_tile = ghost_piece.realize_piece(x, y);
+						active_tile = active_piece.realize_piece(x, y + ghost_piece.y_pos);
+
+						if (active_tile != '.' && ghost_tile != '.') {
+							// game over
+							throw std::runtime_error("GAME OVER");
+						}
+					}
+				}
+			}
+
+			// the top row has something in it
 			for (uint8_t col = 0; col < BOARD_W; col++) {
 				if (SAMPLE_BOARD(board, col, 0) != '.') {
 					// game over
+					throw std::runtime_error("GAME OVER");
 				}
 			}
 		}

@@ -169,6 +169,21 @@ void GameRenderer::render_piece(const uint8_t x, const uint8_t y, const char for
 	}
 }
 
+void GameRenderer::refreshGameUI() {
+	WINDOW* stats_win = win_mgr->getWindow(STATS_WIN);
+	uint64_t top_score = engine->getState().top_score;
+	uint64_t score = engine->getState().score;
+	uint16_t lines = engine->getState().lines;
+	uint8_t level = engine->getState().level;
+
+	wclear(stats_win);
+	mvwprintw(stats_win, 0, 0, "top score: %lld", top_score);
+	mvwprintw(stats_win, 1, 0, "score: %lld", score);
+	mvwprintw(stats_win, 2, 0, "lines: %ld", lines);
+	mvwprintw(stats_win, 4, 12, "level: %d", level);
+	wrefresh(stats_win);
+}
+
 void GameRenderer::blink() {
 	flash();
 }
@@ -216,6 +231,7 @@ void GameRenderer::initGameUI() {
 	wrefresh(title_win);
 
 	win_mgr->showBorder(GAME_WIN);
+	win_mgr->showBorder(STATS_WIN);
 }
 
 void GameRenderer::initSettingsUI() {

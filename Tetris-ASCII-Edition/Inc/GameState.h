@@ -16,6 +16,8 @@ public:
 	// game variables
 	uint8_t level;
 	uint64_t score;
+	uint64_t top_score;
+	uint16_t lines;
 
 	std::array<char, BOARD_W * BOARD_H> board;
 	Tetromino active_piece;
@@ -23,13 +25,16 @@ public:
 
 	// initial conditions
 	GameState(const GameSettings& cfg) {
-		running = false;
-		stop_flag = false;
-		score = 0;
-		tick = 1;
-		board.fill('.');
-
 		level = cfg.start_level;
 		ascii_mode = cfg.ascii_mode;
+
+		board.fill('.');
+		tick = 1;
+		running = false;
+		stop_flag = false;
+
+		top_score = 694202137;
+		score = 0;
+		lines = 0;
 	}
 };

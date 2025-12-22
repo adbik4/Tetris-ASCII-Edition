@@ -98,10 +98,47 @@ void GameEngine::update() {
 				active_piece.soft_drop(board);
 			}
 
-			// generate a new piece if needed
 			if (active_piece.get_piece_id() == NULL) {
+				// generate a new piece if needed
 				active_piece.next_piece(rng);
 				ghost_piece.set_piece_id( active_piece.get_piece_id() );
+
+				// also, since the last piece has just been merged, check for filled lines
+				// for line in board
+				// if it's full: 
+				// clear line
+				// give points
+				// flash screen
+				// wait for 1s
+				// fill in the blanks
+	
+				bool is_full;
+				uint8_t fill_count{ 0 };
+
+				for (uint8_t row = 0; row < BOARD_H; row++) {
+					is_full = true;
+
+					// check line
+					for (uint8_t col = 0; col < BOARD_W; col++) {
+						if (SAMPLE_BOARD(board, col, row) == '.') {
+							is_full = false;
+						}
+					}
+
+					//clear line
+					if (is_full) {
+						fill_count++;
+						for (uint8_t i = 0; i < BOARD_W; i++) {
+							SAMPLE_BOARD(board, i, row) = '.';
+						}
+					}
+				}
+
+				if (fill_count) {
+					//increment points
+					state->score += SCORE_DEF[fill_count] * (static_cast<uint64_t>((floor(state->level / 2.0))) + 1);
+					renderer->blink();
+				}
 			}
 
 			// refresh the ghost piece
@@ -113,6 +150,7 @@ void GameEngine::update() {
 
 		// ==== RENDER OUTPUT ====
 		renderer->renderFrame();
+		renderer->refreshGameUI();
 	}
 	catch (const std::exception& err) {
 		string message = string("[DEBUG]: ") + err.what() + "\n";

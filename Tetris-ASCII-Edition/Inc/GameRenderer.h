@@ -29,6 +29,7 @@ public:
 
 	// graphics
 	void renderFrame();
+	void refreshGameUI();
 	void blink();
 
 	// utility

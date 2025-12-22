@@ -50,7 +50,7 @@ WINDOW* WindowManager::makeMenuWindow() {
 	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
 
-	width = BOARD_W * 2;
+	width = UI_UNIT_W * 2;
 	height = 5;
 	voffset = 7;
 
@@ -67,7 +67,7 @@ WINDOW* WindowManager::makeInputWindow() {
 	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
 
-	width = BOARD_W * 2;
+	width = UI_UNIT_W * 2;
 	height = 2;
 	voffset = 11;
 
@@ -109,6 +109,22 @@ WINDOW* WindowManager::makeErrorWindow() {
 	height = 1;
 	starty = 1;
 	startx = 1;
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+	return window;
+}
+
+WINDOW* WindowManager::makeStatsWindow() {
+	int width, height, starty, startx, lines, cols, voffset, hoffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = UI_UNIT_W * 2 + 2;
+	height = 5;
+	voffset = -5;
+	hoffset = 26;
+
+	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
+	startx = hoffset + (cols - width) / 2;				/* of the window		*/
 
 	WINDOW* window = createNewWindow(height, width, starty, startx);
 	return window;
@@ -181,6 +197,9 @@ WINDOW* WindowManager::getWindow(const int& win_id) {
 		break;
 	case TITLE_WIN:
 		return title_win;
+		break;
+	case STATS_WIN:
+		return stats_win;
 		break;
 	case GLOBAL:
 		return stdscr;

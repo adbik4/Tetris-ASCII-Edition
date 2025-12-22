@@ -30,4 +30,5 @@ static const int SCORE_DEF[5] = { 1, 100, 400, 900, 2000 };
 struct GameSettings {
 	uint8_t start_level = 1;
 	bool ascii_mode = false;
+	bool flash_on_clear = true;
 };

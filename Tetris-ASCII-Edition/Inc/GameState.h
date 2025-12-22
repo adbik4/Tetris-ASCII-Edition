@@ -11,8 +11,9 @@ public:
 	bool running;			// used to check if the engine systems are running
 	bool stop_flag;			// triggers the app shutdown
 	bool ascii_mode;		// controls the rendering mode
+	bool flash_on_clear;	// decides if the screen should flash after a line clear
 	uint64_t tick;			// stores the current tick no
-	uint64_t wait_until;		// used for in-game delays
+	uint64_t wait_until;	// used for in-game delays
 
 	// game variables
 	uint8_t level;
@@ -28,6 +29,7 @@ public:
 	GameState(const GameSettings& cfg) {
 		level = cfg.start_level;
 		ascii_mode = cfg.ascii_mode;
+		flash_on_clear = cfg.flash_on_clear;
 
 		board.fill('.');
 		tick = 1;

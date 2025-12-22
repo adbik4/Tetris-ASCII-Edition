@@ -184,8 +184,22 @@ void GameRenderer::refreshGameUI() {
 	wrefresh(stats_win);
 }
 
-void GameRenderer::blink() {
-	flash();
+void GameRenderer::clearEffect(vector<uint8_t> lines, uint16_t score) {
+	// generate padding for centering
+	array<char, BOARD_W - 2> pad;
+
+	fill(begin(pad), end(pad), ' ');
+	pad[BOARD_W - 3] = '\0';
+	
+	for (auto idx : lines) {
+		mvwprintw(game_win, idx, 0, "%s+%u%s", pad.data(), score, pad.data());
+	}
+
+	wrefresh(game_win);
+
+	if (engine->getState().flash_on_clear) {
+		flash();
+	}
 }
 
 // UTILITY ----

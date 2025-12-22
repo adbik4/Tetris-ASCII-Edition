@@ -108,10 +108,10 @@ void GameEngine::update() {
 				// also, since the last piece has just been merged...
 
 				bool is_full;
-				vector<uint8_t> cleared;
+				vector<uint8_t> lines_cleared;
 
 				// for each line in the board
-				// in reverse order so elements in the cleared vector are in the right order
+				// in reverse order so elements in the lines_cleared vector are in the right order
 				for (int8_t row = BOARD_H - 1; row >= 0; row--) {
 					is_full = true;
 
@@ -124,27 +124,26 @@ void GameEngine::update() {
 
 					//clear line
 					if (is_full) {
-						cleared.push_back(row);
+						lines_cleared.push_back(row);
 						for (uint8_t i = 0; i < BOARD_W; i++) {
 							SAMPLE_BOARD(board, i, row) = '.';
 						}
 					}
 				}
 
-				if (cleared.size() != 0) {
+				if (lines_cleared.size() != 0) {
 					// assign points for clearing
-					state->score += SCORE_DEF[cleared.size()] * score_mult;
-					state->lines += (uint16_t)cleared.size();
-
-					renderer->blink();
-					
-					renderer->renderFrame();
+					uint16_t score = SCORE_DEF[lines_cleared.size()] * score_mult;
+					state->score += score;
+					state->lines += (uint16_t)lines_cleared.size();
+											
+					renderer->clearEffect(lines_cleared, score);
 					this_thread::sleep_for(chrono::milliseconds(500));
 
 					// fill in the blanks by shifting down the upper portion of the board
-					// starting from the cleared line
+					// starting from the lines_cleared line
 					int8_t move_count{ 0 };
-					for (auto start_idx : cleared) {
+					for (auto start_idx : lines_cleared) {
 						for (int8_t row = start_idx + move_count; row > 0; row--) {
 							for (uint8_t col = 0; col < BOARD_W; col++) {
 								SAMPLE_BOARD(board, col, row) = SAMPLE_BOARD(board, col, row - 1); // move down

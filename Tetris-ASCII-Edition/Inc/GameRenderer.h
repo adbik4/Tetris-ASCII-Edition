@@ -30,7 +30,7 @@ public:
 	// graphics
 	void renderFrame();
 	void refreshGameUI();
-	void blink();
+	void clearEffect(vector<uint8_t> lines, uint16_t score);
 
 	// utility
 	void windowPrint(const int& win_id, const string& str);

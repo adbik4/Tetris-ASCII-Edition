@@ -80,10 +80,11 @@ void Tetromino::soft_drop(span<char> board) {
 		fall_dist++;
 	}
 
+	fall_dist++;
 	y_pos++;
 	if (isInvalidPosition(board)) {
 		y_pos--;
-		fall_dist -= (fall_dist > 0) ? 1 : 0;
+		fall_dist -= (fall_dist > 0) ? 2 : 1;
 		merge_piece(board);
 	}
 }

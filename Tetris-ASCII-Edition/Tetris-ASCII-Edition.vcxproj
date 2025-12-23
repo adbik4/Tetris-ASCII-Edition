@@ -111,6 +111,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <EnableModules>false</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,7 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameLogic.cpp" />
+    <ClCompile Include="Src\GameLogic.cpp" />
     <ClCompile Include="Src\Tetromino.cpp" />
     <ClCompile Include="Src\WindowManager.cpp" />
     <ClCompile Include="Src\GameRenderer.cpp" />
@@ -146,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\Constants.h" />
+    <ClInclude Include="Inc\Settings.h" />
     <ClInclude Include="Inc\Tetromino.h" />
     <ClInclude Include="Inc\WindowManager.h" />
     <ClInclude Include="Inc\GameRenderer.h" />
@@ -155,7 +157,15 @@
     <ClInclude Include="Inc\GameState.h" />
     <ClInclude Include="Inc\TimeManager.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="save_state.json" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

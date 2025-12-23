@@ -1,30 +1,48 @@
 #include <memory>
 #include <iostream>
 #include <stdexcept>
+#include <fstream>
 
+#include "nlohmann/json.hpp"
 #include "Constants.h"
 #include "GameEngine.h"
 #include "InputManager.h"
 #include "TimeManager.h"
 #include "GameRenderer.h"
 #include "WindowManager.h"
+#include <Settings.h>
 
 using namespace std;
+using json = nlohmann::json;
 
 // TODO: create a wrapper for a WINDOW* (make it a shared_ptr)
 
 int main()
 {
-    shared_ptr<WindowManager> win_mgr;
+    // load the save file
+    GameSettings cfg;
+    ifstream f("save_state.json");
+    if (f.is_open()) {
+        try {
+            json data = json::parse(f);
+            cfg = data;
+        }
+        catch (const json::parse_error& err) {
+            cout << "The save file couldn't be parsed - loading defaults:\n\n";
+            cout << err.what() << "\n\npress [enter] to continue";
+            cin.get();
+        }
+        catch (const json::type_error& err) {
+            cout << "The save file contains invalid data\n\n";
+            cout << err.what() << "\n\npress [enter] to continue";
+            cin.get();
+        }
+    }
 
-    struct GameSettings cfg;
-    cfg.start_level = 1;
-    cfg.ascii_mode = false;
-
-    // Inititialises everything safely and in the right order
+    // Inititialise everything safely and in the right order
     shared_ptr<GameEngine> engine = make_shared<GameEngine>(cfg);
     
-    win_mgr = make_shared<WindowManager>();
+    auto win_mgr = make_shared<WindowManager>();
 
     auto gr = make_unique<GameRenderer>(engine, win_mgr);
     auto im = make_unique<InputManager>(engine, win_mgr);

@@ -4,6 +4,7 @@
 #include <memory>
 #include "Tetromino.h"
 #include "Constants.h"
+#include "Settings.h"
 
 class GameState {
 public:
@@ -33,6 +34,14 @@ public:
 		ascii_mode = cfg.ascii_mode;
 		flash_on_clear = cfg.flash_on_clear;
 		pure_randomness = cfg.pure_randomness;
+		hi_score = cfg.hi_score;
+
+		if (cfg.hi_score > UINT64_MAX) {
+			hi_score = 0;
+		}
+		if (cfg.start_level > MAX_LEVEL) {
+			level = MAX_LEVEL;
+		}
 
 		board.fill('.');
 		tick = 1;
@@ -40,9 +49,8 @@ public:
 		wait_until = 0;
 		stop_flag = false;
 
-		hi_score = 4202137;
 		score = 0;
 		lines = 0;
-		line_goal = 10*level;
+		line_goal = 10 * level;
 	}
 };

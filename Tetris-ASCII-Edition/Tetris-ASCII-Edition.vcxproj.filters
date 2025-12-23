@@ -36,6 +36,9 @@
     <ClCompile Include="Src\Tetromino.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameLogic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\GameEngine.h">

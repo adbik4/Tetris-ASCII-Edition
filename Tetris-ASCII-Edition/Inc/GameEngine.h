@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <random>
+#include <queue>
 #include "Events.h"
 #include "GameState.h"
 #include "GameRenderer.h"
@@ -33,12 +34,29 @@ private:
 	unique_ptr<InputManager> input_mgr;
 
 	unique_ptr<GameState> state;
+
 	mt19937 rng;
+	array<uint8_t, 35> piece_bag;
+	deque<uint8_t> history;
+	deque<uint8_t> drought_history;
 
 public:
 	GameEngine(const GameSettings& cfg) { 
 		state = make_unique<GameState>(cfg);
+
+		// initialise the randomness source
 		rng = mt19937((uint8_t)chrono::system_clock::now().time_since_epoch().count());
+
+		// intitialise the history
+		history = { 5, 6, 5 };
+		history.push_front(static_cast<uint8_t>(uniform_int_distribution<int16_t>(1, 7)(rng)));
+
+		// initialise the piece pool
+		uint8_t start_idx;
+		for (auto p = 1;p <= 7; p++) {
+			start_idx = (p - 1) * 5;
+			fill(piece_bag.begin() + start_idx, piece_bag.begin() + start_idx + 5, p);
+		}
 	};
 
 	void setTimeManager(unique_ptr<TimeManager> ptr) { time_mgr = move(ptr); }
@@ -50,7 +68,11 @@ public:
 	void update();
 	void stopEngine();
 
-	void nextLevel();
+	void inputHandling();
+	void gameLogic();
+	
+	uint8_t TGM3_randomizer();
+	uint8_t pure_randomizer();
 
 	GameState getState() const { return *(state.get()); }
 };

@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="Src\Tetromino.cpp" />
     <ClCompile Include="Src\WindowManager.cpp" />
     <ClCompile Include="Src\GameRenderer.cpp" />

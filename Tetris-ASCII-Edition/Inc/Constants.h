@@ -31,4 +31,5 @@ struct GameSettings {
 	uint8_t start_level = 1;
 	bool ascii_mode = false;
 	bool flash_on_clear = true;
+	bool pure_randomness = false;
 };

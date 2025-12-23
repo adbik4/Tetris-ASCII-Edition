@@ -171,13 +171,13 @@ void GameRenderer::render_piece(const uint8_t x, const uint8_t y, const char for
 
 void GameRenderer::refreshGameUI() {
 	WINDOW* stats_win = win_mgr->getWindow(STATS_WIN);
-	uint64_t top_score = engine->getState().top_score;
+	uint64_t hi_score = engine->getState().hi_score;
 	uint64_t score = engine->getState().score;
 	uint16_t lines = engine->getState().lines;
 	uint8_t level = engine->getState().level;
 
 	wclear(stats_win);
-	mvwprintw(stats_win, 0, 0, "top score: %lld", top_score);
+	mvwprintw(stats_win, 0, 0, "high score: %lld", hi_score);
 	mvwprintw(stats_win, 1, 0, "score: %lld", score);
 	mvwprintw(stats_win, 2, 0, "lines: %ld", lines);
 	mvwprintw(stats_win, 4, 12, "level: %d", level);
@@ -186,10 +186,10 @@ void GameRenderer::refreshGameUI() {
 
 void GameRenderer::clearEffect(vector<uint8_t> lines, uint16_t score) {
 	// generate padding for centering
-	array<char, BOARD_W - 2> pad;
+	array<char, BOARD_W - 1> pad;
 
 	fill(begin(pad), end(pad), ' ');
-	pad[BOARD_W - 3] = '\0';
+	pad[BOARD_W - 2] = '\0';
 	
 	for (auto idx : lines) {
 		mvwprintw(game_win, idx, 0, "%s+%u%s", pad.data(), score, pad.data());

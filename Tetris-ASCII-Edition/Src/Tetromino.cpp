@@ -3,9 +3,8 @@
 
 using namespace std;
 
-void Tetromino::next_piece(mt19937& rng) {
-	uniform_int_distribution<int16_t> piece_distr(1, TETROMINO_COUNT);
-	piece_id = static_cast<int8_t>(piece_distr(rng));
+void Tetromino::piece_setup(uint8_t random_id) {
+	piece_id = random_id;
 	is_falling = false;
 	fall_dist = 0;
 

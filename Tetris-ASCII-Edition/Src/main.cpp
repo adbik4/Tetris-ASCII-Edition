@@ -15,12 +15,11 @@
 using namespace std;
 using json = nlohmann::json;
 
-// TODO: create a wrapper for a WINDOW* (make it a shared_ptr)
-
 int main()
 {
     // load the save file
     GameSettings cfg;
+
     ifstream f("save_state.json");
     if (f.is_open()) {
         try {
@@ -38,6 +37,7 @@ int main()
             cin.get();
         }
     }
+    f.close();
 
     // Inititialise everything safely and in the right order
     shared_ptr<GameEngine> engine = make_shared<GameEngine>(cfg);
@@ -60,4 +60,24 @@ int main()
     }
 
     engine->stopEngine();
+
+    // write to the save file
+    json data;
+    ofstream of("save_state.json");
+    if (of.is_open()) {
+        data["hi_score"] = engine->getState().hi_score;
+        data["start_level"] = engine->getState().start_level;
+        data["ascii_mode"] = engine->getState().ascii_mode;
+        data["flash_on_clear"] = engine->getState().flash_on_clear;
+        data["pure_randomness"] = engine->getState().pure_randomness;
+
+        of << setw(4) << data << endl;
+    }
+    else {
+        // for debug only
+        cout << "Couldn't save - your settings will be lost\n\n";
+        this_thread::sleep_for(chrono::seconds(1));
+    }
+
+    of.close();
 }

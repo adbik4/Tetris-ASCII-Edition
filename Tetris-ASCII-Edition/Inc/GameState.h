@@ -13,7 +13,8 @@ public:
 	bool stop_flag;			// triggers the app shutdown
 	bool ascii_mode;		// controls the rendering mode
 	bool flash_on_clear;	// decides if the screen should flash after a line clear
-	bool pure_randomness;
+	bool pure_randomness;	// decides how the pieces are randomized
+	uint8_t start_level;	// stores the start_level setting
 	uint64_t tick;			// stores the current tick no
 	uint64_t wait_until;	// used for in-game delays
 
@@ -30,7 +31,7 @@ public:
 
 	// initial conditions
 	GameState(const GameSettings& cfg) {
-		level = cfg.start_level;
+		start_level = level = cfg.start_level;
 		ascii_mode = cfg.ascii_mode;
 		flash_on_clear = cfg.flash_on_clear;
 		pure_randomness = cfg.pure_randomness;

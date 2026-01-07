@@ -59,24 +59,11 @@ void GameEngine::update() {
 		renderer->refreshGameUI();
 	}
 	catch (const std::exception& err) {
-		string message = string("[DEBUG]: ") + err.what() + "\n";
+		string message = string("[DEBUG]: ") + err.what() + ". Press [any key] to continue";
 		renderer->errPrint(message);
-		while (true) {};
-	}
-}
-
-void GameEngine::stopEngine() {
-	if (!state->stop_flag) {
+		input_mgr->waitForAnyKey();
 		state->stop_flag = true;
-		return;
 	}
-	else if (!state->running) {
-		return;
-	}
-
-	state->running = false;
-	renderer->showEndScreen();
-	time_mgr->stopClock();
 }
 
 // This function conducts the main mediation logic
@@ -184,4 +171,18 @@ uint8_t GameEngine::TGM3_randomizer() {
 // Returns a purely random piece without messing around
 uint8_t GameEngine::pure_randomizer() {
 	return static_cast<uint8_t>(uniform_int_distribution<int16_t>(1, 7)(rng));
+}
+
+
+void GameEngine::stopEngine() {
+	if (!state->stop_flag) {
+		state->stop_flag = true;
+		return;
+	}
+	else if (!state->running) {
+		return;
+	}
+
+	state->running = false;
+	time_mgr->stopClock();
 }

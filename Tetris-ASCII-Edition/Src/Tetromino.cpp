@@ -107,7 +107,7 @@ void Tetromino::merge_piece(span<char> board) {
 		for (int8_t x = 0; x < TETROMINO_W; x++) {
 			char tile = realize_piece(x, y);
 			if (tile != '.') {
-						SAMPLE_BOARD(board, x_pos + x, y_pos + y) = tile;
+				SAMPLE_BOARD(board, x_pos + x, y_pos + y) = tile;
 			}
 		}
 	}

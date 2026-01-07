@@ -12,4 +12,5 @@ public:
 
 	int getKeyboardInput(const uint8_t win_id);
 	int getIntInput(const tuple<int, int>& bounds);
+	int waitForAnyKey();
 };

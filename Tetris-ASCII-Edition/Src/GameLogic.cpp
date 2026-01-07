@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include "SaveSystem.h"
 
 void GameEngine::gameLogic() {
 	// create refs for easier access
@@ -95,10 +96,15 @@ void GameEngine::gameLogic() {
 
 	// check for game over
 
-	// the ghost piece is overlapping with the start position
-	if (ghost_piece.y_pos < TETROMINO_W) {
+	// vertical out of bounds
+	if (active_piece.y_pos < 0) {
+		gameOver();
+	}
+	else if (ghost_piece.y_pos < TETROMINO_W) {
+		// check if the ghost piece is overlapping with the start position
 		char active_tile;
 		char ghost_tile;
+		bool game_over = false;
 
 		// for each overlapping tile pair
 		for (int8_t y = 0; y < TETROMINO_W - ghost_piece.y_pos; y++) {
@@ -107,18 +113,39 @@ void GameEngine::gameLogic() {
 				active_tile = active_piece.realize_piece(x, y + ghost_piece.y_pos);
 
 				if (active_tile != '.' && ghost_tile != '.') {
-					// game over
-					throw std::runtime_error("GAME OVER");
+					gameOver();
+					game_over = true;
+					break;
 				}
+			}
+
+			if (game_over) {
+				break;
 			}
 		}
 	}
-
-	// the top row has something in it
-	for (uint8_t col = 0; col < BOARD_W; col++) {
-		if (SAMPLE_BOARD(board, col, 0) != '.') {
-			// game over
-			throw std::runtime_error("GAME OVER");
+	else {
+		// check if the top row has something in it
+		for (uint8_t col = 0; col < BOARD_W; col++) {
+			if (SAMPLE_BOARD(board, col, 0) != '.') {
+				gameOver();
+			}
 		}
 	}
+}
+
+void GameEngine::gameOver() {
+	if (state->score > state->hi_score) {
+		state->hi_score = state->score;
+	}
+
+	renderer->showEndScreen(this->getState());
+	int k_input = input_mgr->waitForAnyKey();
+
+	switch (k_input) {
+		case 27: // ESC
+			state->stop_flag = true;
+		}
+
+	//restartGame();
 }

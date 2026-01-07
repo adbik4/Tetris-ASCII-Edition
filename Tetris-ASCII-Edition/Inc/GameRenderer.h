@@ -38,7 +38,7 @@ public:
 	void showMenu();
 	void initGameUI();
 	void initSettingsUI();
-	void showEndScreen();
+	void showEndScreen(const GameState& state);
 };
 
 inline constexpr array<char, 1507> title_art {

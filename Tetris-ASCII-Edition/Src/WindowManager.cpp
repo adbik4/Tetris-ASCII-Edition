@@ -25,7 +25,6 @@ void WindowManager::initTerm() {
 }
 
 void WindowManager::deinitTerm() {
-	this_thread::sleep_for(chrono::seconds(1));
 	endwin();
 }
 

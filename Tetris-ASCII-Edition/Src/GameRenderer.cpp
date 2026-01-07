@@ -253,6 +253,16 @@ void GameRenderer::initSettingsUI() {
 	win_mgr->clearContents(INPUT_WIN);
 }
 
-void GameRenderer::showEndScreen() {
-	windowPrint(MAIN_MENU, "Exiting the game...\n");
+void GameRenderer::showEndScreen(const GameState& state) {
+	win_mgr->clearContents(GAME_WIN);
+	windowPrint(GAME_WIN, "GAME OVER.\n");
+	if (state.level == state.hi_score) {
+		windowPrint(GAME_WIN, "\n!!!NEW HIGH SCORE!!!\n");
+	}
+
+	windowPrint(GAME_WIN, "score: " + to_string(state.score) + "\n");
+	windowPrint(GAME_WIN, "level reached: " + to_string(state.level) + "\n");
+	windowPrint(GAME_WIN, "lines cleared: " + to_string(state.lines) + "\n");
+	windowPrint(GAME_WIN, "\nPress [any key]\nto start new game\n");
+	windowPrint(GAME_WIN, "\nOr [ESC] to quit\n");
 }

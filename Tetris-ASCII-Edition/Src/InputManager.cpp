@@ -40,3 +40,14 @@ int InputManager::getIntInput(const tuple<int, int>& bounds = {INT_MIN, INT_MAX}
         win_mgr->clearContents(INPUT_WIN);
 	}
 }
+
+int InputManager::waitForAnyKey() {
+    WINDOW* local_win = win_mgr->getWindow(ERR_WIN);
+    
+    keypad(local_win, TRUE); // Enable arrow keys
+    nodelay(local_win, FALSE); // Disable non-blocking input
+    int input = wgetch(local_win);
+    nodelay(local_win, TRUE);
+    keypad(local_win, FALSE);
+    return input;
+}

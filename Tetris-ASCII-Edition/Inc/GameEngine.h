@@ -70,6 +70,8 @@ public:
 
 	void inputHandling();
 	void gameLogic();
+	void gameOver();
+	void restartGame();
 	
 	uint8_t TGM3_randomizer();
 	uint8_t pure_randomizer();

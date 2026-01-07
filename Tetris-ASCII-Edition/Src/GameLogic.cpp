@@ -36,7 +36,7 @@ void GameEngine::gameLogic() {
 			random_id = TGM3_randomizer();
 		}
 
-		active_piece.piece_setup(random_id);
+		active_piece.reset(random_id);
 		ghost_piece.set_piece_id(random_id);
 
 		// also, since the last piece has just been merged...
@@ -135,11 +135,29 @@ void GameEngine::gameLogic() {
 }
 
 void GameEngine::gameOver() {
+	if (state->stop_flag) {
+		return;
+	}
 	if (state->score > state->hi_score) {
 		state->hi_score = state->score;
 	}
 
-	renderer->showEndScreen(this->getState());
+	renderer->renderFrame();
+
+	saveState(getState());
+	if (state->flash_on_clear) {
+		for (auto i = 0; i < 3; i++) {
+			this_thread::sleep_for(chrono::milliseconds(100));
+			flash();
+		}
+	}
+	else {
+		this_thread::sleep_for(chrono::milliseconds(300));
+	}
+	
+
+
+	renderer->showEndScreen(getState());
 	int k_input = input_mgr->waitForAnyKey();
 
 	switch (k_input) {
@@ -147,5 +165,5 @@ void GameEngine::gameOver() {
 			state->stop_flag = true;
 		}
 
-	//restartGame();
+	restartGame();
 }

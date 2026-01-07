@@ -3,8 +3,8 @@
 
 using namespace std;
 
-void Tetromino::piece_setup(uint8_t random_id) {
-	piece_id = random_id;
+void Tetromino::reset(uint8_t random_id) {
+	set_piece_id(random_id);
 	is_falling = false;
 	fall_dist = 0;
 

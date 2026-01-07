@@ -312,14 +312,18 @@ void GameRenderer::showEndScreen(const GameState& state) {
 	}
 
 	win_mgr->clearContents(GAME_WIN);
-	windowPrint(GAME_WIN, "GAME OVER.\n");
-	if (state.level == state.hi_score) {
-		windowPrint(GAME_WIN, "\n!!!NEW HIGH SCORE!!!\n");
+	if (state.score == state.hi_score) {
+		windowPrint(GAME_WIN, "!!!NEW HIGH SCORE!!!\n");
+	}
+	else {
+		windowPrint(GAME_WIN, "GAME OVER.\n");
 	}
 
 	windowPrint(GAME_WIN, "score: " + to_string(state.score) + "\n");
-	windowPrint(GAME_WIN, "level reached: " + to_string(state.level) + "\n");
 	windowPrint(GAME_WIN, "lines cleared: " + to_string(state.lines) + "\n");
+	windowPrint(GAME_WIN, "level reached: " + to_string(state.level) + "\n");
 	windowPrint(GAME_WIN, "\nPress [any key]\nto start new game\n");
-	windowPrint(GAME_WIN, "\nOr [ESC] to quit\n");
+	windowPrint(GAME_WIN, "\nor [ESC] to quit\n");
+
+	this_thread::sleep_for(chrono::milliseconds(1500));
 }

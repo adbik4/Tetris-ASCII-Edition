@@ -54,4 +54,18 @@ public:
 		lines = 0;
 		line_goal = 10 * level;
 	}
+
+	void reset() {
+		level = start_level;
+
+		board.fill('.');
+		tick = 1;
+		running = false;
+		wait_until = 0;
+		stop_flag = false;
+
+		score = 0;
+		lines = 0;
+		line_goal = 10 * level;
+	}
 };

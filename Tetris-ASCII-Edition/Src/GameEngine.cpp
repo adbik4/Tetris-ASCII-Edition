@@ -66,6 +66,11 @@ void GameEngine::update() {
 	}
 }
 
+void GameEngine::restartGame() {
+	state->reset();
+	state->active_piece = Tetromino();
+}
+
 // This function conducts the main mediation logic
 void GameEngine::notify (const Event& event) {
 	switch (event.id) {

@@ -25,7 +25,7 @@ public:
 
 	Tetromino() : is_falling(false), fall_dist(0), piece_id(NULL), curr_rotation(NULL), x_pos((int8_t)BOARD_W / 2 - 2), y_pos(0) {};
 
-	void piece_setup(uint8_t random_id);
+	void reset(uint8_t random_id);
 	void rotateR(span<const char> board);
 	void rotateL(span<const char> board);
 	void moveR(span<const char> board);
@@ -46,10 +46,10 @@ public:
 
 inline constexpr array<char, TETROMINO_SIZE * TETROMINO_COUNT + 1> tetrominoLUT {
 	// id: 1
-		"..@."
-		"..@."
-		"..@."
-		"..@."
+		"...."
+		"@@@@"
+		"...."
+		"...."
 	// id: 2
 		"...."
 		"...#"

@@ -127,7 +127,7 @@ void GameEngine::inputHandling() {
 		break;
 
 	case 27: // ESC
-		stopEngine();
+		gameOver();
 	}
 }
 

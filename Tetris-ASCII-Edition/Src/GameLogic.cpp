@@ -142,9 +142,9 @@ void GameEngine::gameOver() {
 		state->hi_score = state->score;
 	}
 
-	renderer->renderFrame();
-
 	saveState(getState());
+
+	renderer->renderFrame();
 	if (state->flash_on_clear) {
 		for (auto i = 0; i < 3; i++) {
 			this_thread::sleep_for(chrono::milliseconds(100));
@@ -154,8 +154,6 @@ void GameEngine::gameOver() {
 	else {
 		this_thread::sleep_for(chrono::milliseconds(300));
 	}
-	
-
 
 	renderer->showEndScreen(getState());
 	int k_input = input_mgr->waitForAnyKey();

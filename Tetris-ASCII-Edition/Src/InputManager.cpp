@@ -7,12 +7,23 @@
 using namespace std;
 
 int InputManager::getKeyboardInput(const uint8_t win_id) {
+    auto win_mgr = wm.lock();
+    if (!win_mgr) {
+        return -1;
+    }
+
     WINDOW* local_win = win_mgr->getWindow(win_id);
     return wgetch(local_win);
 }
 
 // Returns user input between valid bounds from a to b
 int InputManager::getIntInput(const tuple<int, int>& bounds = {INT_MIN, INT_MAX}) {
+    auto engine = eng.lock();
+    auto win_mgr = wm.lock();
+    if (!engine || !win_mgr) {
+        return -1;
+    }
+
     char buf[16];
     Event err(EventId::INPUT_ERR, { 0, 0 });
 
@@ -42,6 +53,11 @@ int InputManager::getIntInput(const tuple<int, int>& bounds = {INT_MIN, INT_MAX}
 }
 
 int InputManager::waitForAnyKey() {
+    auto win_mgr = wm.lock();
+    if (!win_mgr) {
+        return -1;
+    }
+
     WINDOW* local_win = win_mgr->getWindow(ERR_WIN);
     
     keypad(local_win, TRUE); // Enable arrow keys

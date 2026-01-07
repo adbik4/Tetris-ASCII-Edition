@@ -7,6 +7,11 @@
 using namespace std;
 
 void GameRenderer::renderFrame() {
+	auto engine = eng.lock();
+	if (!engine) {
+		return;
+	}
+
 	wclear(game_win); // clear the screen
 
 	// 1st pass - board
@@ -36,6 +41,11 @@ void GameRenderer::renderFrame() {
 }
 
 void GameRenderer::render_tile(const char tile) {
+	auto engine = eng.lock();
+	if (!engine) {
+		return;
+	}
+
 	char block[3] = { ' ', ' ', '\0' };
 
 	if (engine->getState().ascii_mode) {
@@ -88,6 +98,11 @@ void GameRenderer::render_tile(const char tile) {
 }
 
 void GameRenderer::render_piece(const uint8_t x, const uint8_t y, const char force_tile) {
+	auto engine = eng.lock();
+	if (!engine) {
+		return;
+	}
+
 	char tile = engine->getState().active_piece.realize_piece(x, y);
 	int8_t x_pos, y_pos;
 	char block[3] = {' ', ' ', '\0'};
@@ -170,6 +185,12 @@ void GameRenderer::render_piece(const uint8_t x, const uint8_t y, const char for
 }
 
 void GameRenderer::refreshGameUI() {
+	auto engine = eng.lock();
+	auto win_mgr = wm.lock();
+	if (!engine || !win_mgr) {
+		return;
+	}
+	
 	WINDOW* stats_win = win_mgr->getWindow(STATS_WIN);
 	uint64_t hi_score = engine->getState().hi_score;
 	uint64_t score = engine->getState().score;
@@ -185,6 +206,11 @@ void GameRenderer::refreshGameUI() {
 }
 
 void GameRenderer::clearEffect(vector<uint8_t> lines, uint16_t score) {
+	auto engine = eng.lock();
+	if (!engine) {
+		return;
+	}
+
 	// generate padding for centering
 	array<char, BOARD_W - 1> pad;
 
@@ -204,6 +230,11 @@ void GameRenderer::clearEffect(vector<uint8_t> lines, uint16_t score) {
 
 // UTILITY ----
 void GameRenderer::windowPrint(const int& win_id, const string& str) {
+	auto win_mgr = wm.lock();
+	if (!win_mgr) {
+		return;
+	}
+
 	WINDOW* local_win = win_mgr->getWindow(win_id);
 
 	waddstr(local_win, str.c_str());
@@ -211,6 +242,11 @@ void GameRenderer::windowPrint(const int& win_id, const string& str) {
 }
 
 void GameRenderer::errPrint(const string& str) {
+	auto win_mgr = wm.lock();
+	if (!win_mgr) {
+		return;
+	}
+
 	WINDOW* err_win = win_mgr->getWindow(ERR_WIN);
 	win_mgr->clearContents(ERR_WIN);
 
@@ -219,6 +255,12 @@ void GameRenderer::errPrint(const string& str) {
 }
 
 void GameRenderer::showMenu() {
+	auto engine = eng.lock();
+	auto win_mgr = wm.lock();
+	if (!engine || !win_mgr) {
+		return;
+	}
+
 	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
 	waddnstr(title_win, title_art.data(), -1);
 	wrefresh(title_win);
@@ -237,6 +279,11 @@ void GameRenderer::showMenu() {
 }
 
 void GameRenderer::initGameUI() {
+	auto win_mgr = wm.lock();
+	if (!win_mgr) {
+		return;
+	}
+
 	win_mgr->clearWindow(MAIN_MENU);
 	win_mgr->clearWindow(INPUT_WIN);
 
@@ -249,11 +296,21 @@ void GameRenderer::initGameUI() {
 }
 
 void GameRenderer::initSettingsUI() {
+	auto win_mgr = wm.lock();
+	if (!win_mgr) {
+		return;
+	}
+
 	win_mgr->clearContents(MAIN_MENU);
 	win_mgr->clearContents(INPUT_WIN);
 }
 
 void GameRenderer::showEndScreen(const GameState& state) {
+	auto win_mgr = wm.lock();
+	if (!win_mgr) {
+		return;
+	}
+
 	win_mgr->clearContents(GAME_WIN);
 	windowPrint(GAME_WIN, "GAME OVER.\n");
 	if (state.level == state.hi_score) {

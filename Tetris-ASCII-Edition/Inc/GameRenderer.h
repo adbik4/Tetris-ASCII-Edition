@@ -10,10 +10,10 @@ class GameEngine;
 
 class GameRenderer {
 private:
-	shared_ptr<GameEngine> engine;
-	shared_ptr<WindowManager> win_mgr;
+	weak_ptr<GameEngine> eng;
+	weak_ptr<WindowManager> wm;
 
-	WINDOW* game_win = win_mgr->getWindow(GAME_WIN);		// a reference to the game window
+	WINDOW* game_win;		// a reference to the game window
 
 
 	void render_tile(const char tile);
@@ -21,9 +21,12 @@ private:
 
 public:
 	GameRenderer(const shared_ptr<GameEngine>& engine_ptr, const shared_ptr< WindowManager>& win_ptr) :
-		engine(engine_ptr),
-		win_mgr(win_ptr)
-	{}
+		eng(engine_ptr),
+		wm(win_ptr)
+	{
+		auto win_mgr = wm.lock();
+		game_win = win_mgr->getWindow(GAME_WIN);
+	}
 
 	~GameRenderer() {}
 

@@ -59,6 +59,9 @@ void GameEngine::update() {
 		renderer->refreshGameUI();
 	}
 	catch (const std::exception& err) {
+		if (err.what() == "<realize_piece> Tetromino tile index out of range") {
+			gameOver();
+		}
 		string message = string("[DEBUG]: ") + err.what() + ". Press [any key] to continue";
 		renderer->errPrint(message);
 		input_mgr->waitForAnyKey();
@@ -69,6 +72,7 @@ void GameEngine::update() {
 void GameEngine::restartGame() {
 	state->reset();
 	state->active_piece = Tetromino();
+	renderer->windowReset(GAME_WIN);
 }
 
 // This function conducts the main mediation logic

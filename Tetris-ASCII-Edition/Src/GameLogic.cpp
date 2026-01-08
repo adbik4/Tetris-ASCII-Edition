@@ -23,7 +23,7 @@ void GameEngine::gameLogic() {
 	}
 
 	if (active_piece.get_piece_id() == NULL) {
-		// assign points for hard-dropping
+		// assign points for dropping
 		uint8_t score_mult = static_cast<uint8_t>((floor(state->level / 2.0))) + 1;
 		state->score += active_piece.fall_dist * SCORE_DEF[0] * score_mult;
 
@@ -41,7 +41,8 @@ void GameEngine::gameLogic() {
 
 		// also, since the last piece has just been merged...
 
-		bool is_full;
+		bool is_full = true;
+		bool is_perfect_clear = true;
 		vector<uint8_t> lines_cleared;
 
 		// for each line in the board
@@ -53,6 +54,9 @@ void GameEngine::gameLogic() {
 			for (uint8_t col = 0; col < BOARD_W; col++) {
 				if (SAMPLE_BOARD(board, col, row) == '.') {
 					is_full = false;
+				}
+				else if (is_perfect_clear){
+					is_perfect_clear = false;
 				}
 			}
 
@@ -68,11 +72,23 @@ void GameEngine::gameLogic() {
 		if (lines_cleared.size() != 0) {
 			// assign points for clearing
 			uint16_t score = SCORE_DEF[lines_cleared.size()] * score_mult;
-			state->score += score;
-			state->lines += (uint16_t)lines_cleared.size();
 
-			renderer->clearEffect(lines_cleared, score);
-			this_thread::sleep_for(chrono::milliseconds(500));
+			if (!is_perfect_clear) {
+				state->score += score;
+				state->lines += (uint16_t)lines_cleared.size();
+
+				renderer->clearEffect(lines_cleared, score);
+				this_thread::sleep_for(chrono::milliseconds(500));
+			}
+			else {
+				renderer->windowPrintAtPos(GAME_WIN, 3, BOARD_H/2, "PERFECT CLEAR");
+				score *= 10;	// 10x multiplier
+				state->score += score;
+				for (auto i = 0; i < 5; i++) {
+					renderer->clearEffect(lines_cleared, score);
+					this_thread::sleep_for(chrono::milliseconds(100));
+				}
+			}
 
 			// fill in the blanks by shifting down the upper portion of the board
 			// starting from the lines_cleared line
@@ -101,7 +117,7 @@ void GameEngine::gameLogic() {
 		gameOver();
 	}
 	else if (ghost_piece.y_pos < TETROMINO_W) {
-		// check if the ghost piece is overlapping with the start position
+		/// check if the ghost piece is overlapping with the start position
 		char active_tile;
 		char ghost_tile;
 		bool game_over = false;
@@ -145,14 +161,9 @@ void GameEngine::gameOver() {
 	saveState(getState());
 
 	renderer->renderFrame();
-	if (state->flash_on_clear) {
-		for (auto i = 0; i < 3; i++) {
-			this_thread::sleep_for(chrono::milliseconds(100));
-			flash();
-		}
-	}
-	else {
-		this_thread::sleep_for(chrono::milliseconds(300));
+	for (auto i = 0; i < 3; i++) {
+		this_thread::sleep_for(chrono::milliseconds(100));
+		renderer->flashEffect();
 	}
 
 	renderer->showEndScreen(getState());

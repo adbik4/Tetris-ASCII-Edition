@@ -33,10 +33,13 @@ public:
 	// graphics
 	void renderFrame();
 	void refreshGameUI();
+	void flashEffect();
 	void clearEffect(vector<uint8_t> lines, uint16_t score);
 
 	// utility
 	void windowPrint(const int& win_id, const string& str);
+	void windowPrintAtPos(const int& win_id, const int& x, const int& y, const string& str);
+	void windowReset(const int& win_id);
 	void errPrint(const string& str);
 	void showMenu();
 	void initGameUI();

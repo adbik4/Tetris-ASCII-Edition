@@ -146,7 +146,7 @@ bool Tetromino::isInvalidPosition(span<const char> board) {
 
 const char Tetromino::realize_piece(const int8_t x, const int8_t y) {
 	if (x < 0 || y < 0 || x >= TETROMINO_W || y >= TETROMINO_W) {
-		throw std::out_of_range("<realize_piece> Tetromino tile index out of range");
+		return '.';
 	}
 	if (piece_id == NULL) {
 		throw std::runtime_error("<realize_piece> No tetromino is active");

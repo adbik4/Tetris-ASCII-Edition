@@ -205,6 +205,17 @@ void GameRenderer::refreshGameUI() {
 	wrefresh(stats_win);
 }
 
+void GameRenderer::flashEffect() {
+	auto engine = eng.lock();
+	if (!engine) {
+		return;
+	}
+
+	if (engine->getState().flash_on_clear) {
+		flash();
+	}
+}
+
 void GameRenderer::clearEffect(vector<uint8_t> lines, uint16_t score) {
 	auto engine = eng.lock();
 	if (!engine) {
@@ -223,9 +234,7 @@ void GameRenderer::clearEffect(vector<uint8_t> lines, uint16_t score) {
 
 	wrefresh(game_win);
 
-	if (engine->getState().flash_on_clear) {
-		flash();
-	}
+	flashEffect();
 }
 
 // UTILITY ----
@@ -241,6 +250,20 @@ void GameRenderer::windowPrint(const int& win_id, const string& str) {
 	wrefresh(local_win);
 }
 
+void GameRenderer::windowPrintAtPos(const int& win_id, const int& x, const int& y, const string& str) {
+	auto win_mgr = wm.lock();
+	if (!win_mgr) {
+		return;
+	}
+
+	WINDOW* local_win = win_mgr->getWindow(win_id);
+
+	if (mvwaddstr(local_win, y, x, str.c_str()) < 0) {
+		throw std::out_of_range("<windowPrintAtPos> out of bounds");
+	}
+	wrefresh(local_win);
+}
+
 void GameRenderer::errPrint(const string& str) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -252,6 +275,15 @@ void GameRenderer::errPrint(const string& str) {
 
 	waddstr(err_win, str.c_str());
 	wrefresh(err_win);
+}
+
+void GameRenderer::windowReset(const int& win_id) {
+	auto win_mgr = wm.lock();
+	if (!win_mgr) {
+		return;
+	}
+
+	win_mgr->clearContents(win_id);
 }
 
 void GameRenderer::showMenu() {

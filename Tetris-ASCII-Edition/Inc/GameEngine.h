@@ -68,8 +68,11 @@ public:
 	void update();
 	void stopEngine();
 
+	void gameLogic(const int& k_input);
+	void menuLogic(const int& k_input);
+	void settingsLogic(const int& k_input);
+
 	void inputHandling();
-	void gameLogic();
 	void gameOver();
 	void restartGame();
 	

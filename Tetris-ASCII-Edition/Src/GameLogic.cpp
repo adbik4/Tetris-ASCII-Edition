@@ -1,7 +1,47 @@
 #include "GameEngine.h"
-#include "SaveSystem.h"
 
-void GameEngine::gameLogic() {
+void GameEngine::gameLogic(const int& k_input) {
+	if (state->active_piece.is_falling) {
+		state->active_piece.soft_drop(state->board);
+		return;
+	}
+
+	// keyboard input
+	switch (k_input) {
+	case (int)'q':
+	case (int)'j':
+		state->active_piece.rotateL(state->board);
+		break;
+
+	case (int)'e':
+	case (int)'k':
+		state->active_piece.rotateR(state->board);
+		break;
+
+	case (int)'w':
+	case KEY_UP:
+		state->active_piece.hard_drop(state->board);
+		break;
+
+	case (int)'a':
+	case KEY_LEFT:
+		state->active_piece.moveL(state->board);
+		break;
+
+	case (int)'s':
+	case KEY_DOWN:
+		state->active_piece.soft_drop(state->board);
+		break;
+
+	case (int)'d':
+	case KEY_RIGHT:
+		state->active_piece.moveR(state->board);
+		break;
+
+	case 27: // ESC
+		gameOver();
+	}
+
 	// create refs for easier access
 	array<char, BOARD_W* BOARD_H>& board = state->board;
 	Tetromino& active_piece = state->active_piece;
@@ -150,29 +190,22 @@ void GameEngine::gameLogic() {
 	}
 }
 
-void GameEngine::gameOver() {
-	if (state->stop_flag) {
-		return;
-	}
-	if (state->score > state->hi_score) {
-		state->hi_score = state->score;
-	}
+void GameEngine::menuLogic(const int& k_input) {
+	//switch (int_input) {
+	//case 1:
+	//	renderer->initGameUI();
+	//	time_mgr->startClock();
+	//	break;
+	//case 2:
+	//	renderer->initSettingsUI();
+	//	renderer->windowPrint(MAIN_MENU, "SETTINGS\n");
+	//	break;
+	//case 3:
+	//	state->stop_flag = true;
+	//	break;
+	//}
+}
 
-	saveState(getState());
+void GameEngine::settingsLogic(const int& k_input) {
 
-	renderer->renderFrame();
-	for (auto i = 0; i < 3; i++) {
-		this_thread::sleep_for(chrono::milliseconds(100));
-		renderer->flashEffect();
-	}
-
-	renderer->showEndScreen(getState());
-	int k_input = input_mgr->waitForAnyKey();
-
-	switch (k_input) {
-		case 27: // ESC
-			state->stop_flag = true;
-		}
-
-	restartGame();
 }

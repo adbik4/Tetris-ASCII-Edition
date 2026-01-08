@@ -6,6 +6,10 @@
 #include "Constants.h"
 #include "Settings.h"
 
+#define GAME 0
+#define MENU 1
+#define SETTINGS 2
+
 class GameState {
 public:
 	// engine state
@@ -14,6 +18,8 @@ public:
 	bool ascii_mode;		// controls the rendering mode
 	bool flash_on_clear;	// decides if the screen should flash after a line clear
 	bool pure_randomness;	// decides how the pieces are randomized
+	uint8_t active_window;	// keeps track of the window the game is in
+	uint8_t active_label;	// keeps track of the label selected by the user
 	uint8_t start_level;	// stores the start_level setting
 	uint64_t tick;			// stores the current tick no
 	uint64_t wait_until;	// used for in-game delays
@@ -44,6 +50,8 @@ public:
 			level = MAX_LEVEL;
 		}
 
+		active_window = MENU;
+		active_label = 0;
 		board.fill('.');
 		tick = 1;
 		running = false;
@@ -56,6 +64,7 @@ public:
 	}
 
 	void reset() {
+		active_window = GAME;
 		level = start_level;
 
 		board.fill('.');

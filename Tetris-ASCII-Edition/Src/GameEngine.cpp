@@ -2,61 +2,76 @@
 #include <fstream>
 #include "GameEngine.h"
 #include "Tetromino.h"
+#include "SaveSystem.h"
 #include "nlohmann/json.hpp"
 
 using namespace std;
 using json = nlohmann::json;
 
-int int_input;
-
-void GameEngine::startEngine() {
-	state->running = true;
-
-	try {
-		renderer->showMenu();
-
-		switch (int_input) {
-		case 1:
-			renderer->initGameUI();
-			time_mgr->startClock();
-			break;
-		case 2:
-			renderer->initSettingsUI();
-			renderer->windowPrint(MAIN_MENU, "SETTINGS\n");
-			break;
-		case 3:
-			state->stop_flag = true;
-			break;
-		}
-	}
-	catch (const std::exception& err) {
-		string message = string("[DEBUG]: ") + err.what() + "\n";
-		renderer->errPrint(message);
-	}
-	catch (...) {
-      renderer->errPrint("[DEBUG]: Unknown exception\n");
+// This function conducts the main mediation logic
+void GameEngine::notify(const Event& event) {
+	switch (event.id) {
+	case EventId::CLK:
+		update();
+		state->tick++;
+		break;
+	case EventId::INPUT_ERR:
+		renderer->windowPrint(INPUT_WIN, "Invalid input\n");
+		break;
+	case EventId::INT_INPUT:
+		//int_input = input_mgr->getIntInput(event.args);
+		break;
+	case EventId::GENERAL_ERR:
+		renderer->errPrint("[DEBUG] an error has occured\n");
+		break;
+	default:
+		renderer->errPrint("[DEBUG] GameEngine has recieved an undefined event\n");
+		break;
 	}
 }
 
-uint8_t target_x = 255, target_y = 0;
+void GameEngine::startEngine() {
+	state->running = true;
+	renderer->showTitleScreen();
+	renderer->refreshMenuUI();
+}
 
 void GameEngine::update() {
-
 	try {
-		if (state->active_piece.is_falling) {
-			state->active_piece.soft_drop(state->board);
-		} 
-		else {
-			// ==== INPUT ====
-			inputHandling();
+		// ==== INPUT ====
+		int k_input = input_mgr->getKeyboardInput(GAME_WIN);
 
-			// ==== GAME LOGIC ====
-			gameLogic();
+		// ==== GAME LOGIC ====
+		switch (state->active_window) {
+			case GAME:
+				gameLogic(k_input);
+				break;
+			case MENU:
+				menuLogic(k_input);
+				break;
+			case SETTINGS:
+				settingsLogic(k_input);
+				break;
+			default:
+				throw std::domain_error("<update> unknown window state");
 		}
 
 		// ==== RENDER OUTPUT ====
-		renderer->renderFrame();
-		renderer->refreshGameUI();
+		switch (state->active_window) {
+		case GAME:
+			renderer->renderFrame();
+			renderer->refreshGameUI();
+			break;
+		case MENU:
+			renderer->refreshMenuUI();
+			break;
+		case SETTINGS:
+			renderer->refreshSettingsUI();
+			break;
+		default:
+			throw std::domain_error("<update> unknown window state");
+		}
+
 	}
 	catch (const std::exception& err) {
 		if (err.what() == "<realize_piece> Tetromino tile index out of range") {
@@ -75,64 +90,32 @@ void GameEngine::restartGame() {
 	renderer->windowReset(GAME_WIN);
 }
 
-// This function conducts the main mediation logic
-void GameEngine::notify (const Event& event) {
-	switch (event.id) {
-	case EventId::CLK:
-		update();
-		state->tick++;
-		break;
-	case EventId::INPUT_ERR:
-		renderer->windowPrint(INPUT_WIN, "Invalid input\n");
-		break;
-	case EventId::INT_INPUT:
-		 int_input = input_mgr->getIntInput(event.args);
-		break;
-	case EventId::GENERAL_ERR:
-		renderer->errPrint("[DEBUG] an error has occured\n");
-		break;
-	default:
-		renderer->errPrint("[DEBUG] GameEngine has recieved an undefined event\n");
-		break;
+void GameEngine::gameOver() {
+	if (state->stop_flag) {
+		return;
 	}
-}
+	if (state->score > state->hi_score) {
+		state->hi_score = state->score;
+	}
 
-void GameEngine::inputHandling() {
-	int k_input = input_mgr->getKeyboardInput(GAME_WIN);
+	saveState(getState());
+
+	renderer->renderFrame();
+	for (auto i = 0; i < 3; i++) {
+		this_thread::sleep_for(chrono::milliseconds(100));
+		renderer->flashEffect();
+	}
+
+	renderer->showEndScreen(getState());
+	int k_input = input_mgr->waitForAnyKey();
+
 	switch (k_input) {
-	case (int)'q':
-	case (int)'j':
-		state->active_piece.rotateL(state->board);
-		break;
-
-	case (int)'e':
-	case (int)'k':
-		state->active_piece.rotateR(state->board);
-		break;
-
-	case (int)'w':
-	case KEY_UP:
-		state->active_piece.hard_drop(state->board);
-		break;
-
-	case (int)'a':
-	case KEY_LEFT:
-		state->active_piece.moveL(state->board);
-		break;
-
-	case (int)'s':
-	case KEY_DOWN:
-		state->active_piece.soft_drop(state->board);
-		break;
-
-	case (int)'d':
-	case KEY_RIGHT:
-		state->active_piece.moveR(state->board);
-		break;
-
 	case 27: // ESC
-		gameOver();
+		state->stop_flag = true;
+		return;
 	}
+
+	restartGame();
 }
 
 // Returns a random piece index using the TETRIS TGM3 algorithm.

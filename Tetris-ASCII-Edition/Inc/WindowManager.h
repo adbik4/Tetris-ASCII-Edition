@@ -24,11 +24,11 @@ private:
 	void initTerm();
 	void deinitTerm();
 
+	WINDOW* makeTitleWindow();
 	WINDOW* makeMenuWindow();
 	WINDOW* makeInputWindow();
 	WINDOW* makeErrorWindow();
 	WINDOW* makeGameWindow();
-	WINDOW* makeTitleWindow();
 	WINDOW* makeStatsWindow();
 
 	WINDOW* createNewWindow(const int& height, const int& width, const int& starty, const int& startx);

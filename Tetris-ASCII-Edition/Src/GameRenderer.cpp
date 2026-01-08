@@ -179,8 +179,6 @@ void GameRenderer::render_piece(const uint8_t x, const uint8_t y, const char for
 			mvwprintw(game_win, y_pos + y, (x_pos + x) * 2, "  ");
 			wattroff(game_win, color);
 		}
-
-
 	}
 }
 
@@ -202,7 +200,41 @@ void GameRenderer::refreshGameUI() {
 	mvwprintw(stats_win, 1, 0, "score: %lld", score);
 	mvwprintw(stats_win, 2, 0, "lines: %ld", lines);
 	mvwprintw(stats_win, 4, 12, "level: %d", level);
+
 	wrefresh(stats_win);
+}
+
+void GameRenderer::refreshMenuUI() {
+	auto engine = eng.lock();
+	auto win_mgr = wm.lock();
+	if (!engine || !win_mgr) {
+		return;
+	}
+
+	WINDOW* menu_win = win_mgr->getWindow(MAIN_MENU);
+
+	wattron(menu_win, A_REVERSE);
+	mvwprintw(menu_win, 1, 0, "1) Start Game\n");
+	wattroff(menu_win, A_REVERSE);
+
+	mvwprintw(menu_win, 2, 0, "2) Settings\n");
+	mvwprintw(menu_win, 3, 0, "3) Exit\n");
+
+	win_mgr->showBorder(MAIN_MENU);
+	mvwprintw(menu_win, 0, 6, "MAIN MENU");
+	wrefresh(menu_win);
+
+	engine->notify(Event(EventId::INT_INPUT, { 1, 3 }));
+}
+
+void GameRenderer::refreshSettingsUI() {
+	auto engine = eng.lock();
+	auto win_mgr = wm.lock();
+	if (!engine || !win_mgr) {
+		return;
+	}
+
+	WINDOW* menu_win = win_mgr->getWindow(MAIN_MENU);
 }
 
 void GameRenderer::flashEffect() {
@@ -238,6 +270,16 @@ void GameRenderer::clearEffect(vector<uint8_t> lines, uint16_t score) {
 }
 
 // UTILITY ----
+void GameRenderer::showTitleScreen() {
+	auto win_mgr = wm.lock();
+	if (!win_mgr) {
+		return;
+	}
+
+	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
+	waddnstr(title_win, title_art.data(), -1);
+	wrefresh(title_win);
+}
 void GameRenderer::windowPrint(const int& win_id, const string& str) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -286,30 +328,6 @@ void GameRenderer::windowReset(const int& win_id) {
 	win_mgr->clearContents(win_id);
 }
 
-void GameRenderer::showMenu() {
-	auto engine = eng.lock();
-	auto win_mgr = wm.lock();
-	if (!engine || !win_mgr) {
-		return;
-	}
-
-	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
-	waddnstr(title_win, title_art.data(), -1);
-	wrefresh(title_win);
-
-	WINDOW* menu_win = win_mgr->getWindow(MAIN_MENU);
-
-	mvwprintw(menu_win, 1, 0, "1) Start Game\n");
-	mvwprintw(menu_win, 2, 0, "2) Settings\n");
-	mvwprintw(menu_win, 3, 0, "3) Exit\n");
-
-	win_mgr->showBorder(MAIN_MENU);
-	mvwprintw(menu_win, 0, 6, "MAIN MENU");
-	wrefresh(menu_win);
-
-	engine->notify(Event(EventId::INT_INPUT, { 1, 3 }));
-}
-
 void GameRenderer::initGameUI() {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -317,7 +335,6 @@ void GameRenderer::initGameUI() {
 	}
 
 	win_mgr->clearWindow(MAIN_MENU);
-	win_mgr->clearWindow(INPUT_WIN);
 
 	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
 	wclear(title_win);
@@ -334,7 +351,6 @@ void GameRenderer::initSettingsUI() {
 	}
 
 	win_mgr->clearContents(MAIN_MENU);
-	win_mgr->clearContents(INPUT_WIN);
 }
 
 void GameRenderer::showEndScreen(const GameState& state) {

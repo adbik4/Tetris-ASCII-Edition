@@ -7,7 +7,7 @@
 using namespace std;
 
 vector<string> menu_labels = { "Start Game", "Settings", "Exit" };
-vector<string> settings_labels = { "setting1", "Setting2", "xD" };
+vector<string> settings_labels = { "ASCII mode", "Flashing effects", "Pure randomness", "Start level", "Back"};
 
 
 void GameRenderer::renderFrame() {
@@ -246,14 +246,33 @@ void GameRenderer::refreshSettingsUI() {
 	WINDOW* menu_win = win_mgr->getWindow(MENU_WIN);
 	getmaxyx(menu_win, h, w);
 
+	wclear(menu_win);
+
 	for (int i = 0; i < settings_labels.size(); i++) {
-		const char* label = settings_labels.at(i).c_str();
-		uint8_t center = static_cast<uint8_t>((w - strlen(label)) / 2);
+		string label = settings_labels.at(i);
+		if (label == "ASCII mode") {
+			label += " : ";
+			label += engine->getState().ascii_mode ? "on" : "off";
+		}
+		else if (label == "Flashing effects") {
+			label += " : ";
+			label += engine->getState().flash_on_clear ? "on" : "off";
+		}
+		else if (label == "Pure randomness") {
+			label += " : ";
+			label += engine->getState().pure_randomness ? "on" : "off";
+		}
+		else if (label == "Start level") {
+			label += " : ";
+			label += to_string(engine->getState().start_level);
+		}
+
+		uint8_t center = static_cast<uint8_t>((w - strlen(label.c_str())) / 2);
 
 		if (i == engine->getState().active_label) {
 			wattron(menu_win, A_REVERSE);
 		}
-		mvwprintw(menu_win, i, center, label);
+		mvwprintw(menu_win, i, center, label.c_str());
 		if (i == engine->getState().active_label) {
 			wattroff(menu_win, A_REVERSE);
 		}
@@ -302,6 +321,7 @@ void GameRenderer::showTitleScreen() {
 	}
 
 	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
+	wclear(title_win);
 	waddnstr(title_win, title_art.data(), -1);
 	wrefresh(title_win);
 }
@@ -378,7 +398,21 @@ void GameRenderer::initSettingsUI() {
 	}
 
 	win_mgr->clearWindow(MENU_WIN);
-	
+}
+
+void GameRenderer::initMenuUI() {
+	auto win_mgr = wm.lock();
+	auto engine = eng.lock();
+	if (!win_mgr || !engine) {
+		return;
+	}
+
+	win_mgr->clearWindow(MENU_WIN);
+	if (engine->getState().game_over) {
+		win_mgr->clearWindow(GAME_WIN);
+		win_mgr->clearWindow(STATS_WIN);
+	}
+	showTitleScreen();
 }
 
 void GameRenderer::showEndScreen(const GameState& state) {
@@ -388,6 +422,8 @@ void GameRenderer::showEndScreen(const GameState& state) {
 	}
 
 	win_mgr->clearContents(GAME_WIN);
+	win_mgr->clearWindow(STATS_WIN);
+
 	if (state.score == state.hi_score) {
 		windowPrint(GAME_WIN, "!!!NEW HIGH SCORE!!!\n");
 	}
@@ -399,7 +435,7 @@ void GameRenderer::showEndScreen(const GameState& state) {
 	windowPrint(GAME_WIN, "lines cleared: " + to_string(state.lines) + "\n");
 	windowPrint(GAME_WIN, "level reached: " + to_string(state.level) + "\n");
 	windowPrint(GAME_WIN, "\nPress [any key]\nto start new game\n");
-	windowPrint(GAME_WIN, "\nor [ESC] to quit\n");
+	windowPrint(GAME_WIN, "\nor [ESC] to go to menu\n");
 
 	this_thread::sleep_for(chrono::milliseconds(1500));
 }

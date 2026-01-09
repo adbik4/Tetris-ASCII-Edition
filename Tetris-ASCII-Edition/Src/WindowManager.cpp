@@ -49,8 +49,8 @@ WINDOW* WindowManager::makeMenuWindow() {
 	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
 
-	width = UI_UNIT_W * 2;
-	height = 3;
+	width = UI_UNIT_W * 3;
+	height = 5;
 	voffset = 8;
 
 	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
@@ -68,7 +68,7 @@ WINDOW* WindowManager::makeInputWindow() {
 
 	width = 1;
 	height = 1;
-	voffset = 12;
+	voffset = 13;
 
 	starty = voffset + (lines - height) / 2;
 	startx = (cols - width) / 2;

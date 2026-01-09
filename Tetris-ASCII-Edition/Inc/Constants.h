@@ -10,8 +10,8 @@
 #define MAX_LEVEL 10
 
 #define GAME_TICK 5			//ms
-#define BASE_SPEED 50		// ticks
-#define LEVEL_DECR 5		// ticks
+#define BASE_SPEED 70		// ticks
+#define LEVEL_DECR floor(BASE_SPEED/MAX_LEVEL)		// ticks
 
 #define BOARD_W 10
 #define BOARD_H 20

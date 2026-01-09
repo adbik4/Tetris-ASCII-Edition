@@ -32,7 +32,7 @@ void GameEngine::notify(const Event& event) {
 
 void GameEngine::startEngine() {
 	state->running = true;
-	renderer->showTitleScreen();
+	renderer->initMenuUI();
 	time_mgr->startClock();
 }
 
@@ -88,6 +88,7 @@ void GameEngine::update() {
 void GameEngine::restartGame() {
 	state->reset();
 	state->active_piece = Tetromino();
+	renderer->initGameUI();
 	renderer->windowReset(GAME_WIN);
 }
 
@@ -95,6 +96,9 @@ void GameEngine::gameOver() {
 	if (state->stop_flag) {
 		return;
 	}
+
+	state->game_over = true;
+
 	if (state->score > state->hi_score) {
 		state->hi_score = state->score;
 	}
@@ -112,7 +116,9 @@ void GameEngine::gameOver() {
 
 	switch (k_input) {
 	case 27: // ESC
-		state->stop_flag = true;
+		state->active_label = 0;
+		renderer->initMenuUI();
+		state->active_window = MENU;
 		return;
 	}
 

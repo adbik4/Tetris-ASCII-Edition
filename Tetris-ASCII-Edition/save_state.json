@@ -1,7 +1,7 @@
 {
     "ascii_mode": false,
-    "flash_on_clear": true,
+    "flash_on_clear": false,
     "hi_score": 58028,
     "pure_randomness": false,
-    "start_level": 1
+    "start_level": 4
 }

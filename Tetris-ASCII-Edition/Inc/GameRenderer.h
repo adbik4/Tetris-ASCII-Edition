@@ -45,6 +45,7 @@ public:
 	void windowReset(const int& win_id);
 	void errPrint(const string& str);
 	void initGameUI();
+	void initMenuUI();
 	void initSettingsUI();
 	void showTitleScreen();
 	void showEndScreen(const GameState& state);

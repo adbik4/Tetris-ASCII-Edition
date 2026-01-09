@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include <SaveSystem.h>
 
 void GameEngine::gameLogic(const int& k_input) {
 	if (state->active_piece.is_falling) {
@@ -39,7 +40,9 @@ void GameEngine::gameLogic(const int& k_input) {
 		break;
 
 	case 27: // ESC
-		gameOver();
+		if (!(state->game_over)) {
+			gameOver();
+		}
 	}
 
 	// create refs for easier access
@@ -54,7 +57,7 @@ void GameEngine::gameLogic(const int& k_input) {
 	}
 
 	// gravity
-	uint16_t drop_interval = BASE_SPEED - ((state->level - 1) * LEVEL_DECR);
+	uint16_t drop_interval = static_cast<uint16_t>(BASE_SPEED - ((state->level - 1) * LEVEL_DECR));
 	if (!drop_interval) {
 		throw std::invalid_argument("<engine::update> Level got too high");
 	}
@@ -192,6 +195,7 @@ void GameEngine::gameLogic(const int& k_input) {
 
 void GameEngine::menuLogic(const int& k_input) {
 	switch (k_input) {
+	case 'w':
 	case KEY_UP:
 		--(state->active_label);
 		if (state->active_label < 0) {
@@ -199,6 +203,7 @@ void GameEngine::menuLogic(const int& k_input) {
 		}
 		break;
 
+	case 's':
 	case KEY_DOWN:
 		state->active_label = static_cast<int8_t>(++(state->active_label) % menu_labels.size());
 		break;
@@ -208,6 +213,9 @@ void GameEngine::menuLogic(const int& k_input) {
 	case KEY_ENTER:
 		if (menu_labels.at(state->active_label) == "Start Game") {
 			renderer->initGameUI();
+			if (state->game_over) {
+				restartGame();
+			}
 			state->active_window = GAME;
 		}
 		else if (menu_labels.at(state->active_label) == "Settings") {
@@ -219,22 +227,86 @@ void GameEngine::menuLogic(const int& k_input) {
 			state->stop_flag = true;
 		}
 	}
-
-	//switch (menu_input) {
-	//case 1:
-	//	renderer->initGameUI();
-	//	time_mgr->startClock();
-	//	break;
-	//case 2:
-	//	renderer->initSettingsUI();
-	//	renderer->windowPrint(MENU_WIN, "SETTINGS\n");
-	//	break;
-	//case 3:
-	//	state->stop_flag = true;
-	//	break;
-	//}
 }
 
 void GameEngine::settingsLogic(const int& k_input) {
+	switch (k_input) {
+	case 'w':
+	case KEY_UP:
+		--(state->active_label);
+		if (state->active_label < 0) {
+			state->active_label = static_cast<int8_t>(settings_labels.size() - 1);
+		}
+		break;
 
+	case 's':
+	case KEY_DOWN:
+		state->active_label = static_cast<int8_t>(++(state->active_label) % settings_labels.size());
+		break;
+
+	case 'a':
+	case KEY_LEFT:
+		if (settings_labels.at(state->active_label) == "Start level") {
+			if (state->start_level != 1) {
+				--(state->start_level);
+			}
+			state->level = state->start_level;
+		}
+		if (settings_labels.at(state->active_label) == "ASCII mode") {
+			state->ascii_mode ^= true;	// toggle
+		}
+		else if (settings_labels.at(state->active_label) == "Flashing effects") {
+			state->flash_on_clear ^= true;	// toggle
+		}
+		else if (settings_labels.at(state->active_label) == "Pure randomness") {
+			state->pure_randomness ^= true;	// toggle
+		}
+		break;
+
+	case 'd':
+	case KEY_RIGHT:
+		if (settings_labels.at(state->active_label) == "Start level") {
+			++(state->start_level);
+			if (state->start_level > MAX_LEVEL) {
+				state->start_level = MAX_LEVEL;
+			}
+			state->level = state->start_level;
+		}
+		else if (settings_labels.at(state->active_label) == "ASCII mode") {
+			state->ascii_mode ^= true;	// toggle
+		}
+		else if (settings_labels.at(state->active_label) == "Flashing effects") {
+			state->flash_on_clear ^= true;	// toggle
+		}
+		else if (settings_labels.at(state->active_label) == "Pure randomness") {
+			state->pure_randomness ^= true;	// toggle
+		}
+		break;
+
+	case '\r':
+	case '\n':
+	case KEY_ENTER:
+		if (settings_labels.at(state->active_label) == "ASCII mode") {
+			state->ascii_mode ^= true;	// toggle
+		}
+		else if (settings_labels.at(state->active_label) == "Flashing effects") {
+			state->flash_on_clear ^= true;	// toggle
+		}
+		else if (settings_labels.at(state->active_label) == "Pure randomness") {
+			state->pure_randomness ^= true;	// toggle
+		}
+
+		else if (settings_labels.at(state->active_label) == "Back") {
+			saveState(getState());
+			state->active_label = 0;
+			renderer->initMenuUI();
+			state->active_window = MENU;
+		}
+	case 27: // ESC
+		saveState(getState());
+		state->active_label = 0;
+		renderer->initMenuUI();
+		state->active_window = MENU;
+		break;
+	}
 }

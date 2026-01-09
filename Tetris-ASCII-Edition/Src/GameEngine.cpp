@@ -33,13 +33,14 @@ void GameEngine::notify(const Event& event) {
 void GameEngine::startEngine() {
 	state->running = true;
 	renderer->showTitleScreen();
-	renderer->refreshMenuUI();
+	time_mgr->startClock();
 }
 
 void GameEngine::update() {
 	try {
+
 		// ==== INPUT ====
-		int k_input = input_mgr->getKeyboardInput(GAME_WIN);
+		int k_input = input_mgr->getKeyboardInput();
 
 		// ==== GAME LOGIC ====
 		switch (state->active_window) {
@@ -53,7 +54,7 @@ void GameEngine::update() {
 				settingsLogic(k_input);
 				break;
 			default:
-				throw std::domain_error("<update> unknown window state");
+				throw std::domain_error("<update> unknown window");
 		}
 
 		// ==== RENDER OUTPUT ====
@@ -69,7 +70,7 @@ void GameEngine::update() {
 			renderer->refreshSettingsUI();
 			break;
 		default:
-			throw std::domain_error("<update> unknown window state");
+			throw std::domain_error("<update> unknown window");
 		}
 
 	}
@@ -99,8 +100,8 @@ void GameEngine::gameOver() {
 	}
 
 	saveState(getState());
-
 	renderer->renderFrame();
+
 	for (auto i = 0; i < 3; i++) {
 		this_thread::sleep_for(chrono::milliseconds(100));
 		renderer->flashEffect();

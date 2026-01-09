@@ -6,14 +6,14 @@
 
 using namespace std;
 
-int InputManager::getKeyboardInput(const uint8_t win_id) {
+int InputManager::getKeyboardInput() {
     auto win_mgr = wm.lock();
     if (!win_mgr) {
         return -1;
     }
 
-    WINDOW* local_win = win_mgr->getWindow(win_id);
-    return wgetch(local_win);
+    WINDOW* input_win = win_mgr->getWindow(INPUT_WIN);
+    return wgetch(input_win);
 }
 
 // Returns user input between valid bounds from a to b

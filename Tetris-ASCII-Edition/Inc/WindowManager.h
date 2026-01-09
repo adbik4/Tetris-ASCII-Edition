@@ -5,7 +5,7 @@
 using namespace std;
 
 #define GLOBAL		0
-#define MAIN_MENU	1
+#define MENU_WIN	1
 #define GAME_WIN	2
 #define INPUT_WIN	3
 #define ERR_WIN		4

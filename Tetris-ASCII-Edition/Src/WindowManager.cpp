@@ -34,7 +34,7 @@ WINDOW* WindowManager::makeTitleWindow() {
 
 	width = 105; //105;
 	height = 15;
-	voffset = -5;
+	voffset = -3;
 
 	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
 	startx = (cols - width) / 2;	/* of the window		*/
@@ -50,8 +50,8 @@ WINDOW* WindowManager::makeMenuWindow() {
 	getmaxyx(stdscr, lines, cols);
 
 	width = UI_UNIT_W * 2;
-	height = 5;
-	voffset = 7;
+	height = 3;
+	voffset = 8;
 
 	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
 	startx = (cols - width) / 2;	/* of the window		*/
@@ -66,9 +66,9 @@ WINDOW* WindowManager::makeInputWindow() {
 	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
 
-	width = UI_UNIT_W * 2;
-	height = 2;
-	voffset = 11;
+	width = 1;
+	height = 1;
+	voffset = 12;
 
 	starty = voffset + (lines - height) / 2;
 	startx = (cols - width) / 2;
@@ -153,7 +153,8 @@ void WindowManager::clearContents(const int& win_id) {
 }
 
 void WindowManager::clearWindow(const int& win_id) {
-	clearContents(win_id);
+	WINDOW* local_win = getWindow(win_id);
+	wclear(local_win);
 	clearBorder(win_id);
 }
 
@@ -182,7 +183,7 @@ WINDOW* WindowManager::createNewWindow(const int& height, const int& width, cons
 
 WINDOW* WindowManager::getWindow(const int& win_id) {
 	switch (win_id) {
-	case MAIN_MENU:
+	case MENU_WIN:
 		return menu_win;
 		break;
 	case GAME_WIN:

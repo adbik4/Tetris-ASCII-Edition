@@ -37,7 +37,7 @@ public:
 	void refreshSettingsUI();
 
 	void flashEffect();
-	void clearEffect(vector<uint8_t> lines, uint16_t score);
+	void lineClearEffect(vector<uint8_t> lines, uint16_t score);
 
 	// utility
 	void windowPrint(const int& win_id, const string& str);

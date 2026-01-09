@@ -117,7 +117,7 @@ void GameEngine::gameLogic(const int& k_input) {
 				state->score += score;
 				state->lines += (uint16_t)lines_cleared.size();
 
-				renderer->clearEffect(lines_cleared, score);
+				renderer->lineClearEffect(lines_cleared, score);
 				this_thread::sleep_for(chrono::milliseconds(500));
 			}
 			else {
@@ -125,7 +125,7 @@ void GameEngine::gameLogic(const int& k_input) {
 				score *= 10;	// 10x multiplier
 				state->score += score;
 				for (auto i = 0; i < 5; i++) {
-					renderer->clearEffect(lines_cleared, score);
+					renderer->lineClearEffect(lines_cleared, score);
 					this_thread::sleep_for(chrono::milliseconds(100));
 				}
 			}
@@ -191,14 +191,43 @@ void GameEngine::gameLogic(const int& k_input) {
 }
 
 void GameEngine::menuLogic(const int& k_input) {
-	//switch (int_input) {
+	switch (k_input) {
+	case KEY_UP:
+		--(state->active_label);
+		if (state->active_label < 0) {
+			state->active_label = static_cast<int8_t>(menu_labels.size() - 1);
+		}
+		break;
+
+	case KEY_DOWN:
+		state->active_label = static_cast<int8_t>(++(state->active_label) % menu_labels.size());
+		break;
+
+	case '\r':
+	case '\n':
+	case KEY_ENTER:
+		if (menu_labels.at(state->active_label) == "Start Game") {
+			renderer->initGameUI();
+			state->active_window = GAME;
+		}
+		else if (menu_labels.at(state->active_label) == "Settings") {
+			state->active_label = 0;
+			renderer->initSettingsUI();
+			state->active_window = SETTINGS;
+		}
+		else if (menu_labels.at(state->active_label) == "Exit") {
+			state->stop_flag = true;
+		}
+	}
+
+	//switch (menu_input) {
 	//case 1:
 	//	renderer->initGameUI();
 	//	time_mgr->startClock();
 	//	break;
 	//case 2:
 	//	renderer->initSettingsUI();
-	//	renderer->windowPrint(MAIN_MENU, "SETTINGS\n");
+	//	renderer->windowPrint(MENU_WIN, "SETTINGS\n");
 	//	break;
 	//case 3:
 	//	state->stop_flag = true;

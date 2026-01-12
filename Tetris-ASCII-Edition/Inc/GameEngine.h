@@ -10,9 +10,6 @@
 #include "InputManager.h"
 #include "Constants.h"
 
-// TODO: create a parent class for ncurses io classes
-// contains pointers to each window and getters
-
 using namespace std;
 
 class TimeManager;
@@ -72,7 +69,6 @@ public:
 	void menuLogic(const int& k_input);
 	void settingsLogic(const int& k_input);
 
-	void inputHandling();
 	void gameOver();
 	void restartGame();
 	

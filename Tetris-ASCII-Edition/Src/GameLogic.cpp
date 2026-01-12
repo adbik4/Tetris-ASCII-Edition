@@ -295,13 +295,13 @@ void GameEngine::settingsLogic(const int& k_input) {
 		else if (settings_labels.at(state->active_label) == "Pure randomness") {
 			state->pure_randomness ^= true;	// toggle
 		}
-
 		else if (settings_labels.at(state->active_label) == "Back") {
 			saveState(getState());
 			state->active_label = 0;
 			renderer->initMenuUI();
 			state->active_window = MENU;
 		}
+		break;
 	case 27: // ESC
 		saveState(getState());
 		state->active_label = 0;

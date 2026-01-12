@@ -129,6 +129,22 @@ WINDOW* WindowManager::makeStatsWindow() {
 	return window;
 }
 
+WINDOW* WindowManager::makeNextPieceWindow() {
+	int width, height, starty, startx, lines, cols, voffset, hoffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = 8;
+	height = 4;
+	voffset = 1;
+	hoffset = 26;
+
+	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
+	startx = hoffset + (cols - width) / 2;				/* of the window		*/
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+	return window;
+}
+
 void WindowManager::showBorder(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
 	WINDOW* tmp = createNewWindow(local_win->_maxy + 2, local_win->_maxx + 2, local_win->_begy - 1, local_win->_begx - 1);
@@ -200,6 +216,9 @@ WINDOW* WindowManager::getWindow(const int& win_id) {
 		break;
 	case STATS_WIN:
 		return stats_win;
+		break;
+	case NEXT_WIN:
+		return next_win;
 		break;
 	case GLOBAL:
 		return stdscr;

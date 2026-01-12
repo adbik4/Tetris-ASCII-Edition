@@ -144,11 +144,11 @@ bool Tetromino::isInvalidPosition(span<const char> board) {
 	return false;
 }
 
-const char Tetromino::realize_piece(const int8_t x, const int8_t y) {
+const char Tetromino::realize_piece(const int8_t x, const int8_t y) const {
 	if (x < 0 || y < 0 || x >= TETROMINO_W || y >= TETROMINO_W) {
 		return '.';
 	}
-	if (piece_id == NULL) {
+	if (!is_ghost && piece_id == NULL) {
 		throw std::runtime_error("<realize_piece> No tetromino is active");
 	}
 

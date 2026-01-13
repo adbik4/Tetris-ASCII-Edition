@@ -29,14 +29,14 @@ void GameRenderer::renderFrame() {
 		// 2nd pass - ghost piece
 		for (uint8_t j = 0; j < TETROMINO_W; j++) {
 			for (uint8_t i = 0; i < TETROMINO_W; i++) {
-				render_piece(engine->getState().ghost_piece, i, j);
+				render_piece(i, j, '/');
 			}
 		}
 
 		// 3rd pass - active tetromino
 		for (uint8_t y = 0; y < TETROMINO_W; y++) {
 			for (uint8_t x = 0; x < TETROMINO_W; x++) {
-				render_piece(engine->getState().active_piece, x, y);
+				render_piece(x, y);
 			}
 		}
 	}
@@ -101,32 +101,38 @@ void GameRenderer::render_tile(const char tile) {
 	}
 }
 
-void GameRenderer::render_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id) {
+void GameRenderer::render_piece(const uint8_t x, const uint8_t y, const char force_tile) {
 	auto engine = eng.lock();
-	auto win_mgr = wm.lock();
-	if (!engine || !win_mgr) {
+	if (!engine) {
 		return;
 	}
 
-	char tile = piece.realize_piece(x, y);
+	char tile = engine->getState().active_piece.realize_piece(x, y);
+	int8_t x_pos, y_pos;
 	char block[3] = {' ', ' ', '\0'};
 
 	if (tile == '.') {
 		return;
 	}
+	else if (force_tile) {
+		tile = force_tile;
+	}
 
 	if (engine->getState().ascii_mode) {
-		if (piece.is_ghost) {
-			block[0] = GHOST_SYM;
-			block[1] = GHOST_SYM;
+		if (tile == '/') {
+			x_pos = engine->getState().ghost_piece.x_pos;
+			y_pos = engine->getState().ghost_piece.y_pos;
+			block[0] = '.';
+			block[1] = '.';
 		}
 		else {
+			x_pos = engine->getState().active_piece.x_pos;
+			y_pos = engine->getState().active_piece.y_pos;
 			block[0] = tile;
 			block[1] = tile;
 		}
 
-		WINDOW* local_win = win_mgr->getWindow(win_id);
-		mvwprintw(local_win, piece.y_pos + y, (piece.x_pos + x) * 2, block);
+		mvwprintw(game_win, y_pos + y, (x_pos + x) * 2, block);
 	}
 	else {
 		chtype color = 1;
@@ -161,14 +167,20 @@ void GameRenderer::render_piece(const Tetromino& piece, const uint8_t x, const u
 			break;
 		}
 
-		if (piece.is_ghost) {
+		if (tile == '/') {
+			x_pos = engine->getState().ghost_piece.x_pos;
+			y_pos = engine->getState().ghost_piece.y_pos;
 			block[0] = GHOST_SYM;
 			block[1] = GHOST_SYM;
-			mvwprintw(game_win, piece.y_pos + y, (piece.x_pos + x) * 2, block);
+
+			mvwprintw(game_win, y_pos + y, (x_pos + x) * 2, block);
 		}
 		else {
+			x_pos = engine->getState().active_piece.x_pos;
+			y_pos = engine->getState().active_piece.y_pos;
+
 			wattron(game_win, color);
-			mvwprintw(game_win, piece.y_pos + y, (piece.x_pos + x) * 2, "  ");
+			mvwprintw(game_win, y_pos + y, (x_pos + x) * 2, "  ");
 			wattroff(game_win, color);
 		}
 	}
@@ -182,29 +194,16 @@ void GameRenderer::refreshGameUI() {
 	}
 	
 	WINDOW* stats_win = win_mgr->getWindow(STATS_WIN);
-	WINDOW* next_win = win_mgr->getWindow(NEXT_WIN);
-
 	uint64_t hi_score = engine->getState().hi_score;
 	uint64_t score = engine->getState().score;
 	uint16_t lines = engine->getState().lines;
 	uint8_t level = engine->getState().level;
-	Tetromino next_piece = engine->getState().active_piece;
 
 	wclear(stats_win);
-	wclear(next_win);
-
-	// statistics
 	mvwprintw(stats_win, 0, 0, "high score: %lld", hi_score);
 	mvwprintw(stats_win, 1, 0, "score: %lld", score);
 	mvwprintw(stats_win, 2, 0, "lines: %ld", lines);
 	mvwprintw(stats_win, 4, 12, "level: %d", level);
-
-	// next tetromino
-	for (uint8_t y = 0; y < TETROMINO_W; y++) {
-		for (uint8_t x = 0; x < TETROMINO_W; x++) {
-			render_piece(next_piece, x, y);
-		}
-	}
 
 	wrefresh(stats_win);
 }
@@ -389,7 +388,6 @@ void GameRenderer::initGameUI() {
 
 	win_mgr->showBorder(GAME_WIN);
 	win_mgr->showBorder(STATS_WIN);
-	win_mgr->showBorder(NEXT_WIN);
 }
 
 void GameRenderer::initSettingsUI() {
@@ -437,7 +435,7 @@ void GameRenderer::showEndScreen(const GameState& state) {
 	windowPrint(GAME_WIN, "lines cleared: " + to_string(state.lines) + "\n");
 	windowPrint(GAME_WIN, "level reached: " + to_string(state.level) + "\n");
 	windowPrint(GAME_WIN, "\nPress [any key]\nto start new game\n");
-	windowPrint(GAME_WIN, "\nor\n\n[ESC] to go to menu\n");
+	windowPrint(GAME_WIN, "\nor [ESC] to go to menu\n");
 
 	this_thread::sleep_for(chrono::milliseconds(1500));
 }

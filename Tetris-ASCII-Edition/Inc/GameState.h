@@ -15,7 +15,7 @@ public:
 	// engine state
 	bool running;			// used to check if the engine systems are running
 	bool stop_flag;			// triggers the app shutdown
-	bool game_over;			// remembers the game over state
+	bool game_over;
 	bool ascii_mode;		// controls the rendering mode
 	bool flash_on_clear;	// decides if the screen should flash after a line clear
 	bool pure_randomness;	// decides how the pieces are randomized
@@ -55,11 +55,10 @@ public:
 		active_label = 0;
 		board.fill('.');
 		tick = 1;
-		wait_until = 0;
 		running = false;
+		wait_until = 0;
 		stop_flag = false;
 		game_over = false;
-		ghost_piece.is_ghost = true;
 
 		score = 0;
 		lines = 0;
@@ -72,9 +71,9 @@ public:
 
 		board.fill('.');
 		tick = 1;
-		wait_until = 0;
 		running = false;
 		game_over = false;
+		wait_until = 0;
 		stop_flag = false;
 
 		score = 0;

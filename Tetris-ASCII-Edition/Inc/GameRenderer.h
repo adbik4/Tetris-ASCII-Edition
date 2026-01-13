@@ -17,10 +17,10 @@ private:
 
 
 	void render_tile(const char tile);
-	void render_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id=GAME_WIN);
+	void render_piece(const uint8_t x, const uint8_t y, const char force_tile = NULL);
 
 public:
-	GameRenderer(const shared_ptr<GameEngine>& engine_ptr, const shared_ptr<WindowManager>& win_ptr) :
+	GameRenderer(const shared_ptr<GameEngine>& engine_ptr, const shared_ptr< WindowManager>& win_ptr) :
 		eng(engine_ptr),
 		wm(win_ptr)
 	{

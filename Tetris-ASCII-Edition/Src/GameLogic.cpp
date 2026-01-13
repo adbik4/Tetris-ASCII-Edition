@@ -49,6 +49,7 @@ void GameEngine::gameLogic(const int& k_input) {
 	array<char, BOARD_W* BOARD_H>& board = state->board;
 	Tetromino& active_piece = state->active_piece;
 	Tetromino& ghost_piece = state->ghost_piece;
+	Tetromino& next_piece = state->next_piece;
 
 	// increment level
 	if ((state->lines >= state->line_goal) && (state->level != MAX_LEVEL)) {
@@ -81,6 +82,9 @@ void GameEngine::gameLogic(const int& k_input) {
 
 		active_piece.reset(random_id);
 		ghost_piece.set_piece_id(random_id);
+		next_piece.set_piece_id(random_id);
+
+		renderer->refreshNextPieceUI();
 
 		// also, since the last piece has just been merged...
 
@@ -226,6 +230,10 @@ void GameEngine::menuLogic(const int& k_input) {
 		else if (menu_labels.at(state->active_label) == "Exit") {
 			state->stop_flag = true;
 		}
+		break;
+	case 27: // ESC
+		state->stop_flag = true;
+		break;
 	}
 }
 

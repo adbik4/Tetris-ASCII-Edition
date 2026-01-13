@@ -7,8 +7,9 @@ void WindowManager::initTerm() {
 	setlocale(LC_ALL, "");
 
 	initscr();            // Start curses mode
-	noecho();             // Don’t echo pressed keys
+	noecho();             // Don't echo pressed keys
 	cbreak();             // Disable line buffering
+	curs_set(0);		  // invisible cursor
 
 	start_color();
 	use_default_colors(); // enable color usage
@@ -95,7 +96,6 @@ WINDOW* WindowManager::makeGameWindow() {
 
 	keypad(window, TRUE);	// Enable arrow keys
 	nodelay(window, TRUE);	// Non-blocking input
-	curs_set(0);			// invisible cursor
 
 	return window;
 }
@@ -121,6 +121,24 @@ WINDOW* WindowManager::makeStatsWindow() {
 	height = 5;
 	voffset = -5;
 	hoffset = 26;
+
+	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
+	startx = hoffset + (cols - width) / 2;				/* of the window		*/
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+	return window;
+}
+
+WINDOW* WindowManager::makeNextPieceWindow() {
+	int width, height, starty, startx, lines, cols, voffset, hoffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = TETROMINO_W * 2 + 2;
+	height = TETROMINO_W + 1;
+	voffset = 4;
+	hoffset = 26;
+	//voffset = -5;
+	//hoffset = -20;
 
 	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
 	startx = hoffset + (cols - width) / 2;				/* of the window		*/
@@ -200,6 +218,9 @@ WINDOW* WindowManager::getWindow(const int& win_id) {
 		break;
 	case STATS_WIN:
 		return stats_win;
+		break;
+	case NEXT_WIN:
+		return next_win;
 		break;
 	case GLOBAL:
 		return stdscr;

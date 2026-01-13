@@ -34,6 +34,7 @@ public:
 
 	std::array<char, BOARD_W * BOARD_H> board;
 	Tetromino active_piece;
+	Tetromino next_piece;
 	Tetromino ghost_piece;
 
 	// initial conditions
@@ -55,10 +56,11 @@ public:
 		active_label = 0;
 		board.fill('.');
 		tick = 1;
-		running = false;
 		wait_until = 0;
+		running = false;
 		stop_flag = false;
 		game_over = false;
+		ghost_piece.is_ghost = true;
 
 		score = 0;
 		lines = 0;

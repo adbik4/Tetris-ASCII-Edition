@@ -11,6 +11,7 @@ using namespace std;
 #define ERR_WIN		4
 #define TITLE_WIN	5
 #define STATS_WIN	6
+#define NEXT_WIN	7
 
 class WindowManager {
 private:
@@ -20,6 +21,7 @@ private:
 	WINDOW* game_win;
 	WINDOW* title_win;
 	WINDOW* stats_win;
+	WINDOW* next_win;
 
 	void initTerm();
 	void deinitTerm();
@@ -30,6 +32,7 @@ private:
 	WINDOW* makeErrorWindow();
 	WINDOW* makeGameWindow();
 	WINDOW* makeStatsWindow();
+	WINDOW* makeNextPieceWindow();
 
 	WINDOW* createNewWindow(const int& height, const int& width, const int& starty, const int& startx);
 
@@ -42,8 +45,9 @@ public:
 		err_win = makeErrorWindow();
 		title_win = makeTitleWindow();
 		stats_win = makeStatsWindow();
+		next_win = makeNextPieceWindow();
 
-		if (!menu_win || !game_win || !input_win || !err_win || !title_win || !stats_win) {
+		if (!menu_win || !game_win || !input_win || !err_win || !title_win || !stats_win || !next_win) {
 			throw std::runtime_error("<WindowManager> Failed to initialise windows");
 		}
 	}
@@ -54,7 +58,8 @@ public:
 		delwin(err_win);
 		delwin(title_win);
 		delwin(stats_win);
-		menu_win = game_win = input_win = err_win = title_win = stats_win = NULL;
+		delwin(next_win);
+		menu_win = game_win = input_win = err_win = title_win = stats_win = next_win = NULL;
 
 		deinitTerm();
 	}

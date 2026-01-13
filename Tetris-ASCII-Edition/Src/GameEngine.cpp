@@ -31,9 +31,9 @@ void GameEngine::notify(const Event& event) {
 }
 
 void GameEngine::startEngine() {
-	state->running = true;
 	renderer->initMenuUI();
 	time_mgr->startClock();
+	state->running = true;
 }
 
 void GameEngine::update() {

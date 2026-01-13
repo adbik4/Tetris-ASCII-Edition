@@ -7,6 +7,7 @@ void Tetromino::reset(uint8_t random_id) {
 	set_piece_id(random_id);
 	is_falling = false;
 	fall_dist = 0;
+	curr_rotation = 0;
 
 	x_pos = (int8_t)BOARD_W / 2 - 2; // center
 	y_pos = 0;
@@ -144,7 +145,7 @@ bool Tetromino::isInvalidPosition(span<const char> board) {
 	return false;
 }
 
-const char Tetromino::realize_piece(const int8_t x, const int8_t y) {
+const char Tetromino::realize_piece(const int8_t x, const int8_t y) const {
 	if (x < 0 || y < 0 || x >= TETROMINO_W || y >= TETROMINO_W) {
 		return '.';
 	}

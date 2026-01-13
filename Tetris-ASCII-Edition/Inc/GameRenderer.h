@@ -17,7 +17,7 @@ private:
 
 
 	void render_tile(const char tile);
-	void render_piece(const uint8_t x, const uint8_t y, const char force_tile = NULL);
+	void render_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id=GAME_WIN);
 
 public:
 	GameRenderer(const shared_ptr<GameEngine>& engine_ptr, const shared_ptr< WindowManager>& win_ptr) :
@@ -35,6 +35,7 @@ public:
 	void refreshGameUI();
 	void refreshMenuUI();
 	void refreshSettingsUI();
+	void refreshNextPieceUI();
 
 	void flashEffect();
 	void lineClearEffect(vector<uint8_t> lines, uint16_t score);

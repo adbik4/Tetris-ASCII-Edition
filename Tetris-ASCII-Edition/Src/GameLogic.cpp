@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "GameEngine.h"
 #include <SaveSystem.h>
 
@@ -71,25 +72,26 @@ void GameEngine::gameLogic(const int& k_input) {
 		uint8_t score_mult = static_cast<uint8_t>((floor(state->level / 2.0))) + 1;
 		state->score += active_piece.fall_dist * SCORE_DEF[0] * score_mult;
 
-		// reset the tetromino piece
+		// draw the next tetromino piece
 		uint8_t random_id;
-		if (state->pure_randomness) {
-			random_id = pure_randomizer();
+		while (active_piece.get_piece_id() == NULL) {
+			if (state->pure_randomness) {
+				random_id = pure_randomizer();
+			}
+			else {
+				random_id = TGM3_randomizer();
+			}
+			active_piece = next_piece;
+			next_piece.reset(random_id);
 		}
-		else {
-			random_id = TGM3_randomizer();
-		}
-
-		active_piece.reset(random_id);
-		ghost_piece.set_piece_id(random_id);
-		next_piece.set_piece_id(random_id);
+		
+		ghost_piece.set_piece_id(active_piece.get_piece_id());
 
 		renderer->refreshNextPieceUI();
 
 		// also, since the last piece has just been merged...
 
 		bool is_full = true;
-		bool is_perfect_clear = true;
 		vector<uint8_t> lines_cleared;
 
 		// for each line in the board
@@ -102,9 +104,6 @@ void GameEngine::gameLogic(const int& k_input) {
 				if (SAMPLE_BOARD(board, col, row) == '.') {
 					is_full = false;
 				}
-				else if (is_perfect_clear){
-					is_perfect_clear = false;
-				}
 			}
 
 			//clear line
@@ -115,6 +114,9 @@ void GameEngine::gameLogic(const int& k_input) {
 				}
 			}
 		}
+
+		// check for perfect clear
+		bool is_perfect_clear = (find_if_not(board.begin(), board.end(), [](char i) {return i == '.';}) == board.end()) ? true : false;
 
 		if (lines_cleared.size() != 0) {
 			// assign points for clearing

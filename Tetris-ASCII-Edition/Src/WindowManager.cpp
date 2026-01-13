@@ -135,7 +135,7 @@ WINDOW* WindowManager::makeNextPieceWindow() {
 
 	width = TETROMINO_W * 2 + 2;
 	height = TETROMINO_W + 1;
-	voffset = 4;
+	voffset = 3;
 	hoffset = 26;
 	//voffset = -5;
 	//hoffset = -20;

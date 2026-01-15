@@ -1,12 +1,7 @@
 #include <exception>
-#include <fstream>
 #include "GameEngine.h"
-#include "Tetromino.h"
-#include "SaveSystem.h"
-#include "nlohmann/json.hpp"
 
 using namespace std;
-using json = nlohmann::json;
 
 // This function conducts the main mediation logic
 void GameEngine::notify(const Event& event) {
@@ -14,15 +9,6 @@ void GameEngine::notify(const Event& event) {
 	case EventId::CLK:
 		update();
 		state->tick++;
-		break;
-	case EventId::INPUT_ERR:
-		renderer->windowPrint(INPUT_WIN, "Invalid input\n");
-		break;
-	case EventId::INT_INPUT:
-		//int_input = input_mgr->getIntInput(event.args);
-		break;
-	case EventId::GENERAL_ERR:
-		renderer->errPrint("[DEBUG] an error has occured\n");
 		break;
 	default:
 		renderer->errPrint("[DEBUG] GameEngine has recieved an undefined event\n");

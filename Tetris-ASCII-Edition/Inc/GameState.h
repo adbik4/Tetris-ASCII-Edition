@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
 #include <array>
-#include <memory>
 #include "Tetromino.h"
 #include "Constants.h"
 #include "Settings.h"

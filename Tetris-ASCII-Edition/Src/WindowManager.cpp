@@ -1,7 +1,5 @@
 #include "WindowManager.h"
-#include <thread>
-#include <chrono>
-#include "GameState.h"
+#include "locale"
 
 void WindowManager::initTerm() {
 	setlocale(LC_ALL, "");

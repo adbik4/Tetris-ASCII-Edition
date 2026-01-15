@@ -5,15 +5,11 @@
 using namespace std;
 
 enum class EventId : int8_t {
-	INPUT_ERR = -2,
-	GENERAL_ERR = -1,
 	CLK = 0,
-	INT_INPUT = 1
 };
 
 typedef struct {
 	EventId id;
-	tuple<int, int> args;
 } Event;
 
 /*

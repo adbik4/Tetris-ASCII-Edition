@@ -1,9 +1,10 @@
 #include "TimeManager.h"
 #include "GameEngine.h"
 #include "Constants.h"
+#include <chrono>
 
 void clockTask(std::stop_token stopToken, GameEngine* engine) {
-	Event tick(EventId::CLK, {0, 0}); // Event object to use for notification
+	Event tick(EventId::CLK); // Event object to use for notification
 
 	int sleep_duration{ 0 };
 	while (!stopToken.stop_requested()) {

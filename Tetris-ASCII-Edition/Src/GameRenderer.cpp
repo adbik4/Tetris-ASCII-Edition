@@ -1,13 +1,12 @@
 #include "GameRenderer.h"
 #include "Tetromino.h"
-#include <stdexcept>
 #include <string>
 #include "Constants.h"
 
 using namespace std;
 
 vector<string> menu_labels = { "Start Game", "Settings", "Exit" };
-vector<string> settings_labels = { "ASCII mode", "Flashing effects", "Pure randomness", "Start level", "Back"};
+vector<string> settings_labels = { "ASCII mode", "Flashing effects", "Randomness", "Show future piece", "Start level", "Back"};
 
 
 void GameRenderer::renderFrame() {
@@ -44,130 +43,13 @@ void GameRenderer::renderFrame() {
 	wrefresh(game_win);
 }
 
-void GameRenderer::refreshGameUI() {
-	auto engine = eng.lock();
-	auto win_mgr = wm.lock();
-	if (!engine || !win_mgr) {
-		return;
-	}
-	
-	WINDOW* stats_win = win_mgr->getWindow(STATS_WIN);
-
-	uint64_t hi_score = engine->getState().hi_score;
-	uint64_t score = engine->getState().score;
-	uint16_t lines = engine->getState().lines;
-	uint8_t level = engine->getState().level;
-
-	wclear(stats_win);
-	mvwprintw(stats_win, 0, 0, "high score: %lld", hi_score);
-	mvwprintw(stats_win, 1, 0, "score: %lld", score);
-	mvwprintw(stats_win, 2, 0, "lines: %ld", lines);
-	mvwprintw(stats_win, 4, 12, "level: %d", level);
-	wrefresh(stats_win);
-}
-
-void GameRenderer::refreshNextPieceUI() {
-	auto engine = eng.lock();
-	auto win_mgr = wm.lock();
-	if (!engine || !win_mgr) {
-		return;
-	}
-
-	WINDOW* next_win = win_mgr->getWindow(NEXT_WIN);
-	Tetromino next_piece = engine->getState().next_piece;
-
-	wclear(next_win);
-	windowPrint(NEXT_WIN, "NEXT PIECE");
-	if (engine->getState().next_piece.get_piece_id() != NULL) {
-		for (uint8_t y = 0; y < TETROMINO_W; y++) {
-			for (uint8_t x = 0; x < TETROMINO_W; x++) {
-				render_piece(next_piece, x, y, NEXT_WIN);
-			}
-		}
-	}
-	wrefresh(next_win);
-}
-
-void GameRenderer::refreshMenuUI() {
-	auto engine = eng.lock();
-	auto win_mgr = wm.lock();
-	if (!engine || !win_mgr) {
-		return;
-	}
-
-	int h, w;
-	WINDOW* menu_win = win_mgr->getWindow(MENU_WIN);
-	getmaxyx(menu_win, h, w);
-
-	for (int i = 0; i < menu_labels.size(); i++) {
-		const char* label = menu_labels.at(i).c_str();
-		uint8_t center = static_cast<uint8_t>((w - strlen(label)) / 2);
-
-		if (i == engine->getState().active_label) {
-			wattron(menu_win, A_REVERSE);
-		}
-		mvwprintw(menu_win, i, center, label);
-		if (i == engine->getState().active_label) {
-			wattroff(menu_win, A_REVERSE);
-		}
-	}
-
-	wrefresh(menu_win);
-}
-
-void GameRenderer::refreshSettingsUI() {
-	auto engine = eng.lock();
-	auto win_mgr = wm.lock();
-	if (!engine || !win_mgr) {
-		return;
-	}
-
-	int h, w;
-	WINDOW* menu_win = win_mgr->getWindow(MENU_WIN);
-	getmaxyx(menu_win, h, w);
-
-	wclear(menu_win);
-
-	for (int i = 0; i < settings_labels.size(); i++) {
-		string label = settings_labels.at(i);
-		if (label == "ASCII mode") {
-			label += " : ";
-			label += engine->getState().ascii_mode ? "on" : "off";
-		}
-		else if (label == "Flashing effects") {
-			label += " : ";
-			label += engine->getState().flash_on_clear ? "on" : "off";
-		}
-		else if (label == "Pure randomness") {
-			label += " : ";
-			label += engine->getState().pure_randomness ? "on" : "off";
-		}
-		else if (label == "Start level") {
-			label += " : ";
-			label += to_string(engine->getState().start_level);
-		}
-
-		uint8_t center = static_cast<uint8_t>((w - strlen(label.c_str())) / 2);
-
-		if (i == engine->getState().active_label) {
-			wattron(menu_win, A_REVERSE);
-		}
-		mvwprintw(menu_win, i, center, label.c_str());
-		if (i == engine->getState().active_label) {
-			wattroff(menu_win, A_REVERSE);
-		}
-	}
-
-	wrefresh(menu_win);
-}
-
 void GameRenderer::flashEffect() {
 	auto engine = eng.lock();
 	if (!engine) {
 		return;
 	}
 
-	if (engine->getState().flash_on_clear) {
+	if (engine->getState().cfg.flash_on_clear) {
 		flash();
 	}
 }
@@ -202,7 +84,7 @@ void GameRenderer::render_tile(const char tile) {
 
 	char block[3] = { ' ', ' ', '\0' };
 
-	if (engine->getState().ascii_mode) {
+	if (engine->getState().cfg.ascii_mode) {
 		if (tile == '.') {
 			block[0] = ' ';
 			block[1] = ' ';
@@ -269,7 +151,7 @@ void GameRenderer::render_piece(const Tetromino& piece, const uint8_t x, const u
 		return;
 	}
 
-	if (engine->getState().ascii_mode) {
+	if (engine->getState().cfg.ascii_mode) {
 		if (piece.is_ghost) {
 			block[0] = GHOST_SYM;
 			block[1] = GHOST_SYM;
@@ -339,6 +221,32 @@ void GameRenderer::showTitleScreen() {
 	wrefresh(title_win);
 }
 
+void GameRenderer::showEndScreen(const GameState& state) {
+	auto win_mgr = wm.lock();
+	if (!win_mgr) {
+		return;
+	}
+
+	win_mgr->clearContents(GAME_WIN);
+	win_mgr->clearWindow(STATS_WIN);
+	win_mgr->clearWindow(NEXT_WIN);
+
+	if (state.score == state.cfg.hi_score) {
+		windowPrint(GAME_WIN, "!!!NEW HIGH SCORE!!!\n");
+	}
+	else {
+		windowPrint(GAME_WIN, "GAME OVER.\n");
+	}
+
+	windowPrint(GAME_WIN, "score: " + to_string(state.score) + "\n");
+	windowPrint(GAME_WIN, "lines cleared: " + to_string(state.lines) + "\n");
+	windowPrint(GAME_WIN, "level reached: " + to_string(state.level) + "\n");
+	windowPrint(GAME_WIN, "\nPress [any key]\nto start new game\n");
+	windowPrint(GAME_WIN, "\nor\n\n[ESC] to go to menu\n");
+
+	this_thread::sleep_for(chrono::milliseconds(1000));	// delay to give the player time for reaction
+}
+
 void GameRenderer::windowPrint(const int& win_id, const string& str) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -385,71 +293,4 @@ void GameRenderer::windowReset(const int& win_id) {
 	}
 
 	win_mgr->clearContents(win_id);
-}
-
-void GameRenderer::initGameUI() {
-	auto win_mgr = wm.lock();
-	if (!win_mgr) {
-		return;
-	}
-
-	win_mgr->clearWindow(MENU_WIN);
-
-	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
-	wclear(title_win);
-	wrefresh(title_win);
-
-	win_mgr->showBorder(GAME_WIN);
-	win_mgr->showBorder(STATS_WIN);
-}
-
-void GameRenderer::initSettingsUI() {
-	auto win_mgr = wm.lock();
-	auto engine = eng.lock();
-	if (!win_mgr || !engine) {
-		return;
-	}
-
-	win_mgr->clearWindow(MENU_WIN);
-}
-
-void GameRenderer::initMenuUI() {
-	auto win_mgr = wm.lock();
-	auto engine = eng.lock();
-	if (!win_mgr || !engine) {
-		return;
-	}
-
-	win_mgr->clearWindow(MENU_WIN);
-	if (engine->getState().game_over) {
-		win_mgr->clearWindow(GAME_WIN);
-		win_mgr->clearWindow(STATS_WIN);
-	}
-	showTitleScreen();
-}
-
-void GameRenderer::showEndScreen(const GameState& state) {
-	auto win_mgr = wm.lock();
-	if (!win_mgr) {
-		return;
-	}
-
-	win_mgr->clearContents(GAME_WIN);
-	win_mgr->clearWindow(STATS_WIN);
-	win_mgr->clearWindow(NEXT_WIN);
-
-	if (state.score == state.hi_score) {
-		windowPrint(GAME_WIN, "!!!NEW HIGH SCORE!!!\n");
-	}
-	else {
-		windowPrint(GAME_WIN, "GAME OVER.\n");
-	}
-
-	windowPrint(GAME_WIN, "score: " + to_string(state.score) + "\n");
-	windowPrint(GAME_WIN, "lines cleared: " + to_string(state.lines) + "\n");
-	windowPrint(GAME_WIN, "level reached: " + to_string(state.level) + "\n");
-	windowPrint(GAME_WIN, "\nPress [any key]\nto start new game\n");
-	windowPrint(GAME_WIN, "\nor\n\n[ESC] to go to menu\n");
-
-	this_thread::sleep_for(chrono::milliseconds(1500));
 }

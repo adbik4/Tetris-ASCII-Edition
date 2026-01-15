@@ -8,11 +8,12 @@ void saveState(const GameState& state) {
     json data;
     ofstream of("save_state.json");
     if (of.is_open()) {
-        data["hi_score"] = state.hi_score;
-        data["start_level"] = state.start_level;
-        data["ascii_mode"] = state.ascii_mode;
-        data["flash_on_clear"] = state.flash_on_clear;
-        data["pure_randomness"] = state.pure_randomness;
+        data["hi_score"] = state.cfg.hi_score;
+        data["start_level"] = state.cfg.start_level;
+        data["ascii_mode"] = state.cfg.ascii_mode;
+        data["flash_on_clear"] = state.cfg.flash_on_clear;
+        data["pure_randomness"] = state.cfg.pure_randomness;
+        data["show_future"] = state.cfg.show_future;
 
         of << setw(4) << data << endl;
     }

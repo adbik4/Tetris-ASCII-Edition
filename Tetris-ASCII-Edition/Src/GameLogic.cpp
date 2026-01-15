@@ -75,7 +75,7 @@ void GameEngine::gameLogic(const int& k_input) {
 		// draw the next tetromino piece
 		uint8_t random_id;
 		while (active_piece.get_piece_id() == NULL) {
-			if (state->pure_randomness) {
+			if (state->cfg.pure_randomness) {
 				random_id = pure_randomizer();
 			}
 			else {
@@ -199,124 +199,89 @@ void GameEngine::gameLogic(const int& k_input) {
 	}
 }
 
-void GameEngine::menuLogic(const int& k_input) {
-	switch (k_input) {
-	case 'w':
-	case KEY_UP:
-		--(state->active_label);
-		if (state->active_label < 0) {
-			state->active_label = static_cast<int8_t>(menu_labels.size() - 1);
-		}
-		break;
-
-	case 's':
-	case KEY_DOWN:
-		state->active_label = static_cast<int8_t>(++(state->active_label) % menu_labels.size());
-		break;
-
-	case '\r':
-	case '\n':
-	case KEY_ENTER:
-		if (menu_labels.at(state->active_label) == "Start Game") {
-			renderer->initGameUI();
-			if (state->game_over) {
-				restartGame();
-			}
-			state->active_window = GAME;
-		}
-		else if (menu_labels.at(state->active_label) == "Settings") {
-			state->active_label = 0;
-			renderer->initSettingsUI();
-			state->active_window = SETTINGS;
-		}
-		else if (menu_labels.at(state->active_label) == "Exit") {
-			state->stop_flag = true;
-		}
-		break;
-	case 27: // ESC
-		state->stop_flag = true;
-		break;
-	}
+void GameEngine::restartGame() {
+	state->reset();
+	state->active_piece = Tetromino();
+	renderer->initGameUI();
+	renderer->windowReset(GAME_WIN);
 }
 
-void GameEngine::settingsLogic(const int& k_input) {
+void GameEngine::gameOver() {
+	if (state->stop_flag) {
+		return;
+	}
+
+	state->game_over = true;
+
+	if (state->score > state->cfg.hi_score) {
+		state->cfg.hi_score = state->score;
+	}
+
+	saveState(getState());
+	renderer->renderFrame();
+
+	for (auto i = 0; i < 3; i++) {
+		this_thread::sleep_for(chrono::milliseconds(100));
+		renderer->flashEffect();
+	}
+
+	renderer->showEndScreen(getState());
+	int k_input = input_mgr->waitForAnyKey();
+
 	switch (k_input) {
-	case 'w':
-	case KEY_UP:
-		--(state->active_label);
-		if (state->active_label < 0) {
-			state->active_label = static_cast<int8_t>(settings_labels.size() - 1);
-		}
-		break;
-
-	case 's':
-	case KEY_DOWN:
-		state->active_label = static_cast<int8_t>(++(state->active_label) % settings_labels.size());
-		break;
-
-	case 'a':
-	case KEY_LEFT:
-		if (settings_labels.at(state->active_label) == "Start level") {
-			if (state->start_level != 1) {
-				--(state->start_level);
-			}
-			state->level = state->start_level;
-		}
-		if (settings_labels.at(state->active_label) == "ASCII mode") {
-			state->ascii_mode ^= true;	// toggle
-		}
-		else if (settings_labels.at(state->active_label) == "Flashing effects") {
-			state->flash_on_clear ^= true;	// toggle
-		}
-		else if (settings_labels.at(state->active_label) == "Pure randomness") {
-			state->pure_randomness ^= true;	// toggle
-		}
-		break;
-
-	case 'd':
-	case KEY_RIGHT:
-		if (settings_labels.at(state->active_label) == "Start level") {
-			++(state->start_level);
-			if (state->start_level > MAX_LEVEL) {
-				state->start_level = MAX_LEVEL;
-			}
-			state->level = state->start_level;
-		}
-		else if (settings_labels.at(state->active_label) == "ASCII mode") {
-			state->ascii_mode ^= true;	// toggle
-		}
-		else if (settings_labels.at(state->active_label) == "Flashing effects") {
-			state->flash_on_clear ^= true;	// toggle
-		}
-		else if (settings_labels.at(state->active_label) == "Pure randomness") {
-			state->pure_randomness ^= true;	// toggle
-		}
-		break;
-
-	case '\r':
-	case '\n':
-	case KEY_ENTER:
-		if (settings_labels.at(state->active_label) == "ASCII mode") {
-			state->ascii_mode ^= true;	// toggle
-		}
-		else if (settings_labels.at(state->active_label) == "Flashing effects") {
-			state->flash_on_clear ^= true;	// toggle
-		}
-		else if (settings_labels.at(state->active_label) == "Pure randomness") {
-			state->pure_randomness ^= true;	// toggle
-		}
-
-		else if (settings_labels.at(state->active_label) == "Back") {
-			saveState(getState());
-			state->active_label = 0;
-			renderer->initMenuUI();
-			state->active_window = MENU;
-		}
 	case 27: // ESC
-		saveState(getState());
 		state->active_label = 0;
 		renderer->initMenuUI();
 		state->active_window = MENU;
-		break;
+		return;
 	}
+
+	restartGame();
+}
+
+// Returns a random piece index using the TETRIS TGM3 algorithm.
+// the game keeps track of a piece_bag with 35 pieces, initialised with 5 counts of each variant.
+// to mitigate floods, it also tracks the last four pieces that were played.
+// it will take a piece from the piece_bag at random, and check (up to six times) if it was recently played
+// to prevent droughts, the missing spot in the piece_bag will get filled by the most needed piece
+uint8_t GameEngine::TGM3_randomizer() {
+	uint8_t piece, tmp;
+	uint16_t random_idx;
+
+	// roll six times
+	for (uint8_t _ = 0; _ < 6; _++) {
+		random_idx = static_cast<uint8_t>(uniform_int_distribution<int16_t>(0, 34)(rng));
+		piece = piece_bag[random_idx];
+		if (find(history.begin(), history.end(), piece) == history.end()) {
+			break;
+		}
+	}
+
+	// manage the drought history
+	auto idx = find(drought_history.begin(), drought_history.end(), piece);
+	if (idx == drought_history.end()) {
+		drought_history.push_front(piece);
+	}
+	else {
+		// update drought history
+		tmp = *idx;
+		drought_history.erase(idx);
+		drought_history.push_front(tmp);
+	}
+
+	// replace the gap with the least used piece
+	if (random_idx < 35) {
+		piece_bag[random_idx] = drought_history.back();
+	}
+
+	// update history
+	history.push_front(piece);
+	history.pop_back();
+
+	return piece;
+}
+
+// Returns a purely random piece without messing around
+uint8_t GameEngine::pure_randomizer() {
+	return static_cast<uint8_t>(uniform_int_distribution<int16_t>(1, 7)(rng));
 }

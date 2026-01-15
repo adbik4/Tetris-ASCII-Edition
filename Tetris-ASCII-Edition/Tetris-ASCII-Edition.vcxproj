@@ -139,6 +139,7 @@
     <ClCompile Include="Src\GameLogic.cpp" />
     <ClCompile Include="Src\SaveSystem.cpp" />
     <ClCompile Include="Src\Tetromino.cpp" />
+    <ClCompile Include="Src\UIelements.cpp" />
     <ClCompile Include="Src\WindowManager.cpp" />
     <ClCompile Include="Src\GameRenderer.cpp" />
     <ClCompile Include="Src\GameEngine.cpp" />

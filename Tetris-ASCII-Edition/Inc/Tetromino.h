@@ -6,6 +6,8 @@
 
 using namespace std;
 
+// This object contains the state of a tetromino piece.
+// It's responsible for its movement rules and defines all of the piece variants
 class Tetromino {
 private:
 	int8_t piece_id;
@@ -44,6 +46,7 @@ public:
 	void set_ypos(const int8_t pos) { y_pos = pos; };
 };
 
+// Holds the lookup table for each tetromino piece variant
 inline constexpr array<char, TETROMINO_SIZE * TETROMINO_COUNT + 1> tetrominoLUT {
 	// id: 1
 		"...."

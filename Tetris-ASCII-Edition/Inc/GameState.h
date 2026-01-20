@@ -9,6 +9,7 @@
 #define MENU 1
 #define SETTINGS 2
 
+// Holds the entire state of the game
 class GameState {
 public:
 	// engine state

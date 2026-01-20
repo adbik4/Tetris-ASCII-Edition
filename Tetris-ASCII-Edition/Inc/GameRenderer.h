@@ -8,6 +8,7 @@
 using namespace std;
 class GameEngine;
 
+// Is responsible for drawing UI elements to the screen
 class GameRenderer {
 private:
 	weak_ptr<GameEngine> eng;

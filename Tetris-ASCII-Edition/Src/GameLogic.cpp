@@ -2,6 +2,8 @@
 #include "GameEngine.h"
 #include <SaveSystem.h>
 
+// Implements the TETRIS game logic.
+// Decides what happens after a given k_input press
 void GameEngine::gameLogic(const int& k_input) {
 	if (state->active_piece.is_falling) {
 		state->active_piece.soft_drop(state->board);
@@ -199,6 +201,7 @@ void GameEngine::gameLogic(const int& k_input) {
 	}
 }
 
+// Resets the game state and UI, preparing it for a new game
 void GameEngine::restartGame() {
 	state->reset();
 	state->active_piece = Tetromino();
@@ -206,6 +209,7 @@ void GameEngine::restartGame() {
 	renderer->windowReset(GAME_WIN);
 }
 
+// Ends the game, checks for hi-score and updates the UI
 void GameEngine::gameOver() {
 	if (state->stop_flag) {
 		return;

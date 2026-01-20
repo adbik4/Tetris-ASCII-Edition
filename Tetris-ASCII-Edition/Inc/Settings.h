@@ -4,6 +4,8 @@
 
 using json = nlohmann::json;
 
+// Contains game settings that can be controlled by the user.
+// They'll get saved to save_state.json on each exit and change
 class GameSettings {
 public:
     uint64_t hi_score;      // current high score

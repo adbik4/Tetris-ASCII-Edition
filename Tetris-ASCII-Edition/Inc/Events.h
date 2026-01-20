@@ -4,24 +4,12 @@
 
 using namespace std;
 
-enum class EventId : int8_t {
-	CLK = 0,
-};
-
+// Can be used to pass notifications from publishers to the mediator
 typedef struct {
 	EventId id;
 } Event;
 
-/*
-class Event {
-public:
-	int id;
-	int getId() { return id; }
+// Defines the possible event types
+enum class EventId : int8_t {
+	CLK = 0,
 };
-
-class TickEvent : public Event {};
-
-class InputEvent : public Event {
-	tuple<int, int> args;
-};
-*/

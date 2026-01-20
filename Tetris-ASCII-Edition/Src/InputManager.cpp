@@ -7,6 +7,8 @@
 
 using namespace std;
 
+// Non blocking keyboard input.
+// returns an integer key_id
 int InputManager::getKeyboardInput() {
     auto win_mgr = wm.lock();
     if (!win_mgr) {
@@ -17,6 +19,8 @@ int InputManager::getKeyboardInput() {
     return wgetch(input_win);
 }
 
+// Blocking keyboard input.
+// returns an integer key_id
 int InputManager::waitForAnyKey() {
     auto win_mgr = wm.lock();
     if (!win_mgr) {

@@ -4,10 +4,11 @@
 
 using namespace std;
 
-vector<string> menu_labels = { "Start Game", "Settings", "Exit" };
-vector<string> settings_labels = { "ASCII mode", "Flashing effects", "Randomness", "Show future piece", "Start level", "Back"};
+vector<string> menu_labels = { "Start Game", "Settings", "Exit" }; 	// defines the label contents for the main menu
+vector<string> settings_labels = { "ASCII mode", "Flashing effects", "Randomness", "Show future piece", "Start level", "Back"}; // defines the label contents for the settings menu
 
 
+// Renders the contents of the GAME_WIN based on the current GameState
 void GameRenderer::renderFrame() {
 	auto engine = eng.lock();
 	if (!engine) {
@@ -42,6 +43,7 @@ void GameRenderer::renderFrame() {
 	wrefresh(game_win);
 }
 
+// Flashes the screen if flashing effects are enabled
 void GameRenderer::flashEffect() {
 	auto engine = eng.lock();
 	if (!engine) {
@@ -53,6 +55,7 @@ void GameRenderer::flashEffect() {
 	}
 }
 
+// Displays an effect for line clears
 void GameRenderer::lineClearEffect(vector<uint8_t> lines, uint16_t score) {
 	auto engine = eng.lock();
 	if (!engine) {
@@ -75,6 +78,7 @@ void GameRenderer::lineClearEffect(vector<uint8_t> lines, uint16_t score) {
 }
 
 // UTILITY ----
+// Renders a background tile
 void GameRenderer::render_tile(const char tile) {
 	auto engine = eng.lock();
 	if (!engine) {
@@ -132,6 +136,7 @@ void GameRenderer::render_tile(const char tile) {
 	}
 }
 
+// Renders the entirety of a given tetromino piece in a given window
 void GameRenderer::render_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id) {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
@@ -208,6 +213,7 @@ void GameRenderer::render_piece(const Tetromino& piece, const uint8_t x, const u
 	}
 }
 
+// Renders the ASCII art title
 void GameRenderer::showTitleScreen() {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -220,6 +226,7 @@ void GameRenderer::showTitleScreen() {
 	wrefresh(title_win);
 }
 
+// Renders the contents of the end screen based on the GameState
 void GameRenderer::showEndScreen(const GameState& state) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -246,6 +253,7 @@ void GameRenderer::showEndScreen(const GameState& state) {
 	this_thread::sleep_for(chrono::milliseconds(1000));	// delay to give the player time for reaction
 }
 
+// Appends a message to the end of the given window and displays it
 void GameRenderer::windowPrint(const int& win_id, const string& str) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -258,6 +266,7 @@ void GameRenderer::windowPrint(const int& win_id, const string& str) {
 	wrefresh(local_win);
 }
 
+// Displays a message at a given position in the given window
 void GameRenderer::windowPrintAtPos(const int& win_id, const int& x, const int& y, const string& str) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -272,6 +281,7 @@ void GameRenderer::windowPrintAtPos(const int& win_id, const int& x, const int& 
 	wrefresh(local_win);
 }
 
+// Prints an error in the ERR_WIN
 void GameRenderer::errPrint(const string& str) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -285,6 +295,7 @@ void GameRenderer::errPrint(const string& str) {
 	wrefresh(err_win);
 }
 
+// Clears the contents of a given window
 void GameRenderer::windowReset(const int& win_id) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {

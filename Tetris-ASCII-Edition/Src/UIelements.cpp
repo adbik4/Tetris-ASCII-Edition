@@ -2,6 +2,8 @@
 #include "SaveSystem.h"
 
 // ==== VISUALS ====
+
+// Refreshes the GameUI window with current info from the GameEngine
 void GameRenderer::refreshGameUI() {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
@@ -24,6 +26,7 @@ void GameRenderer::refreshGameUI() {
 	wrefresh(stats_win);
 }
 
+// Refreshes the NextPieceUI window with current info from the GameEngine
 void GameRenderer::refreshNextPieceUI() {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
@@ -46,6 +49,7 @@ void GameRenderer::refreshNextPieceUI() {
 	wrefresh(next_win);
 }
 
+// Refreshes the MenuUI window with current info from the GameEngine
 void GameRenderer::refreshMenuUI() {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
@@ -73,6 +77,7 @@ void GameRenderer::refreshMenuUI() {
 	wrefresh(menu_win);
 }
 
+// Refreshes the SettingsUI window with current info from the GameEngine
 void GameRenderer::refreshSettingsUI() {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
@@ -125,6 +130,8 @@ void GameRenderer::refreshSettingsUI() {
 
 
 // ==== LOGIC ====
+
+// Responsible for the behavior of the main menu
 void GameEngine::menuLogic(const int& k_input) {
 	switch (k_input) {
 	case 'w':
@@ -165,6 +172,7 @@ void GameEngine::menuLogic(const int& k_input) {
 	}
 }
 
+// Responsible for the behavior of the settings menu
 void GameEngine::settingsLogic(const int& k_input) {
 	switch (k_input) {
 	case 'w':
@@ -233,6 +241,8 @@ void GameEngine::settingsLogic(const int& k_input) {
 
 
 // ==== INITIALISATION ====
+
+// initialises the gameUI window
 void GameRenderer::initGameUI() {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -249,6 +259,7 @@ void GameRenderer::initGameUI() {
 	win_mgr->showBorder(STATS_WIN);
 }
 
+// initialises the settingsUI window
 void GameRenderer::initSettingsUI() {
 	auto win_mgr = wm.lock();
 	auto engine = eng.lock();
@@ -259,6 +270,7 @@ void GameRenderer::initSettingsUI() {
 	win_mgr->clearWindow(MENU_WIN);
 }
 
+// initialises the MenuUI window
 void GameRenderer::initMenuUI() {
 	auto win_mgr = wm.lock();
 	auto engine = eng.lock();

@@ -15,6 +15,7 @@ int main()
 {
     GameSettings cfg;
 
+    // Load the GameState from a save file
     try {
         cfg = loadState();
     }
@@ -37,15 +38,18 @@ int main()
     engine->setInputManager(move(im));
     engine->setTimeManager(move(tm));
 
+    // Start the GameEngine
     engine->startEngine();
 
-    // wait for stop flag
+    // Wait for the stop flag
     while (!engine->getState().stop_flag) {
         this_thread::sleep_for(chrono::milliseconds(500));
     }
 
+    // Stop the GameEngine
     engine->stopEngine();
 
+    // Write the GameState to a save file
     try {
         saveState(engine->getState());
     }

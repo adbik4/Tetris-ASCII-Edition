@@ -2,7 +2,7 @@
 #include "nlohmann/json.hpp"
 #include <fstream>
 
-// updates the save file
+// Updates the save file
 void saveState(const GameState& state) {
     // write to the save file
     json data;
@@ -24,7 +24,7 @@ void saveState(const GameState& state) {
     of.close();
 }
 
-// loads the save file
+// Loads the save file
 GameSettings loadState() {
     GameSettings cfg;
 

@@ -1,6 +1,8 @@
 #include "WindowManager.h"
 #include "locale"
 
+// Initialises the terminal.
+// Runs when the WindowManager is created
 void WindowManager::initTerm() {
 	setlocale(LC_ALL, "");
 
@@ -23,10 +25,13 @@ void WindowManager::initTerm() {
 	init_pair(7, COLOR_BLACK, COLOR_YELLOW);
 }
 
+// Deinitialises the terminal.
+// Runs when the WindowManager is deleted
 void WindowManager::deinitTerm() {
 	endwin();
 }
 
+// Shows the given window border without clearing its contents
 void WindowManager::showBorder(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
 	WINDOW* tmp = createNewWindow(local_win->_maxy + 2, local_win->_maxx + 2, local_win->_begy - 1, local_win->_begx - 1);
@@ -35,6 +40,7 @@ void WindowManager::showBorder(const int& win_id) {
 	delwin(tmp);
 }
 
+// Clears the given window border without clearing its contents
 void WindowManager::clearBorder(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
 	WINDOW* tmp = createNewWindow(local_win->_maxy + 2, local_win->_maxx + 2, local_win->_begy - 1, local_win->_begx - 1);
@@ -43,6 +49,7 @@ void WindowManager::clearBorder(const int& win_id) {
 	delwin(tmp);
 }
 
+// Clears the given window contents without clearing its border
 void WindowManager::clearContents(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
 	wclear(local_win);
@@ -50,12 +57,14 @@ void WindowManager::clearContents(const int& win_id) {
 	wrefresh(local_win);
 }
 
+// Clears the given window border and contents
 void WindowManager::clearWindow(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
 	wclear(local_win);
 	clearBorder(win_id);
 }
 
+// Properly creates and validates a new WINDOW object
 WINDOW* WindowManager::createNewWindow(const int& height, const int& width, const int& starty, const int& startx) {
 	int max_y, max_x;
 
@@ -79,6 +88,7 @@ WINDOW* WindowManager::createNewWindow(const int& height, const int& width, cons
 	return window;
 }
 
+// Returns a pointer to a given WINDOW
 WINDOW* WindowManager::getWindow(const int& win_id) {
 	switch (win_id) {
 	case MENU_WIN:

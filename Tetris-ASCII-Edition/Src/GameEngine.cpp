@@ -16,12 +16,15 @@ void GameEngine::notify(const Event& event) {
 	}
 }
 
+// Starts the GameEngine
 void GameEngine::startEngine() {
 	renderer->initMenuUI();
 	time_mgr->startClock();
 	state->running = true;
 }
 
+// Main update loop.
+// Gets called after the GameEngine receives an EventId::CLK tick every GAME_TICK ms. 
 void GameEngine::update() {
 	try {
 
@@ -71,6 +74,7 @@ void GameEngine::update() {
 	}
 }
 
+// Stops the GameEngine
 void GameEngine::stopEngine() {
 	if (!state->stop_flag) {
 		state->stop_flag = true;

@@ -13,6 +13,7 @@ using namespace std;
 #define STATS_WIN	6
 #define NEXT_WIN	7
 
+// Manages the all of the PDCurses WINDOW objects and (de)initialises them
 class WindowManager {
 private:
 	WINDOW* menu_win;

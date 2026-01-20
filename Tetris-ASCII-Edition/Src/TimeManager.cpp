@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include <chrono>
 
+// Runs in a seperate thread and keeps track of the time
 void clockTask(std::stop_token stopToken, GameEngine* engine) {
 	Event tick(EventId::CLK); // Event object to use for notification
 
@@ -14,10 +15,12 @@ void clockTask(std::stop_token stopToken, GameEngine* engine) {
 	}
 }
 
+// Starts a seperate clock thread
 void TimeManager::startClock() {
 	BaseClock = std::jthread(clockTask, engine);
 }
 
+// Terminates the clock thread
 void TimeManager::stopClock() {
 	if (BaseClock.joinable()) {
 		BaseClock.request_stop();

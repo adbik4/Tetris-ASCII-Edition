@@ -24,7 +24,7 @@
 #define GHOST_SYM '.'		// used for displaying the ghost piece
 
 // (level 1-3) points for:
-// hard droping pieces | 1 lines | 2 lines | 3 lines | 4 lines
+// { hard droping pieces | 1 lines | 2 lines | 3 lines | 4 lines }
 static const int SCORE_DEF[5] = { 1, 100, 400, 900, 2000 };		// base values used for calculating scores
 
 // externs

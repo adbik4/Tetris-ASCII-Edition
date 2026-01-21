@@ -29,7 +29,7 @@ int InputManager::waitForAnyKey() {
         return -1;
     }
 
-    WINDOW* local_win = win_mgr->getWindow(ERR_WIN);
+    WINDOW* local_win = win_mgr->getWindow(INPUT_WIN);
     
     keypad(local_win, TRUE); // Enable arrow keys
     nodelay(local_win, FALSE); // Disable non-blocking input

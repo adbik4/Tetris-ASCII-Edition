@@ -86,18 +86,18 @@ WINDOW* WindowManager::createNewWindow(const int& height, const int& width, cons
 
 	// Validate coordinates and size
 	if (height <= 0 || width <= 0) {
-		exit(-1);
+		exit(-1);	// invalid size
 	}
 	if (starty < 0 || startx < 0) {
-		exit(-2);
+		exit(-2);	// start coordinate too small
 	}
 	if (max_x <= startx || max_y <= starty) {
-		exit(-3);
+		exit(-3);	// start coordinate too large
 	}
 
 	WINDOW* window;
 	if ((window = newwin(height, width, starty, startx)) == nullptr) {
-		exit(-4);
+		exit(-4);	// error during window creation
 	}
 	return window;
 }

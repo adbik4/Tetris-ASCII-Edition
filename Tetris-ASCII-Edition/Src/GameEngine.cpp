@@ -7,14 +7,14 @@ using namespace std;
 // Args: event - const Event& to dispatch to the engine components
 // Returns: void
 void GameEngine::notify(const Event& event) {
-	switch (event.id) {
-	case EventId::CLK:
-		update();
-		state->tick++;
-		break;
-	default:
-		renderer->errPrint("[DEBUG] GameEngine has recieved an undefined event\n");
-		break;
+	switch (event) {
+		case Event::CLK:
+			update();
+			state->tick++;
+			break;
+		default:
+			renderer->errPrint("[DEBUG] GameEngine has recieved an undefined event\n");
+			break;
 	}
 }
 

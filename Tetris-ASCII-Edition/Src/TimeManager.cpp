@@ -7,12 +7,10 @@
 // Args: stopToken - std::stop_token to cooperatively end the thread; engine - GameEngine* to notify
 // Returns: void
 void clockTask(std::stop_token stopToken, GameEngine* engine) {
-	Event tick(EventId::CLK); // Event object to use for notification
-
 	int sleep_duration{ 0 };
 	while (!stopToken.stop_requested()) {
 		this_thread::sleep_for(chrono::milliseconds(GAME_TICK));
-		engine->notify(tick);
+		engine->notify(Event::CLK);
 		engine->getState().tick;
 	}
 }

@@ -248,9 +248,9 @@ void GameRenderer::showEndScreen(const GameState& state) {
 		return;
 	}
 
-	win_mgr->clearContents(GAME_WIN);
 	win_mgr->clearWindow(STATS_WIN);
 	win_mgr->clearWindow(NEXT_WIN);
+	win_mgr->clearContents(GAME_WIN);
 
 	if (state.score == state.cfg.hi_score) {
 		windowPrint(GAME_WIN, "!!!NEW HIGH SCORE!!!\n");
@@ -263,9 +263,9 @@ void GameRenderer::showEndScreen(const GameState& state) {
 	windowPrint(GAME_WIN, "lines cleared: " + to_string(state.lines) + "\n");
 	windowPrint(GAME_WIN, "level reached: " + to_string(state.level) + "\n");
 	windowPrint(GAME_WIN, "\nPress [any key]\nto start new game\n");
-	windowPrint(GAME_WIN, "\nor\n\n[ESC] to go to menu\n");
+	windowPrint(GAME_WIN, "\n\tor\n\n[ESC] to go to menu\n");
 
-	this_thread::sleep_for(chrono::milliseconds(1000));	// delay to give the player time for reaction
+	this_thread::sleep_for(chrono::milliseconds(600));	// delay to give the player time for reaction
 }
 
 // Appends a message to the end of the given window and displays it

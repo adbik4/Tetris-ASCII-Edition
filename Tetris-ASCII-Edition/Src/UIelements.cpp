@@ -336,7 +336,7 @@ WINDOW* WindowManager::makeMenuWindow() {
 
 	width = UI_UNIT_W * 3;
 	height = 6;
-	voffset = 8;
+	voffset = 9;
 
 	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
 	startx = (cols - width) / 2;	/* of the window		*/
@@ -356,7 +356,7 @@ WINDOW* WindowManager::makeInputWindow() {
 
 	width = 1;
 	height = 1;
-	voffset = 13;
+	voffset = 12;
 
 	starty = voffset + (lines - height) / 2;
 	startx = (cols - width) / 2;

@@ -4,12 +4,7 @@
 
 using namespace std;
 
-// Can be used to pass notifications from publishers to the mediator
-typedef struct {
-	EventId id;
-} Event;
-
 // Defines the possible event types
-enum class EventId : int8_t {
+enum class Event : uint8_t {
 	CLK = 0,
 };

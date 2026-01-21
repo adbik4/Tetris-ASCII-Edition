@@ -1,6 +1,6 @@
 #pragma once
 #include <stdexcept>
-#include <curses.h>
+#include "CursesWinCompat.h"
 
 using namespace std;
 

@@ -1,6 +1,7 @@
 #include "GameRenderer.h"
 #include "Tetromino.h"
 #include "Constants.h"
+#include "SoundFX.h"
 
 using namespace std;
 
@@ -81,6 +82,7 @@ void GameRenderer::lineClearEffect(vector<uint8_t> lines, uint16_t score) {
 	wrefresh(game_win);
 
 	flashEffect();
+	successSound();
 }
 
 // UTILITY ----
@@ -265,7 +267,8 @@ void GameRenderer::showEndScreen(const GameState& state) {
 	windowPrint(GAME_WIN, "\nPress [any key]\nto start new game\n");
 	windowPrint(GAME_WIN, "\n\tor\n\n[ESC] to go to menu\n");
 
-	this_thread::sleep_for(chrono::milliseconds(600));	// delay to give the player time for reaction
+	// game over jingle
+	failureSound();
 }
 
 // Appends a message to the end of the given window and displays it

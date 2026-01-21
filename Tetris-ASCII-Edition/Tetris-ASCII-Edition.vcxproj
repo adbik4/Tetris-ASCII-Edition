@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClCompile Include="Src\GameLogic.cpp" />
     <ClCompile Include="Src\SaveSystem.cpp" />
+    <ClCompile Include="Src\SoundFX.cpp" />
     <ClCompile Include="Src\Tetromino.cpp" />
     <ClCompile Include="Src\UIelements.cpp" />
     <ClCompile Include="Src\WindowManager.cpp" />
@@ -149,8 +150,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\Constants.h" />
+    <ClInclude Include="Inc\CursesWinCompat.h" />
     <ClInclude Include="Inc\SaveSystem.h" />
     <ClInclude Include="Inc\Settings.h" />
+    <ClInclude Include="Inc\SoundFX.h" />
     <ClInclude Include="Inc\Tetromino.h" />
     <ClInclude Include="Inc\WindowManager.h" />
     <ClInclude Include="Inc\GameRenderer.h" />

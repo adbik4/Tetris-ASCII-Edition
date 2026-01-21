@@ -2,7 +2,7 @@
 #include "GameEngine.h"
 #include "WindowManager.h"
 
-#include <curses.h>
+#include "CursesWinCompat.h"
 #include "Events.h"
 
 using namespace std;
@@ -31,10 +31,8 @@ int InputManager::waitForAnyKey() {
 
     WINDOW* local_win = win_mgr->getWindow(INPUT_WIN);
     
-    keypad(local_win, TRUE); // Enable arrow keys
     nodelay(local_win, FALSE); // Disable non-blocking input
     int input = wgetch(local_win);
     nodelay(local_win, TRUE);
-    keypad(local_win, FALSE);
     return input;
 }

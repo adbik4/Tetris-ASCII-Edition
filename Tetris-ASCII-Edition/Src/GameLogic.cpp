@@ -131,7 +131,7 @@ void GameEngine::gameLogic(const int& k_input) {
 				state->lines += (uint16_t)lines_cleared.size();
 
 				renderer->lineClearEffect(lines_cleared, score);
-				this_thread::sleep_for(chrono::milliseconds(500));
+				this_thread::sleep_for(chrono::milliseconds(100));
 			}
 			else {
 				renderer->windowPrintAtPos(GAME_WIN, 3, BOARD_H/2, "PERFECT CLEAR");
@@ -139,7 +139,6 @@ void GameEngine::gameLogic(const int& k_input) {
 				state->score += score;
 				for (auto i = 0; i < 5; i++) {
 					renderer->lineClearEffect(lines_cleared, score);
-					this_thread::sleep_for(chrono::milliseconds(100));
 				}
 			}
 
@@ -231,8 +230,8 @@ void GameEngine::gameOver() {
 	renderer->renderFrame();
 
 	for (auto i = 0; i < 3; i++) {
-		this_thread::sleep_for(chrono::milliseconds(100));
 		renderer->flashEffect();
+		this_thread::sleep_for(chrono::milliseconds(100));
 	}
 
 	renderer->showEndScreen(getState());

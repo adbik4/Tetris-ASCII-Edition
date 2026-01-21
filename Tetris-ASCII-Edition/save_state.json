@@ -2,7 +2,7 @@
     "ascii_mode": false,
     "flash_on_clear": true,
     "hi_score": 58028,
-    "pure_randomness": true,
-    "show_future": false,
+    "pure_randomness": false,
+    "show_future": true,
     "start_level": 1
 }

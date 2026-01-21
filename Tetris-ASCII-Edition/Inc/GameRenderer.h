@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <curses.h>
+#include "CursesWinCompat.h"
 #include "GameEngine.h"
 #include "WindowManager.h"
 #include <array>

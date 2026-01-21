@@ -3,6 +3,8 @@
 #include <fstream>
 
 // Updates the save file
+// Args: state - const GameState& whose config is persisted
+// Returns: void (throws runtime_error on failure)
 void saveState(const GameState& state) {
     // write to the save file
     json data;
@@ -25,6 +27,8 @@ void saveState(const GameState& state) {
 }
 
 // Loads the save file
+// Args: none (reads default save file)
+// Returns: GameSettings loaded from disk or defaults
 GameSettings loadState() {
     GameSettings cfg;
 

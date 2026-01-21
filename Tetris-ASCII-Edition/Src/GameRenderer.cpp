@@ -9,6 +9,8 @@ vector<string> settings_labels = { "ASCII mode", "Flashing effects", "Randomness
 
 
 // Renders the contents of the GAME_WIN based on the current GameState
+// Args: none (reads state via engine weak_ptr)
+// Returns: void
 void GameRenderer::renderFrame() {
 	auto engine = eng.lock();
 	if (!engine) {
@@ -44,6 +46,8 @@ void GameRenderer::renderFrame() {
 }
 
 // Flashes the screen if flashing effects are enabled
+// Args: none (uses config flag)
+// Returns: void
 void GameRenderer::flashEffect() {
 	auto engine = eng.lock();
 	if (!engine) {
@@ -56,6 +60,8 @@ void GameRenderer::flashEffect() {
 }
 
 // Displays an effect for line clears
+// Args: lines - vector<uint8_t> of cleared row indices; score - uint16_t points awarded
+// Returns: void
 void GameRenderer::lineClearEffect(vector<uint8_t> lines, uint16_t score) {
 	auto engine = eng.lock();
 	if (!engine) {
@@ -78,7 +84,10 @@ void GameRenderer::lineClearEffect(vector<uint8_t> lines, uint16_t score) {
 }
 
 // UTILITY ----
+
 // Renders a background tile
+// Args: tile - char representing board tile content
+// Returns: void
 void GameRenderer::render_tile(const char tile) {
 	auto engine = eng.lock();
 	if (!engine) {
@@ -137,6 +146,8 @@ void GameRenderer::render_tile(const char tile) {
 }
 
 // Renders the entirety of a given tetromino piece in a given window
+// Args: piece - Tetromino to draw; x,y - uint8_t local offsets; win_id - const int& target window id
+// Returns: void
 void GameRenderer::render_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id) {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
@@ -214,6 +225,8 @@ void GameRenderer::render_piece(const Tetromino& piece, const uint8_t x, const u
 }
 
 // Renders the ASCII art title
+// Args: none
+// Returns: void
 void GameRenderer::showTitleScreen() {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -227,6 +240,8 @@ void GameRenderer::showTitleScreen() {
 }
 
 // Renders the contents of the end screen based on the GameState
+// Args: state - const GameState& providing score and stats
+// Returns: void
 void GameRenderer::showEndScreen(const GameState& state) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -254,6 +269,8 @@ void GameRenderer::showEndScreen(const GameState& state) {
 }
 
 // Appends a message to the end of the given window and displays it
+// Args: win_id - const int& target window; str - const string& message to append
+// Returns: void
 void GameRenderer::windowPrint(const int& win_id, const string& str) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -267,6 +284,8 @@ void GameRenderer::windowPrint(const int& win_id, const string& str) {
 }
 
 // Displays a message at a given position in the given window
+// Args: win_id - const int& target window; x - const int& column; y - const int& row; str - const string& message
+// Returns: void
 void GameRenderer::windowPrintAtPos(const int& win_id, const int& x, const int& y, const string& str) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -282,6 +301,8 @@ void GameRenderer::windowPrintAtPos(const int& win_id, const int& x, const int& 
 }
 
 // Prints an error in the ERR_WIN
+// Args: str - const string& error message to display
+// Returns: void
 void GameRenderer::errPrint(const string& str) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -296,6 +317,8 @@ void GameRenderer::errPrint(const string& str) {
 }
 
 // Clears the contents of a given window
+// Args: win_id - const int& window identifier
+// Returns: void
 void GameRenderer::windowReset(const int& win_id) {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {

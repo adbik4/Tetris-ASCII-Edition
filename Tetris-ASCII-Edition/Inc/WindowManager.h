@@ -4,19 +4,19 @@
 
 using namespace std;
 
-#define GLOBAL		0
-#define MENU_WIN	1
-#define GAME_WIN	2
-#define INPUT_WIN	3
-#define ERR_WIN		4
-#define TITLE_WIN	5
-#define STATS_WIN	6
-#define NEXT_WIN	7
+#define GLOBAL		0	// the stdscr
+#define MENU_WIN	1	// a window for displaying the menus
+#define GAME_WIN	2	// a window for rendering the gameplay
+#define INPUT_WIN	3	// an invisible window for obtaining user input
+#define ERR_WIN		4	// a window for displaying debug errors
+#define TITLE_WIN	5	// a window for displaying the title ASCII art
+#define STATS_WIN	6	// a window for displaying game statistics
+#define NEXT_WIN	7	// a window for displaying the next piece in order
 
 // Manages the all of the PDCurses WINDOW objects and (de)initialises them
 class WindowManager {
 private:
-	WINDOW* menu_win;
+	WINDOW* menu_win; 
 	WINDOW* input_win;
 	WINDOW* err_win;
 	WINDOW* game_win;

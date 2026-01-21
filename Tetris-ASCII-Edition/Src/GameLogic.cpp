@@ -4,6 +4,8 @@
 
 // Implements the TETRIS game logic.
 // Decides what happens after a given k_input press
+// Args: k_input - const int& representing the keyboard input code
+// Returns: void
 void GameEngine::gameLogic(const int& k_input) {
 	if (state->active_piece.is_falling) {
 		state->active_piece.soft_drop(state->board);
@@ -202,6 +204,8 @@ void GameEngine::gameLogic(const int& k_input) {
 }
 
 // Resets the game state and UI, preparing it for a new game
+// Args: none
+// Returns: void
 void GameEngine::restartGame() {
 	state->reset();
 	state->active_piece = Tetromino();
@@ -210,6 +214,8 @@ void GameEngine::restartGame() {
 }
 
 // Ends the game, checks for hi-score and updates the UI
+// Args: none
+// Returns: void
 void GameEngine::gameOver() {
 	if (state->stop_flag) {
 		return;
@@ -248,6 +254,8 @@ void GameEngine::gameOver() {
 // to mitigate floods, it also tracks the last four pieces that were played.
 // it will take a piece from the piece_bag at random, and check (up to six times) if it was recently played
 // to prevent droughts, the missing spot in the piece_bag will get filled by the most needed piece
+// Args: none (uses internal random state and bags)
+// Returns: uint8_t representing a tetromino id
 uint8_t GameEngine::TGM3_randomizer() {
 	uint8_t piece, tmp;
 	uint16_t random_idx;
@@ -286,6 +294,8 @@ uint8_t GameEngine::TGM3_randomizer() {
 }
 
 // Returns a purely random piece without messing around
+// Args: none (uses internal RNG)
+// Returns: uint8_t representing a tetromino id
 uint8_t GameEngine::pure_randomizer() {
 	return static_cast<uint8_t>(uniform_int_distribution<int16_t>(1, 7)(rng));
 }

@@ -4,6 +4,8 @@
 // ==== VISUALS ====
 
 // Refreshes the GameUI window with current info from the GameEngine
+// Args: none (pulls data from engine state)
+// Returns: void
 void GameRenderer::refreshGameUI() {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
@@ -27,6 +29,8 @@ void GameRenderer::refreshGameUI() {
 }
 
 // Refreshes the NextPieceUI window with current info from the GameEngine
+// Args: none (pulls data from engine state)
+// Returns: void
 void GameRenderer::refreshNextPieceUI() {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
@@ -50,6 +54,8 @@ void GameRenderer::refreshNextPieceUI() {
 }
 
 // Refreshes the MenuUI window with current info from the GameEngine
+// Args: none (pulls data from engine state)
+// Returns: void
 void GameRenderer::refreshMenuUI() {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
@@ -78,6 +84,8 @@ void GameRenderer::refreshMenuUI() {
 }
 
 // Refreshes the SettingsUI window with current info from the GameEngine
+// Args: none (pulls data from engine state)
+// Returns: void
 void GameRenderer::refreshSettingsUI() {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
@@ -132,6 +140,8 @@ void GameRenderer::refreshSettingsUI() {
 // ==== LOGIC ====
 
 // Responsible for the behavior of the main menu
+// Args: k_input - const int& representing the keyboard input code
+// Returns: void
 void GameEngine::menuLogic(const int& k_input) {
 	switch (k_input) {
 	case 'w':
@@ -173,6 +183,8 @@ void GameEngine::menuLogic(const int& k_input) {
 }
 
 // Responsible for the behavior of the settings menu
+// Args: k_input - const int& representing the keyboard input code
+// Returns: void
 void GameEngine::settingsLogic(const int& k_input) {
 	switch (k_input) {
 	case 'w':
@@ -243,6 +255,8 @@ void GameEngine::settingsLogic(const int& k_input) {
 // ==== INITIALISATION ====
 
 // initialises the gameUI window
+// Args: none
+// Returns: void
 void GameRenderer::initGameUI() {
 	auto win_mgr = wm.lock();
 	if (!win_mgr) {
@@ -260,6 +274,8 @@ void GameRenderer::initGameUI() {
 }
 
 // initialises the settingsUI window
+// Args: none
+// Returns: void
 void GameRenderer::initSettingsUI() {
 	auto win_mgr = wm.lock();
 	auto engine = eng.lock();
@@ -271,6 +287,8 @@ void GameRenderer::initSettingsUI() {
 }
 
 // initialises the MenuUI window
+// Args: none
+// Returns: void
 void GameRenderer::initMenuUI() {
 	auto win_mgr = wm.lock();
 	auto engine = eng.lock();
@@ -288,6 +306,10 @@ void GameRenderer::initMenuUI() {
 
 
 // ==== DEFINITIONS ====
+
+// Creates and defines the title window
+// Args: none
+// Returns: WINDOW* newly created title window (MENU_WIN)
 WINDOW* WindowManager::makeTitleWindow() {
 	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
@@ -305,6 +327,9 @@ WINDOW* WindowManager::makeTitleWindow() {
 	return window;
 }
 
+// Creates and defines the menu window
+// Args: none
+// Returns: WINDOW* newly created menu window
 WINDOW* WindowManager::makeMenuWindow() {
 	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
@@ -322,6 +347,9 @@ WINDOW* WindowManager::makeMenuWindow() {
 	return window;
 }
 
+// Creates and defines the input window
+// Args: none
+// Returns: WINDOW* newly created input window
 WINDOW* WindowManager::makeInputWindow() {
 	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
@@ -340,6 +368,9 @@ WINDOW* WindowManager::makeInputWindow() {
 	return window;
 }
 
+// Creates and defines thegame window
+// Args: none
+// Returns: WINDOW* newly created game window
 WINDOW* WindowManager::makeGameWindow() {
 	int width, height, starty, startx, lines, cols, voffset;
 	getmaxyx(stdscr, lines, cols);
@@ -359,6 +390,9 @@ WINDOW* WindowManager::makeGameWindow() {
 	return window;
 }
 
+// Creates and defines the error window
+// Args: none
+// Returns: WINDOW* newly created error window
 WINDOW* WindowManager::makeErrorWindow() {
 	int width, height, starty, startx, lines, cols;
 	getmaxyx(stdscr, lines, cols);
@@ -372,6 +406,9 @@ WINDOW* WindowManager::makeErrorWindow() {
 	return window;
 }
 
+// Creates and defines the statistics window
+// Args: none
+// Returns: WINDOW* newly created stats window
 WINDOW* WindowManager::makeStatsWindow() {
 	int width, height, starty, startx, lines, cols, voffset, hoffset;
 	getmaxyx(stdscr, lines, cols);
@@ -388,6 +425,9 @@ WINDOW* WindowManager::makeStatsWindow() {
 	return window;
 }
 
+// Creates and defines the next-piece window
+// Args: none
+// Returns: WINDOW* newly created next-piece window
 WINDOW* WindowManager::makeNextPieceWindow() {
 	int width, height, starty, startx, lines, cols, voffset, hoffset;
 	getmaxyx(stdscr, lines, cols);

@@ -4,6 +4,8 @@
 using namespace std;
 
 // Resets the tetromino piece, preparing it to be dropped again
+// Args: random_id - uint8_t new tetromino id to assign
+// Returns: void
 void Tetromino::reset(uint8_t random_id) {
 	set_piece_id(random_id);
 	is_falling = false;
@@ -15,6 +17,8 @@ void Tetromino::reset(uint8_t random_id) {
 }
 
 // Rotates the tetromino piece clockwise
+// Args: board - span<const char> board buffer for collision checks
+// Returns: void
 void Tetromino::rotateL(span<const char> board) {
 	if (piece_id == NULL) {
 		return;
@@ -30,6 +34,8 @@ void Tetromino::rotateL(span<const char> board) {
 }
 
 // Rotates the tetromino piece counterclockwise
+// Args: board - span<const char> board buffer for collision checks
+// Returns: void
 void Tetromino::rotateR(span<const char> board) {
 	if (piece_id == NULL) {
 		return;
@@ -44,6 +50,8 @@ void Tetromino::rotateR(span<const char> board) {
 }
 
 // Moves the tetromino piece one tile to the right
+// Args: board - span<const char> board buffer for collision checks
+// Returns: void
 void Tetromino::moveR(span<const char> board) {
 	if (piece_id == NULL) {
 		return;
@@ -56,6 +64,8 @@ void Tetromino::moveR(span<const char> board) {
 }
 
 // Moves the tetromino piece one tile to the left
+// Args: board - span<const char> board buffer for collision checks
+// Returns: void
 void Tetromino::moveL(span<const char> board) {
 	if (piece_id == NULL) {
 		return;
@@ -69,6 +79,8 @@ void Tetromino::moveL(span<const char> board) {
 
 // Immediately drops the tetromino piece all the way to the last valid position.
 // (used exclusively to position the ghost piece)
+// Args: board - span<const char> board buffer for collision checks
+// Returns: void
 void Tetromino::ghost_drop(span<const char> board) {
 	if (piece_id == NULL) {
 		return;
@@ -81,6 +93,8 @@ void Tetromino::ghost_drop(span<const char> board) {
 }
 
 // Drops the tetromino piece by one block and increments the fall_dist
+// Args: board - span<char> board buffer to mutate when merging
+// Returns: void
 void Tetromino::soft_drop(span<char> board) {
 	if (piece_id == NULL) {
 		return;
@@ -100,6 +114,8 @@ void Tetromino::soft_drop(span<char> board) {
 
 // Initiates a fall sequence.
 // drops the tetromino piece all the way to the last valid position, one tick at a time
+// Args: board - span<char> board buffer to mutate when merging
+// Returns: void
 void Tetromino::hard_drop(span<char> board) {
 	if (piece_id == NULL) {
 		return;
@@ -109,6 +125,8 @@ void Tetromino::hard_drop(span<char> board) {
 }
 
 // Merges the tetromino with the board
+// Args: board - span<char> board buffer to write merged tiles into
+// Returns: void (throws out_of_range if invalid)
 void Tetromino::merge_piece(span<char> board) {
 	if (isInvalidPosition(board)) {
 		throw std::out_of_range("<merge_piece> Tetromino is out of bounds");
@@ -128,6 +146,8 @@ void Tetromino::merge_piece(span<char> board) {
 }
 
 // Checks if the tetromino piece is in a valid position to be merged
+// Args: board - span<const char> board buffer for collision checks
+// Returns: bool true if invalid position, false otherwise
 bool Tetromino::isInvalidPosition(span<const char> board) {
 	char tile;
 
@@ -158,6 +178,8 @@ bool Tetromino::isInvalidPosition(span<const char> board) {
 
 // Returns a tile at the given x,y coordinates in the tetrominos local frame of reference.
 // applies the right rotation transform to the piece
+// Args: x - const int8_t column in local frame; y - const int8_t row in local frame
+// Returns: const char tile value at requested position
 const char Tetromino::realize_piece(const int8_t x, const int8_t y) const {
 	if (x < 0 || y < 0 || x >= TETROMINO_W || y >= TETROMINO_W) {
 		return '.';

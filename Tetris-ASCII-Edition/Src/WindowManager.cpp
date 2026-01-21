@@ -3,6 +3,8 @@
 
 // Initialises the terminal.
 // Runs when the WindowManager is created
+// Args: none
+// Returns: void
 void WindowManager::initTerm() {
 	setlocale(LC_ALL, "");
 
@@ -27,11 +29,15 @@ void WindowManager::initTerm() {
 
 // Deinitialises the terminal.
 // Runs when the WindowManager is deleted
+// Args: none
+// Returns: void
 void WindowManager::deinitTerm() {
 	endwin();
 }
 
 // Shows the given window border without clearing its contents
+// Args: win_id - const int& window identifier
+// Returns: void
 void WindowManager::showBorder(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
 	WINDOW* tmp = createNewWindow(local_win->_maxy + 2, local_win->_maxx + 2, local_win->_begy - 1, local_win->_begx - 1);
@@ -41,6 +47,8 @@ void WindowManager::showBorder(const int& win_id) {
 }
 
 // Clears the given window border without clearing its contents
+// Args: win_id - const int& window identifier
+// Returns: void
 void WindowManager::clearBorder(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
 	WINDOW* tmp = createNewWindow(local_win->_maxy + 2, local_win->_maxx + 2, local_win->_begy - 1, local_win->_begx - 1);
@@ -50,6 +58,8 @@ void WindowManager::clearBorder(const int& win_id) {
 }
 
 // Clears the given window contents without clearing its border
+// Args: win_id - const int& window identifier
+// Returns: void
 void WindowManager::clearContents(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
 	wclear(local_win);
@@ -58,6 +68,8 @@ void WindowManager::clearContents(const int& win_id) {
 }
 
 // Clears the given window border and contents
+// Args: win_id - const int& window identifier
+// Returns: void
 void WindowManager::clearWindow(const int& win_id) {
 	WINDOW* local_win = getWindow(win_id);
 	wclear(local_win);
@@ -65,6 +77,8 @@ void WindowManager::clearWindow(const int& win_id) {
 }
 
 // Properly creates and validates a new WINDOW object
+// Args: height - const int& rows; width - const int& cols; starty - const int& y origin; startx - const int& x origin
+// Returns: WINDOW* newly created window (exits on failure)
 WINDOW* WindowManager::createNewWindow(const int& height, const int& width, const int& starty, const int& startx) {
 	int max_y, max_x;
 
@@ -89,6 +103,8 @@ WINDOW* WindowManager::createNewWindow(const int& height, const int& width, cons
 }
 
 // Returns a pointer to a given WINDOW
+// Args: win_id - const int& window identifier
+// Returns: WINDOW* corresponding to requested id (exits on invalid id)
 WINDOW* WindowManager::getWindow(const int& win_id) {
 	switch (win_id) {
 	case MENU_WIN:

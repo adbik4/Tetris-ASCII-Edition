@@ -4,6 +4,8 @@
 using namespace std;
 
 // This function conducts the main mediation logic
+// Args: event - const Event& to dispatch to the engine components
+// Returns: void
 void GameEngine::notify(const Event& event) {
 	switch (event.id) {
 	case EventId::CLK:
@@ -17,6 +19,8 @@ void GameEngine::notify(const Event& event) {
 }
 
 // Starts the GameEngine
+// Args: none
+// Returns: void
 void GameEngine::startEngine() {
 	renderer->initMenuUI();
 	time_mgr->startClock();
@@ -25,6 +29,8 @@ void GameEngine::startEngine() {
 
 // Main update loop.
 // Gets called after the GameEngine receives an EventId::CLK tick every GAME_TICK ms. 
+// Args: none (uses internal state and managers)
+// Returns: void
 void GameEngine::update() {
 	try {
 
@@ -75,6 +81,8 @@ void GameEngine::update() {
 }
 
 // Stops the GameEngine
+// Args: none
+// Returns: void
 void GameEngine::stopEngine() {
 	if (!state->stop_flag) {
 		state->stop_flag = true;

@@ -8,7 +8,7 @@
 using namespace std;
 class GameEngine;
 
-// Is responsible for drawing UI elements to the screen
+// Is responsible for drawing the game state and UI elements to the screen
 class GameRenderer {
 private:
 	weak_ptr<GameEngine> eng;
@@ -16,9 +16,10 @@ private:
 
 	WINDOW* game_win;		// a reference to the game window
 
-
-	void render_tile(const char tile);
-	void render_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id=GAME_WIN);
+	void render_color_tile(const char tile);
+	void render_ASCII_tile(const char tile);
+	void render_color_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id = GAME_WIN);
+	void render_ASCII_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id=GAME_WIN);
 
 public:
 	GameRenderer(const shared_ptr<GameEngine>& engine_ptr, const shared_ptr< WindowManager>& win_ptr) :
@@ -32,7 +33,8 @@ public:
 	~GameRenderer() {}
 
 	// graphics
-	void renderFrame();
+	void renderColorFrame();
+	void renderASCIIFrame();
 	void refreshGameUI();
 	void refreshMenuUI();
 	void refreshSettingsUI();

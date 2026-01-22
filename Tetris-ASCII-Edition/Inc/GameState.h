@@ -56,6 +56,9 @@ public:
 		line_goal = 10 * level;
 	}
 
+	// Resets the game state to prepare it for a new game.
+	// Args: none
+	// Returns: void
 	void reset() {
 		active_window = GAME;
 		level = cfg.start_level;

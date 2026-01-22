@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "GameEngine.h"
-#include <SaveSystem.h>
+#include "SaveSystem.h"
+#include "SoundFX.h"
 
 // Implements the TETRIS game logic.
 // Decides what happens after a given k_input press
@@ -227,12 +228,19 @@ void GameEngine::gameOver() {
 	}
 
 	saveState(getState());
-	renderer->renderFrame();
+	if (state->cfg.ascii_mode) {
+		renderer->renderASCIIFrame();
+	} else{
+		renderer->renderColorFrame();
+	}
+
 
 	for (auto i = 0; i < 3; i++) {
-		renderer->flashEffect();
 		this_thread::sleep_for(chrono::milliseconds(100));
+		renderer->flashEffect();
 	}
+
+	failureSound();
 
 	renderer->showEndScreen(getState());
 	int k_input = input_mgr->waitForAnyKey();

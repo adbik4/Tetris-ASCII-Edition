@@ -18,16 +18,10 @@ class TimeManager;
 class InputManager;
 class GameRenderer;
 
-// Abstract Mediator class - defines the notify behavior
-class Mediator {
-	public:
-		virtual void notify(const Event& event) = 0;
-		virtual ~Mediator() = default;
-};
-
-// The GameEngine is a Mediator class, which keeps track of everything that is happening in the game.
-// It notifies everyone about certain events who needs to react to them and decides on the order of operations.
-class GameEngine : public Mediator {
+// The GameEngine is a Mediator class, which holds references to all of the submodules in the program and keeps track of everything that is happening in the game.
+// It notifies everyone about certain events who needs to react to them, decides on the order of operations.
+// It also contains the update() loop which is the heart of the program and distributes the GameState to the other program submodules.
+class GameEngine {
 private:
 	unique_ptr<GameRenderer> renderer;
 	unique_ptr<TimeManager> time_mgr;
@@ -51,7 +45,7 @@ public:
 		history = { 5, 6, 5 };
 		history.push_front(static_cast<uint8_t>(uniform_int_distribution<int16_t>(1, 7)(rng)));
 
-		// initialise the piece pool
+		// initialize the piece pool
 		uint8_t start_idx;
 		for (auto p = 1;p <= 7; p++) {
 			start_idx = (p - 1) * 5;
@@ -59,10 +53,12 @@ public:
 		}
 	};
 
+	~GameEngine() = default;
+
 	void setTimeManager(unique_ptr<TimeManager> ptr) { time_mgr = move(ptr); }
 	void setGameRenderer(unique_ptr<GameRenderer> ptr) { renderer = move(ptr); }
 	void setInputManager(unique_ptr<InputManager> ptr) { input_mgr = move(ptr); }
-	void notify(const Event& event) override;
+	void notify(const Event& event);
 
 	void startEngine();
 	void update();
@@ -72,7 +68,6 @@ public:
 	void menuLogic(const int& k_input);
 	void settingsLogic(const int& k_input);
 
-	void inputHandling();
 	void gameOver();
 	void restartGame();
 	

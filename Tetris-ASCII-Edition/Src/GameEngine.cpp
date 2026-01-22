@@ -3,8 +3,8 @@
 
 using namespace std;
 
-// This function conducts the main mediation logic
-// Args: event - const Event& to dispatch to the engine components
+// This function conducts the asynchronous logic in the program.
+// Args: event - const Event& to act upon and/or dispatch to the engine components
 // Returns: void
 void GameEngine::notify(const Event& event) {
 	switch (event) {
@@ -27,8 +27,8 @@ void GameEngine::startEngine() {
 	state->running = true;
 }
 
-// Main update loop.
-// Gets called after the GameEngine receives an EventId::CLK tick every GAME_TICK ms. 
+// Synchronous update loop that's the heart of the program.
+// Called after the GameEngine receives an EventId::CLK tick every GAME_TICK ms. 
 // Args: none (uses internal state and managers)
 // Returns: void
 void GameEngine::update() {
@@ -55,15 +55,22 @@ void GameEngine::update() {
 		// ==== RENDER OUTPUT ====
 		switch (state->active_window) {
 		case GAME:
-			renderer->renderFrame();
+			if (state->cfg.ascii_mode) {
+				renderer->renderASCIIFrame();
+			} else {
+				renderer->renderColorFrame();
+			}
 			renderer->refreshGameUI();
 			break;
+
 		case MENU:
 			renderer->refreshMenuUI();
 			break;
+
 		case SETTINGS:
 			renderer->refreshSettingsUI();
 			break;
+
 		default:
 			throw std::domain_error("<update> unknown window");
 		}

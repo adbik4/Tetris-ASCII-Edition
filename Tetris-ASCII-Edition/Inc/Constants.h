@@ -4,7 +4,6 @@
 
 // macros
 #define SAMPLE_BOARD(array, x, y) ((array)[(x) + (BOARD_W) * (y)])
-#define MS_TO_TICKS(duration) (static_cast<uint16_t>(floor((duration) / (GAME_TICK)) / 3.0))
 
 // constants
 #define MAX_LEVEL 10
@@ -24,7 +23,7 @@
 #define GHOST_SYM '.'		// used for displaying the ghost piece
 
 // (level 1-3) points for:
-// { hard droping pieces | 1 lines | 2 lines | 3 lines | 4 lines }
+// { dropping pieces | 1 lines | 2 lines | 3 lines | 4 lines }
 static const int SCORE_DEF[5] = { 1, 100, 400, 900, 2000 };		// base values used for calculating scores
 
 // externs

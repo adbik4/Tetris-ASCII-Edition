@@ -1,7 +1,6 @@
 #include "InputManager.h"
 #include "GameEngine.h"
 #include "WindowManager.h"
-
 #include "CursesWinCompat.h"
 #include "Events.h"
 

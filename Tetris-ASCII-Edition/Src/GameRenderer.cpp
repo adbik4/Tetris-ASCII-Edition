@@ -9,10 +9,10 @@ vector<string> menu_labels = { "Start Game", "Settings", "Exit" }; 	// defines t
 vector<string> settings_labels = { "ASCII mode", "Flashing effects", "Randomness", "Show future piece", "Start level", "Back"}; // defines the label contents for the settings menu
 
 
-// Renders the contents of the GAME_WIN based on the current GameState
+// Renders the contents of the GAME_WIN based on the current GameState with blocks of color
 // Args: none (reads state via engine weak_ptr)
 // Returns: void
-void GameRenderer::renderFrame() {
+void GameRenderer::renderColorFrame() {
 	auto engine = eng.lock();
 	if (!engine) {
 		return;
@@ -23,7 +23,7 @@ void GameRenderer::renderFrame() {
 	// 1st pass - board
 	for (uint8_t y = 0; y < BOARD_H; y++) {
 		for (uint8_t x = 0; x < BOARD_W; x++) {
-			render_tile(SAMPLE_BOARD(engine->getState().board, x, y));
+			render_color_tile(SAMPLE_BOARD(engine->getState().board, x, y));
 		}
 	}
 
@@ -31,14 +31,51 @@ void GameRenderer::renderFrame() {
 		// 2nd pass - ghost piece
 		for (uint8_t j = 0; j < TETROMINO_W; j++) {
 			for (uint8_t i = 0; i < TETROMINO_W; i++) {
-				render_piece(engine->getState().ghost_piece, i, j);
+				render_color_piece(engine->getState().ghost_piece, i, j);
 			}
 		}
 
 		// 3rd pass - active tetromino
 		for (uint8_t y = 0; y < TETROMINO_W; y++) {
 			for (uint8_t x = 0; x < TETROMINO_W; x++) {
-				render_piece(engine->getState().active_piece, x, y);
+				render_color_piece(engine->getState().active_piece, x, y);
+			}
+		}
+	}
+
+	wrefresh(game_win);
+}
+
+// Renders the contents of the GAME_WIN based on the current GameState with ASCII art
+// Args: none (reads state via engine weak_ptr)
+// Returns: void
+void GameRenderer::renderASCIIFrame() {
+	auto engine = eng.lock();
+	if (!engine) {
+		return;
+	}
+
+	wclear(game_win); // clear the screen
+
+	// 1st pass - board
+	for (uint8_t y = 0; y < BOARD_H; y++) {
+		for (uint8_t x = 0; x < BOARD_W; x++) {
+			render_ASCII_tile(SAMPLE_BOARD(engine->getState().board, x, y));
+		}
+	}
+
+	if (engine->getState().active_piece.get_piece_id() != NULL) {
+		// 2nd pass - ghost piece
+		for (uint8_t j = 0; j < TETROMINO_W; j++) {
+			for (uint8_t i = 0; i < TETROMINO_W; i++) {
+				render_ASCII_piece(engine->getState().ghost_piece, i, j);
+			}
+		}
+
+		// 3rd pass - active tetromino
+		for (uint8_t y = 0; y < TETROMINO_W; y++) {
+			for (uint8_t x = 0; x < TETROMINO_W; x++) {
+				render_ASCII_piece(engine->getState().active_piece, x, y);
 			}
 		}
 	}
@@ -87,10 +124,56 @@ void GameRenderer::lineClearEffect(vector<uint8_t> lines, uint16_t score) {
 
 // UTILITY ----
 
-// Renders a background tile
+// Renders a background tile with blocks of color
 // Args: tile - char representing board tile content
 // Returns: void
-void GameRenderer::render_tile(const char tile) {
+void GameRenderer::render_color_tile(const char tile) {
+	auto engine = eng.lock();
+	if (!engine) {
+		return;
+	}
+
+	chtype color;
+	switch (tile) {
+	case '.':	// empty space
+		color = COLOR_PAIR(0);
+		break;
+	case '@':
+		color = COLOR_PAIR(1);
+		break;
+	case '#':
+		color = COLOR_PAIR(2);
+		break;
+	case 'o':
+		color = COLOR_PAIR(3);
+		break;
+	case '$':
+		color = COLOR_PAIR(4);
+		break;
+	case '*':
+		color = COLOR_PAIR(5);
+		break;
+	case '%':
+		color = COLOR_PAIR(6);
+		break;
+	case '&':
+		color = COLOR_PAIR(7);
+		break;
+	case 'E':	// error
+	default:
+		color = COLOR_PAIR(4);
+		break;
+	}
+
+	wattron(game_win, color);
+	waddstr(game_win, "  ");
+	wattroff(game_win, color);
+}
+
+// Renders a background tile with ASCII art
+// Args: tile - char representing board tile content
+// Returns: void
+void GameRenderer::render_ASCII_tile(const char tile) {
 	auto engine = eng.lock();
 	if (!engine) {
 		return;
@@ -98,59 +181,21 @@ void GameRenderer::render_tile(const char tile) {
 
 	char block[3] = { ' ', ' ', '\0' };
 
-	if (engine->getState().cfg.ascii_mode) {
-		if (tile == '.') {
-			block[0] = ' ';
-			block[1] = ' ';
-		}
-		else {
-			block[0] = tile;
-			block[1] = tile;
-		}
-		waddstr(game_win, block);
+	if (tile == '.') {
+		block[0] = ' ';
+		block[1] = ' ';
 	}
 	else {
-		chtype color = 1;
-		switch (tile) {
-		case '.':	// empty space
-			color = COLOR_PAIR(0);
-			break;
-		case '@':
-			color = COLOR_PAIR(1);
-			break;
-		case '#':
-			color = COLOR_PAIR(2);
-			break;
-		case 'o':
-			color = COLOR_PAIR(3);
-			break;
-		case '$':
-			color = COLOR_PAIR(4);
-			break;
-		case '*':
-			color = COLOR_PAIR(5);
-			break;
-		case '%':
-			color = COLOR_PAIR(6);
-			break;
-		case '&':
-			color = COLOR_PAIR(7);
-			break;
-		case 'E':	// error
-			color = COLOR_PAIR(4);
-			break;
-		}
-
-		wattron(game_win, color);
-		waddstr(game_win, "  ");
-		wattroff(game_win, color);
+		block[0] = tile;
+		block[1] = tile;
 	}
+	waddstr(game_win, block);
 }
 
-// Renders the entirety of a given tetromino piece in a given window
+// Renders the entirety of a given tetromino piece in a given window with blocks of color
 // Args: piece - Tetromino to draw; x,y - uint8_t local offsets; win_id - const int& target window id
 // Returns: void
-void GameRenderer::render_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id) {
+void GameRenderer::render_color_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id) {
 	auto engine = eng.lock();
 	auto win_mgr = wm.lock();
 	if (!engine || !win_mgr) {
@@ -168,62 +213,81 @@ void GameRenderer::render_piece(const Tetromino& piece, const uint8_t x, const u
 		return;
 	}
 
-	if (engine->getState().cfg.ascii_mode) {
-		if (piece.is_ghost) {
-			block[0] = GHOST_SYM;
-			block[1] = GHOST_SYM;
-		}
-		else {
-			block[0] = tile;
-			block[1] = tile;
-		}
+	chtype color = 1;
+	switch (tile) {
+	case '/': // ghost piece
+		color = COLOR_PAIR(2);
+		break;
+	case '@':
+		color = COLOR_PAIR(1);
+		break;
+	case '#':
+		color = COLOR_PAIR(2);
+		break;
+	case 'o':
+		color = COLOR_PAIR(3);
+		break;
+	case '$':
+		color = COLOR_PAIR(4);
+		break;
+	case '*':
+		color = COLOR_PAIR(5);
+		break;
+	case '%':
+		color = COLOR_PAIR(6);
+		break;
+	case '&':
+		color = COLOR_PAIR(7);
+		break;
+	case 'E': // error
+	default:
+		color = COLOR_PAIR(4);
+		break;
+	}
 
+	if (piece.is_ghost) {
+		block[0] = GHOST_SYM;
+		block[1] = GHOST_SYM;
 		mvwprintw(local_win, draw_y, draw_x, block);
 	}
 	else {
-		chtype color = 1;
-		switch (tile) {
-		case '/': // ghost piece
-			color = COLOR_PAIR(2);
-			break;
-		case '@':
-			color = COLOR_PAIR(1);
-			break;
-		case '#':
-			color = COLOR_PAIR(2);
-			break;
-		case 'o':
-			color = COLOR_PAIR(3);
-			break;
-		case '$':
-			color = COLOR_PAIR(4);
-			break;
-		case '*':
-			color = COLOR_PAIR(5);
-			break;
-		case '%':
-			color = COLOR_PAIR(6);
-			break;
-		case '&':
-			color = COLOR_PAIR(7);
-			break;
-		case 'E':
-			// error
-			color = COLOR_PAIR(4);
-			break;
-		}
-
-		if (piece.is_ghost) {
-			block[0] = GHOST_SYM;
-			block[1] = GHOST_SYM;
-			mvwprintw(local_win, draw_y, draw_x, block);
-		}
-		else {
-			wattron(local_win, color);
-			mvwprintw(local_win, draw_y, draw_x, "  ");
-			wattroff(local_win, color);
-		}
+		wattron(local_win, color);
+		mvwprintw(local_win, draw_y, draw_x, "  ");
+		wattroff(local_win, color);
 	}
+}
+
+// Renders the entirety of a given tetromino piece in a given window with ASCII art
+// Args: piece - Tetromino to draw; x,y - uint8_t local offsets; win_id - const int& target window id
+// Returns: void
+void GameRenderer::render_ASCII_piece(const Tetromino& piece, const uint8_t x, const uint8_t y, const int& win_id) {
+	auto engine = eng.lock();
+	auto win_mgr = wm.lock();
+	if (!engine || !win_mgr) {
+		return;
+	}
+
+	WINDOW* local_win = win_mgr->getWindow(win_id);
+	char tile = piece.realize_piece(x, y);
+	char block[3] = { ' ', ' ', '\0' };
+
+	const int draw_y = (win_id == GAME_WIN) ? piece.y_pos + y : 1 + y;
+	const int draw_x = (win_id == GAME_WIN) ? (piece.x_pos + x) * 2 : x * 2;
+
+	if (tile == '.') {
+		return;
+	}
+
+	if (piece.is_ghost) {
+		block[0] = GHOST_SYM;
+		block[1] = GHOST_SYM;
+	}
+	else {
+		block[0] = tile;
+		block[1] = tile;
+	}
+
+	mvwprintw(local_win, draw_y, draw_x, block);
 }
 
 // Renders the ASCII art title
@@ -266,9 +330,6 @@ void GameRenderer::showEndScreen(const GameState& state) {
 	windowPrint(GAME_WIN, "level reached: " + to_string(state.level) + "\n");
 	windowPrint(GAME_WIN, "\nPress [any key]\nto start new game\n");
 	windowPrint(GAME_WIN, "\n\tor\n\n[ESC] to go to menu\n");
-
-	// game over jingle
-	failureSound();
 }
 
 // Appends a message to the end of the given window and displays it

@@ -1,6 +1,192 @@
 #include "GameRenderer.h"
 #include "SaveSystem.h"
 
+// ==== DEFINITIONS ====
+
+// Creates and defines the title window
+// Args: none
+// Returns: WINDOW* newly created title window (MENU_WIN)
+WINDOW* WindowManager::makeTitleWindow() {
+	int width, height, starty, startx, lines, cols, voffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = 105; //105;
+	height = 15;
+	voffset = -3;
+
+	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
+	startx = (cols - width) / 2;	/* of the window		*/
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+	return window;
+}
+
+// Creates and defines the menu window
+// Args: none
+// Returns: WINDOW* newly created menu window
+WINDOW* WindowManager::makeMenuWindow() {
+	int width, height, starty, startx, lines, cols, voffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = UI_UNIT_W * 3;
+	height = 6;
+	voffset = 9;
+
+	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
+	startx = (cols - width) / 2;	/* of the window		*/
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+	return window;
+}
+
+// Creates and defines the input window
+// Args: none
+// Returns: WINDOW* newly created input window
+WINDOW* WindowManager::makeInputWindow() {
+	int width, height, starty, startx, lines, cols, voffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = 1;
+	height = 1;
+	voffset = 12;
+
+	starty = voffset + (lines - height) / 2;
+	startx = (cols - width) / 2;
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+
+	keypad(window, TRUE); // Enable arrow keys
+	nodelay(window, TRUE);// Non-blocking input
+	return window;
+}
+
+// Creates and defines the game window
+// Args: none
+// Returns: WINDOW* newly created game window
+WINDOW* WindowManager::makeGameWindow() {
+	int width, height, starty, startx, lines, cols, voffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = BOARD_W * 2;	// scale according to block size
+	height = BOARD_H;
+	voffset = 0;
+
+	starty = voffset + (lines - height) / 2;
+	startx = (cols - width) / 2;
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+
+	return window;
+}
+
+// Creates and defines the error window
+// Args: none
+// Returns: WINDOW* newly created error window
+WINDOW* WindowManager::makeErrorWindow() {
+	int width, height, starty, startx, lines, cols;
+	getmaxyx(stdscr, lines, cols);
+
+	width = cols - 2;
+	height = 1;
+	starty = 1;
+	startx = 1;
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+	return window;
+}
+
+// Creates and defines the statistics window
+// Args: none
+// Returns: WINDOW* newly created stats window
+WINDOW* WindowManager::makeStatsWindow() {
+	int width, height, starty, startx, lines, cols, voffset, hoffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = UI_UNIT_W * 2 + 2;
+	height = 5;
+	voffset = -5;
+	hoffset = 26;
+
+	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
+	startx = hoffset + (cols - width) / 2;				/* of the window		*/
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+	return window;
+}
+
+// Creates and defines the next-piece window
+// Args: none
+// Returns: WINDOW* newly created next-piece window
+WINDOW* WindowManager::makeNextPieceWindow() {
+	int width, height, starty, startx, lines, cols, voffset, hoffset;
+	getmaxyx(stdscr, lines, cols);
+
+	width = TETROMINO_W * 2 + 2;
+	height = TETROMINO_W + 1;
+	voffset = 3;
+	hoffset = 26;
+	//voffset = -5;
+	//hoffset = -20;
+
+	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
+	startx = hoffset + (cols - width) / 2;				/* of the window		*/
+
+	WINDOW* window = createNewWindow(height, width, starty, startx);
+	return window;
+}
+
+// ==== INITIALISATION ====
+
+// initialises the gameUI window
+// Args: none
+// Returns: void
+void GameRenderer::initGameUI() {
+	auto win_mgr = wm.lock();
+	if (!win_mgr) {
+		return;
+	}
+
+	win_mgr->clearWindow(MENU_WIN);
+
+	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
+	wclear(title_win);
+	wrefresh(title_win);
+
+	win_mgr->showBorder(GAME_WIN);
+	win_mgr->showBorder(STATS_WIN);
+}
+
+// initialises the settingsUI window
+// Args: none
+// Returns: void
+void GameRenderer::initSettingsUI() {
+	auto win_mgr = wm.lock();
+	auto engine = eng.lock();
+	if (!win_mgr || !engine) {
+		return;
+	}
+
+	win_mgr->clearWindow(MENU_WIN);
+}
+
+// initialises the MenuUI window
+// Args: none
+// Returns: void
+void GameRenderer::initMenuUI() {
+	auto win_mgr = wm.lock();
+	auto engine = eng.lock();
+	if (!win_mgr || !engine) {
+		return;
+	}
+
+	win_mgr->clearWindow(MENU_WIN);
+	if (engine->getState().game_over) {
+		win_mgr->clearWindow(GAME_WIN);
+		win_mgr->clearWindow(STATS_WIN);
+	}
+	showTitleScreen();
+}
+
 // ==== VISUALS ====
 
 // Refreshes the GameUI window with current info from the GameEngine
@@ -43,10 +229,21 @@ void GameRenderer::refreshNextPieceUI() {
 
 	wclear(next_win);
 	windowPrint(NEXT_WIN, "NEXT PIECE");
-	if (engine->getState().next_piece.get_piece_id() != NULL) {
-		for (uint8_t y = 0; y < TETROMINO_W; y++) {
-			for (uint8_t x = 0; x < TETROMINO_W; x++) {
-				render_piece(next_piece, x, y, NEXT_WIN);
+	if (engine->getState().cfg.ascii_mode) {
+		if (engine->getState().next_piece.get_piece_id() != NULL) {
+			for (uint8_t y = 0; y < TETROMINO_W; y++) {
+				for (uint8_t x = 0; x < TETROMINO_W; x++) {
+					render_ASCII_piece(next_piece, x, y, NEXT_WIN);
+				}
+			}
+		}
+	}
+	else {
+		if (engine->getState().next_piece.get_piece_id() != NULL) {
+			for (uint8_t y = 0; y < TETROMINO_W; y++) {
+				for (uint8_t x = 0; x < TETROMINO_W; x++) {
+					render_color_piece(next_piece, x, y, NEXT_WIN);
+				}
 			}
 		}
 	}
@@ -249,199 +446,4 @@ void GameEngine::settingsLogic(const int& k_input) {
 		state->active_window = MENU;
 		break;
 	}
-}
-
-
-// ==== INITIALISATION ====
-
-// initialises the gameUI window
-// Args: none
-// Returns: void
-void GameRenderer::initGameUI() {
-	auto win_mgr = wm.lock();
-	if (!win_mgr) {
-		return;
-	}
-
-	win_mgr->clearWindow(MENU_WIN);
-
-	WINDOW* title_win = win_mgr->getWindow(TITLE_WIN);
-	wclear(title_win);
-	wrefresh(title_win);
-
-	win_mgr->showBorder(GAME_WIN);
-	win_mgr->showBorder(STATS_WIN);
-}
-
-// initialises the settingsUI window
-// Args: none
-// Returns: void
-void GameRenderer::initSettingsUI() {
-	auto win_mgr = wm.lock();
-	auto engine = eng.lock();
-	if (!win_mgr || !engine) {
-		return;
-	}
-
-	win_mgr->clearWindow(MENU_WIN);
-}
-
-// initialises the MenuUI window
-// Args: none
-// Returns: void
-void GameRenderer::initMenuUI() {
-	auto win_mgr = wm.lock();
-	auto engine = eng.lock();
-	if (!win_mgr || !engine) {
-		return;
-	}
-
-	win_mgr->clearWindow(MENU_WIN);
-	if (engine->getState().game_over) {
-		win_mgr->clearWindow(GAME_WIN);
-		win_mgr->clearWindow(STATS_WIN);
-	}
-	showTitleScreen();
-}
-
-
-// ==== DEFINITIONS ====
-
-// Creates and defines the title window
-// Args: none
-// Returns: WINDOW* newly created title window (MENU_WIN)
-WINDOW* WindowManager::makeTitleWindow() {
-	int width, height, starty, startx, lines, cols, voffset;
-	getmaxyx(stdscr, lines, cols);
-
-	width = 105; //105;
-	height = 15;
-	voffset = -3;
-
-	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
-	startx = (cols - width) / 2;	/* of the window		*/
-
-	WINDOW* window = createNewWindow(height, width, starty, startx);
-	keypad(window, TRUE); // Enable arrow keys
-	nodelay(window, TRUE);// Non-blocking input
-	return window;
-}
-
-// Creates and defines the menu window
-// Args: none
-// Returns: WINDOW* newly created menu window
-WINDOW* WindowManager::makeMenuWindow() {
-	int width, height, starty, startx, lines, cols, voffset;
-	getmaxyx(stdscr, lines, cols);
-
-	width = UI_UNIT_W * 3;
-	height = 6;
-	voffset = 9;
-
-	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
-	startx = (cols - width) / 2;	/* of the window		*/
-
-	WINDOW* window = createNewWindow(height, width, starty, startx);
-	keypad(window, TRUE); // Enable arrow keys
-	nodelay(window, TRUE);// Non-blocking input
-	return window;
-}
-
-// Creates and defines the input window
-// Args: none
-// Returns: WINDOW* newly created input window
-WINDOW* WindowManager::makeInputWindow() {
-	int width, height, starty, startx, lines, cols, voffset;
-	getmaxyx(stdscr, lines, cols);
-
-	width = 1;
-	height = 1;
-	voffset = 12;
-
-	starty = voffset + (lines - height) / 2;
-	startx = (cols - width) / 2;
-
-	WINDOW* window = createNewWindow(height, width, starty, startx);
-
-	keypad(window, TRUE); // Enable arrow keys
-	nodelay(window, TRUE);// Non-blocking input
-	return window;
-}
-
-// Creates and defines thegame window
-// Args: none
-// Returns: WINDOW* newly created game window
-WINDOW* WindowManager::makeGameWindow() {
-	int width, height, starty, startx, lines, cols, voffset;
-	getmaxyx(stdscr, lines, cols);
-
-	width = BOARD_W * 2;	// scale according to block size
-	height = BOARD_H;
-	voffset = 0;
-
-	starty = voffset + (lines - height) / 2;
-	startx = (cols - width) / 2;
-
-	WINDOW* window = createNewWindow(height, width, starty, startx);
-
-	keypad(window, TRUE);	// Enable arrow keys
-	nodelay(window, TRUE);	// Non-blocking input
-
-	return window;
-}
-
-// Creates and defines the error window
-// Args: none
-// Returns: WINDOW* newly created error window
-WINDOW* WindowManager::makeErrorWindow() {
-	int width, height, starty, startx, lines, cols;
-	getmaxyx(stdscr, lines, cols);
-
-	width = cols - 2;
-	height = 1;
-	starty = 1;
-	startx = 1;
-
-	WINDOW* window = createNewWindow(height, width, starty, startx);
-	return window;
-}
-
-// Creates and defines the statistics window
-// Args: none
-// Returns: WINDOW* newly created stats window
-WINDOW* WindowManager::makeStatsWindow() {
-	int width, height, starty, startx, lines, cols, voffset, hoffset;
-	getmaxyx(stdscr, lines, cols);
-
-	width = UI_UNIT_W * 2 + 2;
-	height = 5;
-	voffset = -5;
-	hoffset = 26;
-
-	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
-	startx = hoffset + (cols - width) / 2;				/* of the window		*/
-
-	WINDOW* window = createNewWindow(height, width, starty, startx);
-	return window;
-}
-
-// Creates and defines the next-piece window
-// Args: none
-// Returns: WINDOW* newly created next-piece window
-WINDOW* WindowManager::makeNextPieceWindow() {
-	int width, height, starty, startx, lines, cols, voffset, hoffset;
-	getmaxyx(stdscr, lines, cols);
-
-	width = TETROMINO_W * 2 + 2;
-	height = TETROMINO_W + 1;
-	voffset = 3;
-	hoffset = 26;
-	//voffset = -5;
-	//hoffset = -20;
-
-	starty = voffset + (lines - height) / 2;	/* Calculating for a center placement */
-	startx = hoffset + (cols - width) / 2;				/* of the window		*/
-
-	WINDOW* window = createNewWindow(height, width, starty, startx);
-	return window;
 }

@@ -1,14 +1,11 @@
 # termtris
 
-**termtris** is a terminal-based game engine project that includes an implementation of the classic game Tetris. It's fully playable inside a terminal window.
+**termtris** is a terminal-based game engine project that includes an implementation of the classic game Tetris.  
+It's fully playable inside a terminal window.
 
 ![Main Menu](Images/main_menu.jpg)
 
-<p style="text-align: center;">main menu</p>
-
 ![Gameplay](Images/gameplay.jpg)
-
-<p style="text-align: center;">typical gameplay</p>
 
 ## Installation
 
